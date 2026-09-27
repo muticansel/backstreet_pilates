@@ -53,6 +53,10 @@ Bu maddeler varsayılan bir iş kuralına dönüştürülmeden önce netleştiri
 | payments | Satın alma, tutar, para birimi, yöntem, durum, ödeme zamanı, sağlayıcı referansı |
 | refunds | Ödeme, iade tutarı, durum, zaman, benzersiz sağlayıcı referansı |
 | audit_events | Admin değişiklikleri, yapan kişi, zaman, neden |
+| video_series | Dijital seri kataloğu, erişim süresi ve yayın durumu |
+| series_videos | Serinin sıralı video bilgileri; oynatma bağlantısı içermez |
+| video_series_access | Kullanıcıya satın alma veya manuel işlemle tanınan süreli erişim |
+| video_progress | Kullanıcının kendi video izleme ilerlemesi |
 
 Tabloların nihai alanları ve ilişkileri SQL incelemesinde tek tek ele alınacak.
 Tek veritabanı kullanılacak; şube ayrımı ilişkiler ve erişim kurallarıyla sağlanacak.
@@ -179,3 +183,19 @@ bakiyesi pozitif olsa da yeni rezervasyona izin vermez.
 5. Ödemeleri ve raporları ayrı bir aşamada bağla.
 
 Bu aşamada Flutter sayfaları ve demo giriş davranışı değişmedi.
+
+## Video library foundation
+
+Ücretli video serileri için ilk veri ve RLS taslağı
+`docs/VIDEO_LIBRARY.md` içinde, incelenecek migration ise
+`supabase/migrations/20260927000200_video_library.sql` içindedir. Video dosyası
+veya kalıcı oynatma URL'si public şemada tutulmaz; erişimi geçerli kullanıcıya
+sunucu tarafında kısa ömürlü oynatma bağlantısı verilir. Bu migration henüz canlı
+Supabase projesinde çalıştırılmadı.
+
+Video satın alma, oynatma ve güvenlik mimarisi karar kaydı
+`docs/VIDEO_LIBRARY.md` dosyasında tutulur. Planlanan ayrım şudur: Flutter
+yalnızca store satın alma arayüzünü ve oynatıcıyı içerir; RevenueCat doğrulanmış
+store olaylarını Edge Function'a gönderir; Edge Function erişimi ve kısa ömürlü
+oynatma bağlantısını yönetir. Kalıcı ödeme veya oynatma sırları istemciye
+eklenmez.

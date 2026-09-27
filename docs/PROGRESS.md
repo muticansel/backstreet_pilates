@@ -17,8 +17,9 @@
 
 ## Next steps
 
-1. Review the member dashboard and its preview data with the user.
-2. Define the purchased-membership, class-session and booking tables that will replace dashboard preview data.
+1. Review the video-library database foundation before applying its migration.
+2. Design the member video-library page after the data model is approved.
+3. Define the purchased-membership, class-session and booking tables that will replace dashboard preview data.
 
 ## Git setup
 
@@ -91,3 +92,15 @@
 - Added bottom navigation with Home, Packages and Usage. Packages and Usage are dummy flows; Home holds the dashboard overview.
 - Review notes: `docs/reviews/04-member-dashboard.md`.
 - Verification: Dart format clean, flutter analyze clean, all 5 widget tests passed, and the iOS simulator build succeeded with Supabase dependencies.
+
+## Video library foundation
+
+- Prepared a separate catalogue, ordered-video, access-grant and watch-progress model for paid video series.
+- Each series defines its access duration; the initial product value is 365 days.
+- Streaming-provider asset identifiers are private. A future Edge Function will issue a short-lived playback URL only after it verifies active access.
+- Flutter clients cannot grant themselves access, alter expiry dates or read private playback assets.
+- The migration is prepared locally for review and has not been applied to Supabase.
+- A rollback-based SQL access test is included for the migration review; it has not been run because the migration is not yet applied.
+- Recorded the future production architecture: RevenueCat and native store billing for digital video, verified webhooks and access control in Supabase Edge Functions, `video_player` in Flutter, and Mux or Cloudflare Stream for protected delivery.
+- No RevenueCat, player or streaming dependency is installed yet; those are added only with the related reviewed page and backend work.
+- Review notes: `docs/VIDEO_LIBRARY.md`.
