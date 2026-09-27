@@ -36,3 +36,5 @@ See [Flutter's iOS setup](https://docs.flutter.dev/platform-integration/ios/setu
 Start with [the project plan](docs/BLUEPRINT.md), then [login](docs/reviews/01-login.md)
 and [signup](docs/reviews/02-signup.md). Track decisions in [progress](docs/PROGRESS.md).
 Markdown files provide development context; they are not runtime app content.
+
+Database design draft: [DATABASE.md](docs/DATABASE.md).

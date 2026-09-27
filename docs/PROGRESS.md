@@ -50,3 +50,15 @@
 - Project now lives at `/Users/mutic/Desktop/personal/backstreet_pilates`.
 - Flutter generated paths refreshed after cleaning the old build artifacts.
 - Analyzer and iOS rebuild passed from the new location.
+
+## Database planning
+
+- Added `docs/DATABASE.md` as a review draft; no SQL or backend provisioned.
+- Confirmed branch-bound packages for Oran and İncek, variable weekly frequency and duration, no-show consumption, future cancellation allowances, and global admin access.
+- Supabase/PostgreSQL remains the proposed stack; authentication is still demo-only.
+- Confirmed fixed recurring day/time packages for the first release; flexible packages may be added later.
+- Database draft now separates scheduling mode, recurring membership slots, dated bookings, and cancellation allowances.
+- Proposed atomic activation creates the complete fixed schedule; future-booked credits are distinguished from attended/no-show lessons.
+- Package starts automatically on the first scheduled lesson date, with admin override supported; missing that lesson does not postpone the start.
+- Draft specifies audited date changes, recalculated end date, reservation consistency checks, and preservation of attendance/credit history.
+- Remaining decisions include cancellation terms and studio holiday handling; date boundary conventions are still proposed.
