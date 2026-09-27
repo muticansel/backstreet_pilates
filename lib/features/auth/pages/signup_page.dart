@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 
+import '../data/auth_gateway.dart';
 import '../validation/auth_validators.dart';
 import '../widgets/auth_layout.dart';
-import '../widgets/demo_feedback.dart';
 import '../widgets/password_field.dart';
+import 'signed_in_page.dart';
 
 class SignupPage extends StatefulWidget {
-  const SignupPage({super.key});
+  const SignupPage({super.key, required this.auth});
+
+  final AuthGateway auth;
 
   @override
   State<SignupPage> createState() => _SignupPageState();
@@ -18,6 +21,8 @@ class _SignupPageState extends State<SignupPage> {
   final _email = TextEditingController();
   final _password = TextEditingController();
   final _confirmation = TextEditingController();
+  bool _isSubmitting = false;
+  String? _errorMessage;
 
   @override
   void dispose() {
@@ -28,10 +33,49 @@ class _SignupPageState extends State<SignupPage> {
     super.dispose();
   }
 
-  void _submit() {
+  Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
     FocusScope.of(context).unfocus();
-    showDemoFeedback(context, isSignup: true);
+    setState(() {
+      _isSubmitting = true;
+      _errorMessage = null;
+    });
+    try {
+      final result = await widget.auth.signUp(
+        displayName: _name.text.trim(),
+        email: _email.text.trim(),
+        password: _password.text,
+      );
+      if (!mounted) return;
+      if (result == SignupResult.signedIn) {
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute<void>(
+              builder: (_) => SignedInPage(auth: widget.auth)),
+          (_) => false,
+        );
+        return;
+      }
+      await showDialog<void>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Check your email'),
+          content: const Text(
+            'We sent a confirmation link to your email address. Confirm it, then return here to log in.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Back to log in'),
+            ),
+          ],
+        ),
+      );
+      if (mounted) Navigator.of(context).pop();
+    } on AuthFailure catch (error) {
+      if (mounted) setState(() => _errorMessage = error.message);
+    } finally {
+      if (mounted) setState(() => _isSubmitting = false);
+    }
   }
 
   @override
@@ -47,6 +91,12 @@ class _SignupPageState extends State<SignupPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              if (_errorMessage != null) ...[
+                Text(_errorMessage!,
+                    style:
+                        TextStyle(color: Theme.of(context).colorScheme.error)),
+                const SizedBox(height: 18),
+              ],
               TextFormField(
                 controller: _name,
                 validator: AuthValidators.name,
@@ -87,7 +137,10 @@ class _SignupPageState extends State<SignupPage> {
               ),
               const SizedBox(height: 28),
               FilledButton(
-                  onPressed: _submit, child: const Text('Create account')),
+                onPressed: _isSubmitting ? null : _submit,
+                child: Text(
+                    _isSubmitting ? 'Creating account…' : 'Create account'),
+              ),
               const SizedBox(height: 20),
               const Text('Already have an account?',
                   textAlign: TextAlign.center),

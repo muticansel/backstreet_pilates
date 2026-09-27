@@ -65,11 +65,30 @@ Tüm örnek paketler ve teklifler satışa kapalıdır; fiyatlar uydurmadır.
 Rezervasyon, paket satın alma, para tahsilatı, iptal/mazeret koşulları bu migration'da yoktur.
 Süre başlangıcı ve admin değişikliği, sonraki satın alınmış üyelik aşamasında uygulanacak.
 
-## 5. Flutter bağlantısı — sonraki sayfa incelemesi
+## 5. Flutter bağlantısı — authentication page review
 
-Paket kuruldu ancak `main.dart` içinde henüz Supabase.initialize çağrısı yok.
-Hesap/proje hazır olunca, gerçek login/signup incelemesinde Project URL ve publishable
-key `--dart-define` ile aktarılacak; oturum yönlendirmesi ve e-posta doğrulaması eklenecek.
+`main.dart`, Project URL ve publishable key `--dart-define` ile verildiğinde Supabase'i
+başlatır. İki değerden biri yoksa uygulama açılır, fakat giriş/kayıt gönderimi güvenli
+bir yapılandırma mesajı verir. Değerler Git'e veya dosyaya kaydedilmez.
+
+Authentication → URL Configuration altında şu Additional Redirect URL eklenmelidir:
+
+```
+backstreetpilates://login-callback/
+```
+
+Bu URL e-posta doğrulama bağlantısının iOS uygulamasına dönmesini sağlar. Confirm email
+etkin kalmalıdır. Uygulama, kayıt anında standart `member` rolü üretir; hiçbir istemci
+isteği admin rolü atayamaz.
+
+Yerel iOS çalıştırma:
+
+```sh
+flutter run -d C9F6A868-3B6F-4E6B-9531-69F4480BB6E7 \
+  --dart-define=SUPABASE_URL=https://vjzoquvdoyndflcjulun.supabase.co \
+  --dart-define=SUPABASE_PUBLISHABLE_KEY=YOUR_PUBLISHABLE_KEY
+```
+
 Publishable key uygulamada görülebilir; veri güvenliğini RLS sağlar.
 
 Resmi kaynaklar:

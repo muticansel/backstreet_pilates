@@ -1,0 +1,43 @@
+enum SignupResult { signedIn, confirmationRequired }
+
+abstract interface class AuthGateway {
+  Future<void> signIn({required String email, required String password});
+
+  Future<SignupResult> signUp({
+    required String displayName,
+    required String email,
+    required String password,
+  });
+
+  Future<void> signOut();
+}
+
+class AuthFailure implements Exception {
+  const AuthFailure(this.message);
+
+  final String message;
+}
+
+class UnconfiguredAuthGateway implements AuthGateway {
+  const UnconfiguredAuthGateway();
+
+  static const _message =
+      'Account service is not configured. Start the app with its Supabase settings.';
+
+  @override
+  Future<void> signIn({required String email, required String password}) {
+    throw const AuthFailure(_message);
+  }
+
+  @override
+  Future<SignupResult> signUp({
+    required String displayName,
+    required String email,
+    required String password,
+  }) {
+    throw const AuthFailure(_message);
+  }
+
+  @override
+  Future<void> signOut() async {}
+}

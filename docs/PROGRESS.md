@@ -77,5 +77,7 @@
   ROLLBACK yaptığı için geçici kullanıcılar ve rol değişiklikleri kalıcı olmadı.
 - Temel Supabase geliştirme kurulumu tamamlandı: katalog verisi, profil
   tetikleyicisi, RLS kuralları ve kullanıcı/admin erişim sınırları doğrulandı.
-- Login/signup wiring deferred to the next page review as agreed.
+- Supabase auth integration is implemented locally and awaits page review plus the project's publishable key.
+- iOS deep-link scheme `backstreetpilates://login-callback/` is declared; dashboard redirect configuration remains user action.
+- Verification: Flutter analyze clean, four widget tests passed, and the iOS simulator build succeeded.
 - Verification: Dart format unchanged, flutter analyze clean, all 3 widget tests passed, iOS simulator build succeeded with Supabase dependencies.

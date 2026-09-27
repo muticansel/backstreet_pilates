@@ -39,4 +39,4 @@ Markdown files provide development context; they are not runtime app content.
 
 Database design draft: [DATABASE.md](docs/DATABASE.md).
 
-Backend setup: [SUPABASE_SETUP.md](docs/SUPABASE_SETUP.md). Supabase Flutter is installed; auth screens remain in demo mode until the next page review.
+Backend setup: [SUPABASE_SETUP.md](docs/SUPABASE_SETUP.md). Review the real login/signup connection in [03-supabase-auth.md](docs/reviews/03-supabase-auth.md).

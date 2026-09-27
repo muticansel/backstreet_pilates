@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 
+import '../data/auth_gateway.dart';
 import '../validation/auth_validators.dart';
 import '../widgets/auth_layout.dart';
-import '../widgets/demo_feedback.dart';
 import '../widgets/password_field.dart';
+import 'signed_in_page.dart';
 import 'signup_page.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+  const LoginPage({super.key, required this.auth});
+
+  final AuthGateway auth;
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -17,6 +20,8 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final _email = TextEditingController();
   final _password = TextEditingController();
+  bool _isSubmitting = false;
+  String? _errorMessage;
 
   @override
   void dispose() {
@@ -25,10 +30,27 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
-  void _submit() {
+  Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
     FocusScope.of(context).unfocus();
-    showDemoFeedback(context, isSignup: false);
+    setState(() {
+      _isSubmitting = true;
+      _errorMessage = null;
+    });
+    try {
+      await widget.auth
+          .signIn(email: _email.text.trim(), password: _password.text);
+      if (!mounted) return;
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute<void>(
+            builder: (_) => SignedInPage(auth: widget.auth)),
+        (_) => false,
+      );
+    } on AuthFailure catch (error) {
+      if (mounted) setState(() => _errorMessage = error.message);
+    } finally {
+      if (mounted) setState(() => _isSubmitting = false);
+    }
   }
 
   @override
@@ -44,6 +66,12 @@ class _LoginPageState extends State<LoginPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              if (_errorMessage != null) ...[
+                Text(_errorMessage!,
+                    style:
+                        TextStyle(color: Theme.of(context).colorScheme.error)),
+                const SizedBox(height: 18),
+              ],
               TextFormField(
                 controller: _email,
                 validator: AuthValidators.email,
@@ -60,7 +88,10 @@ class _LoginPageState extends State<LoginPage> {
                 onSubmitted: (_) => _submit(),
               ),
               const SizedBox(height: 28),
-              FilledButton(onPressed: _submit, child: const Text('Log in')),
+              FilledButton(
+                onPressed: _isSubmitting ? null : _submit,
+                child: Text(_isSubmitting ? 'Logging in…' : 'Log in'),
+              ),
               const SizedBox(height: 20),
               const Text('New to Backstreet Pilates?',
                   textAlign: TextAlign.center),
@@ -68,7 +99,7 @@ class _LoginPageState extends State<LoginPage> {
                 onPressed: () {
                   _password.clear();
                   Navigator.of(context).push(MaterialPageRoute<void>(
-                    builder: (_) => const SignupPage(),
+                    builder: (_) => SignupPage(auth: widget.auth),
                   ));
                 },
                 child: const Text('Create an account'),

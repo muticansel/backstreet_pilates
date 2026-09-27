@@ -1,11 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:backstreet_pilates/app.dart';
+import 'package:backstreet_pilates/features/auth/data/auth_gateway.dart';
+
+class FakeAuthGateway implements AuthGateway {
+  FakeAuthGateway({this.signUpResult = SignupResult.confirmationRequired});
+
+  final SignupResult signUpResult;
+  AuthFailure? signInFailure;
+  AuthFailure? signUpFailure;
+  int signOutCount = 0;
+
+  @override
+  Future<void> signIn({required String email, required String password}) async {
+    if (signInFailure != null) throw signInFailure!;
+  }
+
+  @override
+  Future<SignupResult> signUp({
+    required String displayName,
+    required String email,
+    required String password,
+  }) async {
+    if (signUpFailure != null) throw signUpFailure!;
+    return signUpResult;
+  }
+
+  @override
+  Future<void> signOut() async => signOutCount++;
+}
 
 void main() {
-  testWidgets('login rejects empty fields and valid input opens demo feedback',
+  testWidgets(
+      'login rejects empty fields and valid input opens signed-in state',
       (tester) async {
-    await tester.pumpWidget(const PilatesApp());
+    await tester.pumpWidget(PilatesApp(auth: FakeAuthGateway()));
     await tester.tap(find.text('Log in'));
     await tester.pumpAndSettle();
     expect(find.text('Enter your email address.'), findsOneWidget);
@@ -17,13 +46,12 @@ void main() {
     await tester.ensureVisible(find.text('Log in'));
     await tester.tap(find.text('Log in'));
     await tester.pumpAndSettle();
-    expect(find.text('Your form is ready'), findsOneWidget);
-    expect(find.textContaining('does not sign you in'), findsOneWidget);
+    expect(find.text('You’re signed in.'), findsOneWidget);
   });
 
   testWidgets('signup checks confirmation and returns to login',
       (tester) async {
-    await tester.pumpWidget(const PilatesApp());
+    await tester.pumpWidget(PilatesApp(auth: FakeAuthGateway()));
     await tester.ensureVisible(find.text('Create an account'));
     await tester.tap(find.text('Create an account'));
     await tester.pumpAndSettle();
@@ -42,11 +70,11 @@ void main() {
     await tester.ensureVisible(find.text('Create account'));
     await tester.tap(find.text('Create account'));
     await tester.pumpAndSettle();
-    expect(find.textContaining('does not create an account'), findsOneWidget);
-    await tester.tap(find.text('Keep exploring'));
-    await tester.pumpAndSettle();
-    await tester.ensureVisible(find.text('Back to log in'));
-    await tester.tap(find.text('Back to log in'));
+    expect(find.text('Check your email'), findsOneWidget);
+    await tester.tap(find.descendant(
+      of: find.byType(AlertDialog),
+      matching: find.text('Back to log in'),
+    ));
     await tester.pumpAndSettle();
     expect(find.text('Welcome back.'), findsOneWidget);
   });
@@ -56,11 +84,24 @@ void main() {
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
-    await tester.pumpWidget(const PilatesApp());
+    await tester.pumpWidget(PilatesApp(auth: FakeAuthGateway()));
     await tester.ensureVisible(find.text('Create an account'));
     await tester.tap(find.text('Create an account'));
     await tester.pumpAndSettle();
     await tester.ensureVisible(find.text('Create account'));
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('auth failures stay on login and show a message', (tester) async {
+    final auth = FakeAuthGateway()
+      ..signInFailure = const AuthFailure('Check your details and try again.');
+    await tester.pumpWidget(PilatesApp(auth: auth));
+    await tester.enterText(
+        find.byType(TextFormField).at(0), 'hello@example.com');
+    await tester.enterText(find.byType(TextFormField).at(1), 'practice123');
+    await tester.tap(find.text('Log in'));
+    await tester.pumpAndSettle();
+    expect(find.text('Check your details and try again.'), findsOneWidget);
+    expect(find.text('Welcome back.'), findsOneWidget);
   });
 }
