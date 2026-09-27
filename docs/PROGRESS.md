@@ -1,0 +1,50 @@
+# Progress and continuation
+
+## Current state
+
+- Login and signup source code written; neither page is user-approved.
+- Shared theme, layout, validation, password field, and demo dialog written.
+- Flutter 3.47.5 / Dart 3.13.4 installed at `/Users/mutic/develop/flutter`.
+- SDK PATH configured in ~/.zprofile and ~/.bash_profile; VS Code SDK path configured.
+- Xcode 27 and the booted iPhone 17 iOS 26.5 simulator detected.
+- iOS platform project generated.
+- Code formatted; flutter analyze passes; all three widget tests pass.
+- Fixed a brand-label overflow discovered by the 320px screen test using Flexible.
+- iOS debug build succeeded and app launched on iPhone 17 (iOS 26.5).
+- Login screen screenshot visually checked; no visible overflow.
+- Flutter debug session left running for hot reload.
+- CocoaPods is absent; the current app has no third-party native plugins.
+
+## Next steps
+
+1. Review shared foundation and login code with the user.
+2. Record feedback before beginning further page work.
+
+## Git setup
+
+- Local Git repository initialized on branch `main`.
+- Machine-specific VS Code SDK settings excluded from version control.
+- Repository-local Git author configured with the user's supplied name and email.
+- Initial snapshot prepared with message `Initial Backstreet Pilates app`.
+- GitHub remote and first push are pending; no repository URL supplied yet.
+- See `docs/GIT_GUIDE.md` for the step-by-step commands.
+
+## Decisions
+
+- App name: Backstreet Pilates; Dart package: backstreet_pilates.
+- English UI for the first blueprint; localization remains undecided.
+- Authentication provider remains undecided; all submission feedback is demo-only.
+- The user requested an iOS launch, not a web launch.
+
+## Branding update — 2026-09-27
+
+- Renamed the Dart package to `backstreet_pilates` and updated test imports.
+- Login/signup shared header, login prompt, app title, web metadata, and iOS display name now use Backstreet Pilates.
+- Workspace folder renamed to `backstreet_pilates`; IDE module references updated. iOS bundle identifier is unchanged to preserve installed app identity.
+- Dart formatting, flutter analyze, and all three widget tests passed after renaming.
+
+## Folder rename verification
+
+- Project now lives at `/Users/mutic/Desktop/personal/backstreet_pilates`.
+- Flutter generated paths refreshed after cleaning the old build artifacts.
+- Analyzer and iOS rebuild passed from the new location.
