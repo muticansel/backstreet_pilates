@@ -17,8 +17,8 @@
 
 ## Next steps
 
-1. Review shared foundation and login code with the user.
-2. Record feedback before beginning further page work.
+1. Review the member dashboard and its preview data with the user.
+2. Define the purchased-membership, class-session and booking tables that will replace dashboard preview data.
 
 ## Git setup
 
@@ -81,4 +81,12 @@
 - iOS deep-link scheme `backstreetpilates://login-callback/` is declared; dashboard redirect configuration remains user action.
 - Verification: Flutter analyze clean, four widget tests passed, and the iOS simulator build succeeded.
 - Real Supabase initialization was verified on the iPhone 17 simulator using the project's publishable key. No key was written to the repository.
+
+## Member dashboard
+
+- Replaced the signed-in placeholder with a member dashboard preview.
+- Dashboard presents greeting, remaining class rights, active package, package discovery and recent practice.
+- The values are typed preview data, not Supabase membership or booking records.
+- Purchase action is explanatory only; no payment or membership write exists.
+- Review notes: `docs/reviews/04-member-dashboard.md`.
 - Verification: Dart format unchanged, flutter analyze clean, all 3 widget tests passed, iOS simulator build succeeded with Supabase dependencies.

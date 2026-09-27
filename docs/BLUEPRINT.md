@@ -18,7 +18,8 @@ Supabase Flutter is installed for the next integration stage. Current pages rema
 7. `lib/features/auth/widgets/demo_feedback.dart`: explicit demo result dialog.
 8. `lib/features/auth/pages/login_page.dart`: login state and UI.
 9. `lib/features/auth/pages/signup_page.dart`: signup state and UI.
-10. `test/auth_flow_test.dart`: form, navigation, and small-screen checks.
+10. `lib/features/dashboard/dashboard_page.dart`: signed-in member dashboard preview.
+11. `test/auth_flow_test.dart`: form, navigation, dashboard, and small-screen checks.
 
 Each page owns and disposes its text controllers. Flutter's Navigator handles
 navigation; local widget state handles password visibility. No state-management

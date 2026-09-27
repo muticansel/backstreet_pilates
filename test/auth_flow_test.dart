@@ -31,8 +31,7 @@ class FakeAuthGateway implements AuthGateway {
 }
 
 void main() {
-  testWidgets(
-      'login rejects empty fields and valid input opens signed-in state',
+  testWidgets('login rejects empty fields and valid input opens the dashboard',
       (tester) async {
     await tester.pumpWidget(PilatesApp(auth: FakeAuthGateway()));
     await tester.tap(find.text('Log in'));
@@ -46,7 +45,8 @@ void main() {
     await tester.ensureVisible(find.text('Log in'));
     await tester.tap(find.text('Log in'));
     await tester.pumpAndSettle();
-    expect(find.text('You’re signed in.'), findsOneWidget);
+    expect(find.text('YOUR CURRENT PACKAGE'), findsOneWidget);
+    expect(find.text('8 class package'), findsOneWidget);
   });
 
   testWidgets('signup checks confirmation and returns to login',

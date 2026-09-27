@@ -4,7 +4,7 @@ import '../data/auth_gateway.dart';
 import '../validation/auth_validators.dart';
 import '../widgets/auth_layout.dart';
 import '../widgets/password_field.dart';
-import 'signed_in_page.dart';
+import '../../dashboard/dashboard_page.dart';
 import 'signup_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -43,7 +43,7 @@ class _LoginPageState extends State<LoginPage> {
       if (!mounted) return;
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute<void>(
-            builder: (_) => SignedInPage(auth: widget.auth)),
+            builder: (_) => DashboardPage(auth: widget.auth)),
         (_) => false,
       );
     } on AuthFailure catch (error) {

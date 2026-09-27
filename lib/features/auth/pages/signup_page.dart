@@ -4,7 +4,7 @@ import '../data/auth_gateway.dart';
 import '../validation/auth_validators.dart';
 import '../widgets/auth_layout.dart';
 import '../widgets/password_field.dart';
-import 'signed_in_page.dart';
+import '../../dashboard/dashboard_page.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key, required this.auth});
@@ -50,7 +50,7 @@ class _SignupPageState extends State<SignupPage> {
       if (result == SignupResult.signedIn) {
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute<void>(
-              builder: (_) => SignedInPage(auth: widget.auth)),
+              builder: (_) => DashboardPage(auth: widget.auth)),
           (_) => false,
         );
         return;
