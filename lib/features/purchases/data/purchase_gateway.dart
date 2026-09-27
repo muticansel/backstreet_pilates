@@ -16,8 +16,32 @@ class PackageOffer {
   final int priceMinor;
 }
 
+/// A package that has been approved for the currently signed-in member.
+class ApprovedPackage {
+  const ApprovedPackage({
+    required this.id,
+    required this.title,
+    required this.branchName,
+    required this.status,
+    required this.totalCredits,
+    required this.remainingCredits,
+    required this.startDate,
+    required this.endDateExclusive,
+  });
+
+  final String id;
+  final String title;
+  final String branchName;
+  final String status;
+  final int totalCredits;
+  final int remainingCredits;
+  final DateTime startDate;
+  final DateTime endDateExclusive;
+}
+
 abstract interface class PurchaseGateway {
   Future<List<PackageOffer>> loadActiveOffers();
+  Future<List<ApprovedPackage>> loadApprovedPackages();
   Future<void> requestCashPurchase({
     required String offerId,
     required DateTime requestedStartDate,
@@ -60,6 +84,9 @@ class UnconfiguredPurchaseGateway implements PurchaseGateway {
 
   @override
   Future<List<PackageOffer>> loadActiveOffers() async => const [];
+
+  @override
+  Future<List<ApprovedPackage>> loadApprovedPackages() async => const [];
 
   @override
   Future<void> requestCashPurchase({

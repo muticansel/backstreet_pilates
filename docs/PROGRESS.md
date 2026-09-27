@@ -23,7 +23,7 @@
 
 ## Next steps
 
-1. Review the cash package-purchase migration before applying it, then connect the member package screen and admin queue.
+1. Review the member approved-packages page and its Active / Old status wording.
 2. Review the admin dashboard and promote one development user to admin only after approval.
 3. Review the video-library database foundation before applying its migration.
 4. Design the member video-library page after the data model is approved.
@@ -124,6 +124,15 @@
 - Verification: `dart format lib test` and all 6 widget tests pass. `flutter
   analyze` reports only four pre-existing `RadioListTile` deprecation infos in
   the member package chooser; the new admin queue has no analyzer findings.
+
+## Member approved packages
+
+- Added the member-only **My packages** navigation tab. It reads only approved
+  membership records available to the signed-in user through existing RLS.
+- The page labels currently usable packages **Active**, historical packages
+  **Old**, and approved future-start packages **Starts soon**. It is read-only.
+- Review notes: `docs/reviews/07-member-approved-packages.md`.
+- Verification is pending after this implementation.
 
 ## Video library foundation
 

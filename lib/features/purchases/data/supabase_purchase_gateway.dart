@@ -30,6 +30,39 @@ class SupabasePurchaseGateway implements PurchaseGateway, AdminPurchaseGateway {
   }
 
   @override
+  Future<List<ApprovedPackage>> loadApprovedPackages() async {
+    try {
+      final rows = await _client
+          .from('user_memberships')
+          .select(
+              'id, status, total_credits, remaining_credits, effective_start_date, '
+              'end_date_exclusive, '
+              'branches!user_memberships_branch_id_fkey(name), '
+              'membership_plans!user_memberships_plan_id_fkey(name)')
+          .order('effective_start_date', ascending: false);
+      return rows.map((row) {
+        final branch = row['branches'] as Map<String, dynamic>;
+        final plan = row['membership_plans'] as Map<String, dynamic>;
+        return ApprovedPackage(
+          id: row['id'] as String,
+          title: plan['name'] as String,
+          branchName: branch['name'] as String,
+          status: row['status'] as String,
+          totalCredits: row['total_credits'] as int,
+          remainingCredits: row['remaining_credits'] as int,
+          startDate: DateTime.parse(row['effective_start_date'] as String),
+          endDateExclusive: DateTime.parse(row['end_date_exclusive'] as String),
+        );
+      }).toList();
+    } on PostgrestException catch (error) {
+      throw PurchaseFailure(error.message);
+    } catch (_) {
+      throw const PurchaseFailure(
+          'Approved packages could not be loaded. Try again.');
+    }
+  }
+
+  @override
   Future<void> requestCashPurchase({
     required String offerId,
     required DateTime requestedStartDate,

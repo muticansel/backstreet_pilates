@@ -143,6 +143,10 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Your practice history'), findsOneWidget);
 
+    await tester.tap(find.text('My packages'));
+    await tester.pumpAndSettle();
+    expect(find.text('No approved packages yet'), findsOneWidget);
+
     await tester.tap(find.text('Home'));
     await tester.pumpAndSettle();
     expect(find.text('YOUR CURRENT PACKAGE'), findsOneWidget);

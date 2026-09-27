@@ -4,6 +4,7 @@ import '../account/data/account_role_resolver.dart';
 import '../auth/data/auth_gateway.dart';
 import '../auth/pages/login_page.dart';
 import '../purchases/data/purchase_gateway.dart';
+import '../purchases/pages/approved_packages_page.dart';
 import '../../../theme/app_theme.dart';
 import '../../../l10n/app_localizations.dart';
 
@@ -98,6 +99,11 @@ class _DashboardPageState extends State<DashboardPage> {
           selectedIcon: Icon(Icons.history),
           label: 'Usage',
         ),
+        NavigationDestination(
+          icon: Icon(Icons.verified_outlined),
+          selectedIcon: Icon(Icons.verified),
+          label: 'My packages',
+        ),
       ],
     );
   }
@@ -118,6 +124,11 @@ class _DashboardPageState extends State<DashboardPage> {
     }
     if (_selectedIndex == 2) {
       return _placeholderScaffold(const _UsagePlaceholder());
+    }
+    if (_selectedIndex == 3) {
+      return _placeholderScaffold(
+        ApprovedPackagesPage(purchases: widget.purchases),
+      );
     }
 
     final dashboard = _dashboard;
