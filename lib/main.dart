@@ -3,6 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'app.dart';
 import 'config/supabase_config.dart';
+import 'features/account/data/supabase_account_role_resolver.dart';
 import 'features/auth/data/supabase_auth_gateway.dart';
 
 Future<void> main() async {
@@ -20,5 +21,8 @@ Future<void> main() async {
     authOptions:
         const FlutterAuthClientOptions(authFlowType: AuthFlowType.pkce),
   );
-  runApp(PilatesApp(auth: SupabaseAuthGateway(Supabase.instance.client.auth)));
+  runApp(PilatesApp(
+    auth: SupabaseAuthGateway(Supabase.instance.client.auth),
+    roles: SupabaseAccountRoleResolver(Supabase.instance.client),
+  ));
 }

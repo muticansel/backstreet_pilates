@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 
+import '../../account/data/account_role_resolver.dart';
+import '../../account/pages/account_home_page.dart';
 import '../data/auth_gateway.dart';
 import '../validation/auth_validators.dart';
 import '../widgets/auth_layout.dart';
 import '../widgets/password_field.dart';
-import '../../dashboard/dashboard_page.dart';
 import 'signup_page.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key, required this.auth});
+  const LoginPage({super.key, required this.auth, required this.roles});
 
   final AuthGateway auth;
+  final AccountRoleResolver roles;
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -43,7 +45,9 @@ class _LoginPageState extends State<LoginPage> {
       if (!mounted) return;
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute<void>(
-            builder: (_) => DashboardPage(auth: widget.auth)),
+          builder: (_) =>
+              AccountHomePage(auth: widget.auth, roles: widget.roles),
+        ),
         (_) => false,
       );
     } on AuthFailure catch (error) {
@@ -99,7 +103,8 @@ class _LoginPageState extends State<LoginPage> {
                 onPressed: () {
                   _password.clear();
                   Navigator.of(context).push(MaterialPageRoute<void>(
-                    builder: (_) => SignupPage(auth: widget.auth),
+                    builder: (_) =>
+                        SignupPage(auth: widget.auth, roles: widget.roles),
                   ));
                 },
                 child: const Text('Create an account'),

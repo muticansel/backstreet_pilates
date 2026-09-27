@@ -1,13 +1,20 @@
 import 'package:flutter/material.dart';
 
+import '../account/data/account_role_resolver.dart';
 import '../auth/data/auth_gateway.dart';
 import '../auth/pages/login_page.dart';
 import '../../../theme/app_theme.dart';
 
 class DashboardPage extends StatefulWidget {
-  const DashboardPage({super.key, required this.auth, this.dashboard});
+  const DashboardPage({
+    super.key,
+    required this.auth,
+    required this.roles,
+    this.dashboard,
+  });
 
   final AuthGateway auth;
+  final AccountRoleResolver roles;
   final DashboardData? dashboard;
 
   @override
@@ -26,7 +33,9 @@ class _DashboardPageState extends State<DashboardPage> {
       await widget.auth.signOut();
       if (!mounted) return;
       Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute<void>(builder: (_) => LoginPage(auth: widget.auth)),
+        MaterialPageRoute<void>(
+          builder: (_) => LoginPage(auth: widget.auth, roles: widget.roles),
+        ),
         (_) => false,
       );
     } on AuthFailure catch (error) {

@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 
+import '../../account/data/account_role_resolver.dart';
+import '../../account/pages/account_home_page.dart';
 import '../data/auth_gateway.dart';
 import '../validation/auth_validators.dart';
 import '../widgets/auth_layout.dart';
 import '../widgets/password_field.dart';
-import '../../dashboard/dashboard_page.dart';
 
 class SignupPage extends StatefulWidget {
-  const SignupPage({super.key, required this.auth});
+  const SignupPage({super.key, required this.auth, required this.roles});
 
   final AuthGateway auth;
+  final AccountRoleResolver roles;
 
   @override
   State<SignupPage> createState() => _SignupPageState();
@@ -50,7 +52,9 @@ class _SignupPageState extends State<SignupPage> {
       if (result == SignupResult.signedIn) {
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute<void>(
-              builder: (_) => DashboardPage(auth: widget.auth)),
+            builder: (_) =>
+                AccountHomePage(auth: widget.auth, roles: widget.roles),
+          ),
           (_) => false,
         );
         return;

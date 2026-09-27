@@ -17,9 +17,10 @@
 
 ## Next steps
 
-1. Review the video-library database foundation before applying its migration.
-2. Design the member video-library page after the data model is approved.
-3. Define the purchased-membership, class-session and booking tables that will replace dashboard preview data.
+1. Review the admin dashboard and promote one development user to admin only after approval.
+2. Review the video-library database foundation before applying its migration.
+3. Design the member video-library page after the data model is approved.
+4. Define the purchased-membership, class-session and booking tables that will replace dashboard preview data.
 
 ## Git setup
 
@@ -92,6 +93,15 @@
 - Added bottom navigation with Home, Packages and Usage. Packages and Usage are dummy flows; Home holds the dashboard overview.
 - Review notes: `docs/reviews/04-member-dashboard.md`.
 - Verification: Dart format clean, flutter analyze clean, all 5 widget tests passed, and the iOS simulator build succeeded with Supabase dependencies.
+
+## Admin dashboard
+
+- Sign-in now resolves the current user's database role. `admin` opens a distinct admin dashboard; all other outcomes fall back to the member dashboard.
+- The Supabase role resolver reads the signed-in user's own RLS-protected role record and fails closed as a member on error.
+- Admin dashboard preview includes monthly sales, active members, an active-package list and a cash-payment/package-grant form.
+- Reporting, member and payment data are mock data; the form validates input but does not write a payment or membership.
+- Review notes and development-only role setup: `docs/reviews/05-admin-dashboard.md`.
+- Verification: Flutter analyze clean, all 6 widget tests passed, and iOS Simulator build artifact regenerated successfully.
 
 ## Video library foundation
 

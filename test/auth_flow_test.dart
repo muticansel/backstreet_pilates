@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:backstreet_pilates/app.dart';
+import 'package:backstreet_pilates/features/account/data/account_role_resolver.dart';
 import 'package:backstreet_pilates/features/auth/data/auth_gateway.dart';
 
 class FakeAuthGateway implements AuthGateway {
@@ -28,6 +29,15 @@ class FakeAuthGateway implements AuthGateway {
 
   @override
   Future<void> signOut() async => signOutCount++;
+}
+
+class FakeRoleResolver implements AccountRoleResolver {
+  const FakeRoleResolver(this.role);
+
+  final AccountRole role;
+
+  @override
+  Future<AccountRole> currentRole() async => role;
 }
 
 void main() {
@@ -124,5 +134,33 @@ void main() {
     await tester.tap(find.text('Home'));
     await tester.pumpAndSettle();
     expect(find.text('YOUR CURRENT PACKAGE'), findsOneWidget);
+  });
+
+  testWidgets('admin sees the studio dashboard and management entry points',
+      (tester) async {
+    await tester.pumpWidget(PilatesApp(
+      auth: FakeAuthGateway(),
+      roles: const FakeRoleResolver(AccountRole.admin),
+    ));
+    await tester.enterText(
+        find.byType(TextFormField).at(0), 'admin@example.com');
+    await tester.enterText(find.byType(TextFormField).at(1), 'practice123');
+    await tester.tap(find.text('Log in'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('ADMIN OVERVIEW'), findsOneWidget);
+    expect(find.text('₺68.400'), findsOneWidget);
+
+    await tester.tap(find.text('Active member packages'));
+    await tester.pumpAndSettle();
+    expect(find.text('Aylin Demir'), findsOneWidget);
+
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+    final cashPayment = find.text('Record a cash payment');
+    await tester.ensureVisible(cashPayment);
+    await tester.tap(cashPayment);
+    await tester.pumpAndSettle();
+    expect(find.text('Amount received (TRY)'), findsOneWidget);
   });
 }
