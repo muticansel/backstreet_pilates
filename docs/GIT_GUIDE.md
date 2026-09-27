@@ -46,7 +46,7 @@ Görünürlüğünü seç; README, .gitignore ve lisans ekleme seçeneklerini bo
 Repo adresini kendi adresinle değiştir:
 
 ```sh
-git remote add origin https://github.com/KULLANICI/backstreet_pilates.git
+git remote add origin https://github.com/muticansel/backstreet_pilates.git
 git remote -v
 git push -u origin main
 ```

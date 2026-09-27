@@ -26,7 +26,9 @@
 - Machine-specific VS Code SDK settings excluded from version control.
 - Repository-local Git author configured with the user's supplied name and email.
 - Initial snapshot prepared with message `Initial Backstreet Pilates app`.
-- GitHub remote and first push are pending; no repository URL supplied yet.
+- GitHub origin configured: https://github.com/muticansel/backstreet_pilates.git.
+- Remote checked before the initial push: empty, with no existing refs.
+- Publish and verify with `git push -u origin main` and `git status -sb`.
 - See `docs/GIT_GUIDE.md` for the step-by-step commands.
 
 ## Decisions
