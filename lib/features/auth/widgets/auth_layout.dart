@@ -49,7 +49,7 @@ class AuthLayout extends StatelessWidget {
                     child,
                     const SizedBox(height: 24),
                     const Text(
-                      'Preview mode · No account data is sent or saved.',
+                      'Your account details are handled securely.',
                       textAlign: TextAlign.center,
                       style: TextStyle(fontSize: 12, color: AppTheme.sage),
                     ),
