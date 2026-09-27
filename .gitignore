@@ -10,3 +10,10 @@ coverage/
 android/local.properties
 ios/Flutter/Generated.xcconfig
 ios/Flutter/flutter_export_environment.sh
+
+# Local backend configuration
+.env
+.env.*
+config/*.local.json
+supabase/.temp/
+supabase/.branches/

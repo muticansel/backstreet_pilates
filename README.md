@@ -38,3 +38,5 @@ and [signup](docs/reviews/02-signup.md). Track decisions in [progress](docs/PROG
 Markdown files provide development context; they are not runtime app content.
 
 Database design draft: [DATABASE.md](docs/DATABASE.md).
+
+Backend setup: [SUPABASE_SETUP.md](docs/SUPABASE_SETUP.md). Supabase Flutter is installed; auth screens remain in demo mode until the next page review.

@@ -35,7 +35,7 @@
 
 - App name: Backstreet Pilates; Dart package: backstreet_pilates.
 - English UI for the first blueprint; localization remains undecided.
-- Authentication provider remains undecided; all submission feedback is demo-only.
+- Supabase selected for the initial backend; all submission feedback remains demo-only.
 - The user requested an iOS launch, not a web launch.
 
 ## Branding update — 2026-09-27
@@ -53,7 +53,7 @@
 
 ## Database planning
 
-- Added `docs/DATABASE.md` as a review draft; no SQL or backend provisioned.
+- `docs/DATABASE.md` records the full design; initial catalog SQL is prepared; user created the cloud project, remote schema status is unverified.
 - Confirmed branch-bound packages for Oran and İncek, variable weekly frequency and duration, no-show consumption, future cancellation allowances, and global admin access.
 - Supabase/PostgreSQL remains the proposed stack; authentication is still demo-only.
 - Confirmed fixed recurring day/time packages for the first release; flexible packages may be added later.
@@ -62,3 +62,20 @@
 - Package starts automatically on the first scheduled lesson date, with admin override supported; missing that lesson does not postpone the start.
 - Draft specifies audited date changes, recalculated end date, reservation consistency checks, and preservation of attendance/credit history.
 - Remaining decisions include cancellation terms and studio holiday handling; date boundary conventions are still proposed.
+
+## Initial backend setup
+
+- Installed supabase_flutter 2.17.2.
+- Added initial catalog/profile/role migration, inactive fictional seed data, and rollback-based SQL access checks.
+- User supplied project URL: https://vjzoquvdoyndflcjulun.supabase.co.
+- Screenshot shows project healthy in Seoul (ap-northeast-2).
+- Browser access retried: computer-use permissions are still not granted.
+- İlk catalog migration kullanıcı tarafından Supabase SQL Editor'da başarıyla uygulandı; tablolar, RLS politikaları ve profil tetikleyicisi oluşturuldu.
+- Geliştirme seed verisi kullanıcı tarafından başarıyla uygulandı; iki şube,
+  beş pasif örnek paket ve on pasif şube teklifi eklendi.
+- Erişim testi Supabase SQL Editor'da hatasız tamamlandı. Test, işlem sonunda
+  ROLLBACK yaptığı için geçici kullanıcılar ve rol değişiklikleri kalıcı olmadı.
+- Temel Supabase geliştirme kurulumu tamamlandı: katalog verisi, profil
+  tetikleyicisi, RLS kuralları ve kullanıcı/admin erişim sınırları doğrulandı.
+- Login/signup wiring deferred to the next page review as agreed.
+- Verification: Dart format unchanged, flutter analyze clean, all 3 widget tests passed, iOS simulator build succeeded with Supabase dependencies.

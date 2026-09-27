@@ -1,6 +1,6 @@
 # Backstreet Pilates — veritabanı taslağı
 
-Durum: İnceleme taslağı. SQL migration veya canlı veritabanı henüz oluşturulmadı.
+Durum: Genel model inceleme taslağı. Temel katalog/profil/rol migration dosyası hazır; canlı veritabanına henüz uygulanmadı. Kurulum için SUPABASE_SETUP.md dosyasına bak.
 Teknik öneri: Supabase üzerinde PostgreSQL; kullanıcı kimliği için Supabase Auth.
 
 ## Kesinleşen işletme kuralları

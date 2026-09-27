@@ -5,7 +5,7 @@
 Backstreet Pilates is an app concept with cream backgrounds and sage accents.
 The initial scope is login and signup UI, form validation, and navigation.
 Forms scroll on small screens; wide screens add a Pilates brand panel.
-No external packages, backend, network requests, or credential storage are used.
+Supabase Flutter is installed for the next integration stage. Current pages remain a local demo without backend requests.
 
 ## Code map and review order
 
