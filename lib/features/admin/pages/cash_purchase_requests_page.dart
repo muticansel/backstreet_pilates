@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../theme/app_theme.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../purchases/data/purchase_gateway.dart';
 
 class CashPurchaseRequestsPage extends StatefulWidget {
@@ -30,10 +31,11 @@ class _CashPurchaseRequestsPageState extends State<CashPurchaseRequestsPage> {
   }
 
   Future<void> _confirm(PendingCashPurchase request) async {
+    final strings = AppLocalizations.of(context);
     final approved = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Confirm cash payment?'),
+        title: Text(strings.text('confirmCashPayment')),
         content: Text(
           '${request.memberName} will receive ${request.packageName}. '
           'This creates the membership and cannot be undone here.',
@@ -41,11 +43,11 @@ class _CashPurchaseRequestsPageState extends State<CashPurchaseRequestsPage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+            child: Text(strings.text('cancel')),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Confirm payment'),
+            child: Text(strings.text('confirmPayment')),
           ),
         ],
       ),
@@ -58,7 +60,9 @@ class _CashPurchaseRequestsPageState extends State<CashPurchaseRequestsPage> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text('${request.memberName}\'s membership was created.')),
+            content: Text(strings
+                .text('membershipCreated')
+                .replaceAll('{name}', request.memberName))),
       );
       await _reload();
     } on PurchaseFailure catch (error) {
@@ -74,10 +78,11 @@ class _CashPurchaseRequestsPageState extends State<CashPurchaseRequestsPage> {
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
-          title: const Text('Cash payment requests'),
+          title: Text(AppLocalizations.of(context).text('cashRequests')),
           actions: [
+            const LanguageMenuButton(),
             IconButton(
-              tooltip: 'Refresh',
+              tooltip: AppLocalizations.of(context).text('refresh'),
               onPressed: _confirmingId == null ? _reload : null,
               icon: const Icon(Icons.refresh),
             ),
@@ -122,65 +127,71 @@ class _RequestCard extends StatelessWidget {
   final VoidCallback onConfirm;
 
   @override
-  Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: const Color(0xFFD8DED5)),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(request.memberName,
-                style:
-                    const TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
-            const SizedBox(height: 4),
-            Text('${request.packageName} · ${request.branchName}'),
-            const SizedBox(height: 16),
-            Text('₺${request.priceMinor ~/ 100}',
-                style: const TextStyle(
-                    color: AppTheme.sage,
-                    fontSize: 24,
-                    fontWeight: FontWeight.w700)),
-            const SizedBox(height: 6),
-            Text(
-              '${request.totalCredits} classes · ${request.sessionsPerWeek} per week · '
-              '${request.durationWeeks} weeks',
+  Widget build(BuildContext context) {
+    final strings = AppLocalizations.of(context);
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: const Color(0xFFD8DED5)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(request.memberName,
+              style:
+                  const TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
+          const SizedBox(height: 4),
+          Text('${request.packageName} · ${request.branchName}'),
+          const SizedBox(height: 16),
+          Text('₺${request.priceMinor ~/ 100}',
+              style: const TextStyle(
+                  color: AppTheme.sage,
+                  fontSize: 24,
+                  fontWeight: FontWeight.w700)),
+          const SizedBox(height: 6),
+          Text(
+            '${request.totalCredits} classes · ${request.sessionsPerWeek} per week · '
+            '${request.durationWeeks} weeks',
+          ),
+          const SizedBox(height: 6),
+          Text(strings
+              .text('requestedStart')
+              .replaceAll('{date}', _date(request.requestedStartDate))),
+          const SizedBox(height: 18),
+          SizedBox(
+            width: double.infinity,
+            child: FilledButton.icon(
+              onPressed: confirming ? null : onConfirm,
+              icon: confirming
+                  ? const SizedBox(
+                      height: 18,
+                      width: 18,
+                      child: CircularProgressIndicator(strokeWidth: 2))
+                  : const Icon(Icons.check_circle_outline),
+              label:
+                  Text(strings.text(confirming ? 'confirming' : 'confirmCash')),
             ),
-            const SizedBox(height: 6),
-            Text('Requested start: ${_date(request.requestedStartDate)}'),
-            const SizedBox(height: 18),
-            SizedBox(
-              width: double.infinity,
-              child: FilledButton.icon(
-                onPressed: confirming ? null : onConfirm,
-                icon: confirming
-                    ? const SizedBox(
-                        height: 18,
-                        width: 18,
-                        child: CircularProgressIndicator(strokeWidth: 2))
-                    : const Icon(Icons.check_circle_outline),
-                label:
-                    Text(confirming ? 'Confirming…' : 'Confirm cash payment'),
-              ),
-            ),
-          ],
-        ),
-      );
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 class _EmptyRequests extends StatelessWidget {
   const _EmptyRequests();
 
   @override
-  Widget build(BuildContext context) => const Center(
+  Widget build(BuildContext context) => Center(
         child: Padding(
           padding: EdgeInsets.all(32),
           child: Column(mainAxisSize: MainAxisSize.min, children: [
             Icon(Icons.task_alt_outlined, color: AppTheme.sage, size: 52),
             SizedBox(height: 16),
-            Text('No cash payments are waiting.', textAlign: TextAlign.center),
+            Text(AppLocalizations.of(context).text('noCashPayments'),
+                textAlign: TextAlign.center),
           ]),
         ),
       );
@@ -195,10 +206,12 @@ class _LoadError extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(32),
           child: Column(mainAxisSize: MainAxisSize.min, children: [
-            const Text('Cash requests could not be loaded.',
+            Text(AppLocalizations.of(context).text('cashRequestsLoadError'),
                 textAlign: TextAlign.center),
             const SizedBox(height: 12),
-            OutlinedButton(onPressed: onRetry, child: const Text('Try again')),
+            OutlinedButton(
+                onPressed: onRetry,
+                child: Text(AppLocalizations.of(context).text('tryAgain'))),
           ]),
         ),
       );

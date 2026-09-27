@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../account/data/account_role_resolver.dart';
 import '../../account/pages/account_home_page.dart';
 import '../../purchases/data/purchase_gateway.dart';
+import '../../../l10n/app_localizations.dart';
 import '../data/auth_gateway.dart';
 import '../validation/auth_validators.dart';
 import '../widgets/auth_layout.dart';
@@ -70,9 +71,10 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final strings = AppLocalizations.of(context);
     return AuthLayout(
-      title: 'Welcome back.',
-      subtitle: 'Take a breath. Make time for your practice.',
+      title: strings.text('welcomeBack'),
+      subtitle: strings.text('loginSubtitle'),
       child: AutofillGroup(
         onDisposeAction: AutofillContextAction.cancel,
         child: Form(
@@ -94,22 +96,24 @@ class _LoginPageState extends State<LoginPage> {
                 textInputAction: TextInputAction.next,
                 autofillHints: const [AutofillHints.email],
                 autocorrect: false,
-                decoration: const InputDecoration(labelText: 'Email address'),
+                decoration:
+                    InputDecoration(labelText: strings.text('emailAddress')),
               ),
               const SizedBox(height: 18),
               PasswordField(
                 controller: _password,
                 validator: AuthValidators.loginPassword,
+                label: strings.text('password'),
                 onSubmitted: (_) => _submit(),
               ),
               const SizedBox(height: 28),
               FilledButton(
                 onPressed: _isSubmitting ? null : _submit,
-                child: Text(_isSubmitting ? 'Logging in…' : 'Log in'),
+                child:
+                    Text(strings.text(_isSubmitting ? 'loggingIn' : 'logIn')),
               ),
               const SizedBox(height: 20),
-              const Text('New to Backstreet Pilates?',
-                  textAlign: TextAlign.center),
+              Text(strings.text('newHere'), textAlign: TextAlign.center),
               TextButton(
                 onPressed: () {
                   _password.clear();
@@ -121,7 +125,7 @@ class _LoginPageState extends State<LoginPage> {
                         adminPurchases: widget.adminPurchases),
                   ));
                 },
-                child: const Text('Create an account'),
+                child: Text(strings.text('createAccount')),
               ),
             ],
           ),

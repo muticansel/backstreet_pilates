@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../theme/app_theme.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// A scrollable single-column form on phones, with a brand panel on wide screens.
 class AuthLayout extends StatelessWidget {
@@ -28,16 +29,20 @@ class AuthLayout extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const Row(children: [
-                      Icon(Icons.spa_outlined, color: AppTheme.sage, size: 30),
-                      SizedBox(width: 10),
-                      Flexible(
-                          child: Text('Backstreet Pilates',
-                              style: TextStyle(
-                                letterSpacing: 3,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w600,
-                              ))),
+                    Row(children: [
+                      const Icon(Icons.spa_outlined,
+                          color: AppTheme.sage, size: 30),
+                      const SizedBox(width: 10),
+                      const Flexible(
+                        child: Text('Backstreet Pilates',
+                            style: TextStyle(
+                              letterSpacing: 3,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                            )),
+                      ),
+                      const Spacer(),
+                      const LanguageMenuButton(),
                     ]),
                     const SizedBox(height: 48),
                     Text(title,

@@ -24,6 +24,7 @@ Supabase Flutter is installed for the next integration stage. Current pages rema
 13. `lib/features/admin/pages/active_members_page.dart`: active-member preview list.
 14. `lib/features/admin/pages/cash_purchase_requests_page.dart`: pending cash-payment queue and confirmation.
 15. `test/auth_flow_test.dart`: form, role navigation, dashboard, and small-screen checks.
+16. `lib/l10n/app_localizations.dart`: English/Turkish locale state, translated strings and language menu.
 
 Each page owns and disposes its text controllers. Flutter's Navigator handles
 navigation; local widget state handles password visibility. No state-management

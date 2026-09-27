@@ -5,6 +5,7 @@ import '../auth/data/auth_gateway.dart';
 import '../auth/pages/login_page.dart';
 import '../purchases/data/purchase_gateway.dart';
 import '../../../theme/app_theme.dart';
+import '../../../l10n/app_localizations.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({
@@ -147,6 +148,7 @@ class _DashboardPageState extends State<DashboardPage> {
                     onPressed: _signingOut ? null : _signOut,
                     icon: const Icon(Icons.logout_outlined),
                   ),
+                  const LanguageMenuButton(),
                 ],
               ),
               const SizedBox(height: 34),

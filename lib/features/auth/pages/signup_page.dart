@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../account/data/account_role_resolver.dart';
 import '../../account/pages/account_home_page.dart';
 import '../../purchases/data/purchase_gateway.dart';
+import '../../../l10n/app_localizations.dart';
 import '../data/auth_gateway.dart';
 import '../validation/auth_validators.dart';
 import '../widgets/auth_layout.dart';
@@ -72,18 +73,19 @@ class _SignupPageState extends State<SignupPage> {
       }
       await showDialog<void>(
         context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Check your email'),
-          content: const Text(
-            'We sent a confirmation link to your email address. Confirm it, then return here to log in.',
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Back to log in'),
-            ),
-          ],
-        ),
+        builder: (context) {
+          final strings = AppLocalizations.of(context);
+          return AlertDialog(
+            title: Text(strings.text('checkYourEmail')),
+            content: Text(strings.text('emailConfirmation')),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text(strings.text('backToLogin')),
+              ),
+            ],
+          );
+        },
       );
       if (mounted) Navigator.of(context).pop();
     } on AuthFailure catch (error) {
@@ -95,9 +97,10 @@ class _SignupPageState extends State<SignupPage> {
 
   @override
   Widget build(BuildContext context) {
+    final strings = AppLocalizations.of(context);
     return AuthLayout(
-      title: 'Start with you.',
-      subtitle: 'A stronger, calmer everyday begins with one small step.',
+      title: strings.text('startWithYou'),
+      subtitle: strings.text('signupSubtitle'),
       child: AutofillGroup(
         onDisposeAction: AutofillContextAction.cancel,
         child: Form(
@@ -118,7 +121,8 @@ class _SignupPageState extends State<SignupPage> {
                 textCapitalization: TextCapitalization.words,
                 textInputAction: TextInputAction.next,
                 autofillHints: const [AutofillHints.name],
-                decoration: const InputDecoration(labelText: 'Your name'),
+                decoration:
+                    InputDecoration(labelText: strings.text('yourName')),
               ),
               const SizedBox(height: 18),
               TextFormField(
@@ -128,18 +132,20 @@ class _SignupPageState extends State<SignupPage> {
                 textInputAction: TextInputAction.next,
                 autofillHints: const [AutofillHints.email],
                 autocorrect: false,
-                decoration: const InputDecoration(labelText: 'Email address'),
+                decoration:
+                    InputDecoration(labelText: strings.text('emailAddress')),
               ),
               const SizedBox(height: 18),
               PasswordField(
                 controller: _password,
                 validator: AuthValidators.newPassword,
+                label: strings.text('password'),
                 isNewPassword: true,
                 textInputAction: TextInputAction.next,
               ),
-              const Padding(
-                padding: EdgeInsets.only(top: 8, bottom: 18),
-                child: Text('Use at least 8 characters.',
+              Padding(
+                padding: const EdgeInsets.only(top: 8, bottom: 18),
+                child: Text(strings.text('useEightCharacters'),
                     style: TextStyle(fontSize: 12)),
               ),
               PasswordField(
@@ -153,15 +159,15 @@ class _SignupPageState extends State<SignupPage> {
               const SizedBox(height: 28),
               FilledButton(
                 onPressed: _isSubmitting ? null : _submit,
-                child: Text(
-                    _isSubmitting ? 'Creating account…' : 'Create account'),
+                child: Text(strings.text(
+                    _isSubmitting ? 'creatingAccount' : 'createAccountAction')),
               ),
               const SizedBox(height: 20),
-              const Text('Already have an account?',
+              Text(strings.text('alreadyHaveAccount'),
                   textAlign: TextAlign.center),
               TextButton(
                 onPressed: () => Navigator.of(context).pop(),
-                child: const Text('Back to log in'),
+                child: Text(strings.text('backToLogin')),
               ),
             ],
           ),

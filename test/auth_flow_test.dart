@@ -41,6 +41,18 @@ class FakeRoleResolver implements AccountRoleResolver {
 }
 
 void main() {
+  testWidgets('language menu changes the login screen to Turkish',
+      (tester) async {
+    await tester.pumpWidget(PilatesApp(auth: FakeAuthGateway()));
+    await tester.tap(find.byIcon(Icons.language_outlined));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Türkçe'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Tekrar hoş geldin.'), findsOneWidget);
+    expect(find.text('Giriş yap'), findsOneWidget);
+  });
+
   testWidgets('login rejects empty fields and valid input opens the dashboard',
       (tester) async {
     await tester.pumpWidget(PilatesApp(auth: FakeAuthGateway()));

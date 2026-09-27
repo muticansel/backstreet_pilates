@@ -6,6 +6,7 @@ import '../../auth/pages/login_page.dart';
 import '../../purchases/data/purchase_gateway.dart';
 import '../data/admin_dashboard_data.dart';
 import '../../../theme/app_theme.dart';
+import '../../../l10n/app_localizations.dart';
 import 'cash_purchase_requests_page.dart';
 
 class AdminDashboardPage extends StatefulWidget {
@@ -57,6 +58,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
 
   @override
   Widget build(BuildContext context) {
+    final strings = AppLocalizations.of(context);
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -80,15 +82,15 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                     ),
                   ),
                   IconButton(
-                    tooltip: 'Sign out',
+                    tooltip: strings.text('signOut'),
                     onPressed: _signingOut ? null : _signOut,
                     icon: const Icon(Icons.logout_outlined),
                   ),
                 ],
               ),
               const SizedBox(height: 34),
-              const Text(
-                'ADMIN OVERVIEW',
+              Text(
+                strings.text('adminOverview'),
                 style: TextStyle(
                   color: AppTheme.sage,
                   fontSize: 11,
@@ -98,12 +100,12 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
               ),
               const SizedBox(height: 8),
               Text(
-                'Your studio, at a glance.',
+                strings.text('studioAtGlance'),
                 style: Theme.of(context).textTheme.headlineLarge,
               ),
               const SizedBox(height: 10),
               Text(
-                'Keep track of the month and support your members.',
+                strings.text('adminSubtitle'),
                 style: Theme.of(context).textTheme.bodyLarge,
               ),
               const SizedBox(height: 28),
@@ -129,12 +131,12 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                 ],
               ),
               const SizedBox(height: 30),
-              const _SectionLabel(title: 'MEMBERSHIP MANAGEMENT'),
+              _SectionLabel(title: strings.text('membershipManagement')),
               const SizedBox(height: 10),
               _AdminActionCard(
                 icon: Icons.pending_actions_outlined,
-                title: 'Payments awaiting approval',
-                detail: 'Review payment requests and activate member packages.',
+                title: strings.text('paymentsAwaitingApproval'),
+                detail: strings.text('reviewCashPayments'),
                 onTap: () => Navigator.of(context).push(
                   MaterialPageRoute<void>(
                     builder: (_) => CashPurchaseRequestsPage(
@@ -144,6 +146,9 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                 ),
               ),
               const SizedBox(height: 24),
+              const Align(
+                  alignment: Alignment.centerRight,
+                  child: LanguageMenuButton()),
               const Text(
                 'Reporting and active-member totals are preview data. Cash payment requests are live.',
                 textAlign: TextAlign.center,

@@ -2,6 +2,12 @@
 
 ## Current state
 
+- English/Turkish localization foundation added. Users can change the active
+  language from the app; selection is session-only for now. See `docs/LOCALIZATION.md`.
+- Localization verification: the language-switch widget test and all other 6
+  widget tests pass. Analyzer reports only the existing four `RadioListTile`
+  deprecation infos in the member package chooser.
+
 - Login and signup source code written; neither page is user-approved.
 - Shared theme, layout, validation, password field, and demo dialog written.
 - Flutter 3.47.5 / Dart 3.13.4 installed at `/Users/mutic/develop/flutter`.
