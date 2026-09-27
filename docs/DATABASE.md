@@ -199,3 +199,13 @@ yalnızca store satın alma arayüzünü ve oynatıcıyı içerir; RevenueCat do
 store olaylarını Edge Function'a gönderir; Edge Function erişimi ve kısa ömürlü
 oynatma bağlantısını yönetir. Kalıcı ödeme veya oynatma sırları istemciye
 eklenmez.
+
+## Nakit paket satın alma akışı
+
+Kullanıcının nakit ödeme talebi, admin onayı ve üyelik oluşturma taslağı
+`docs/CASH_PURCHASE_FLOW.md` dosyasında; incelenecek SQL ise
+`supabase/migrations/20260927000300_cash_purchase_requests.sql` dosyasındadır.
+Her satış teklifi önceden tek bir şubeye bağlıdır; kullanıcı ayrı bir şube
+seçmez. İstemci yalnızca bu hazır teklife ait nakit talebini oluşturabilir.
+Talebin onaylanması ve üyeliğin oluşturulması, admin denetimi yapan ayrı sunucu
+fonksiyonudur. Bu migration henüz canlı Supabase projesinde çalıştırılmadı.

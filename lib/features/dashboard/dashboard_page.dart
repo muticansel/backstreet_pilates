@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../account/data/account_role_resolver.dart';
 import '../auth/data/auth_gateway.dart';
 import '../auth/pages/login_page.dart';
+import '../purchases/data/purchase_gateway.dart';
 import '../../../theme/app_theme.dart';
 
 class DashboardPage extends StatefulWidget {
@@ -10,11 +11,13 @@ class DashboardPage extends StatefulWidget {
     super.key,
     required this.auth,
     required this.roles,
+    required this.purchases,
     this.dashboard,
   });
 
   final AuthGateway auth;
   final AccountRoleResolver roles;
+  final PurchaseGateway purchases;
   final DashboardData? dashboard;
 
   @override
@@ -109,7 +112,7 @@ class _DashboardPageState extends State<DashboardPage> {
   Widget build(BuildContext context) {
     if (_selectedIndex == 1) {
       return _placeholderScaffold(
-        _PackagesPlaceholder(onExplorePackages: _showPurchasePreview),
+        _PackagesPlaceholder(purchases: widget.purchases),
       );
     }
     if (_selectedIndex == 2) {
@@ -418,54 +421,138 @@ class _HistoryCard extends StatelessWidget {
   }
 }
 
-class _PackagesPlaceholder extends StatelessWidget {
-  const _PackagesPlaceholder({required this.onExplorePackages});
+class _PackagesPlaceholder extends StatefulWidget {
+  const _PackagesPlaceholder({required this.purchases});
 
-  final VoidCallback onExplorePackages;
+  final PurchaseGateway purchases;
+
+  @override
+  State<_PackagesPlaceholder> createState() => _PackagesPlaceholderState();
+}
+
+class _PackagesPlaceholderState extends State<_PackagesPlaceholder> {
+  late final Future<List<PackageOffer>> _offers =
+      widget.purchases.loadActiveOffers();
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(24, 32, 24, 36),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          const Icon(Icons.style_outlined, color: AppTheme.sage, size: 34),
-          const SizedBox(height: 24),
-          Text('Packages', style: Theme.of(context).textTheme.headlineLarge),
-          const SizedBox(height: 10),
-          Text(
-            'Find a rhythm that fits your week.',
-            style: Theme.of(context).textTheme.bodyLarge,
+    return FutureBuilder<List<PackageOffer>>(
+        future: _offers,
+        builder: (context, snapshot) => SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(24, 32, 24, 36),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const Icon(Icons.style_outlined,
+                      color: AppTheme.sage, size: 34),
+                  const SizedBox(height: 24),
+                  Text('Packages',
+                      style: Theme.of(context).textTheme.headlineLarge),
+                  const SizedBox(height: 10),
+                  Text(
+                    'Find a rhythm that fits your week.',
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                  const SizedBox(height: 32),
+                  if (snapshot.connectionState != ConnectionState.done)
+                    const Center(
+                        child: Padding(
+                            padding: EdgeInsets.all(32),
+                            child: CircularProgressIndicator()))
+                  else if (snapshot.hasError || snapshot.data!.isEmpty)
+                    const Text('No packages are available right now.',
+                        textAlign: TextAlign.center)
+                  else
+                    for (final offer in snapshot.data!) ...[
+                      _PackageOptionCard(
+                        title: offer.title,
+                        detail:
+                            '${offer.branchName} · ${offer.totalCredits} classes · ${offer.durationWeeks} weeks · ₺${offer.priceMinor ~/ 100}',
+                        icon: Icons.spa_outlined,
+                        onTap: () => _showRequest(context, offer),
+                      ),
+                      const SizedBox(height: 14),
+                    ],
+                  const SizedBox(height: 24),
+                  const Text(
+                    'Package details, branch-specific prices and purchasing will be connected in a later step.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 12, color: AppTheme.sage),
+                  ),
+                ],
+              ),
+            ));
+  }
+
+  Future<void> _showRequest(BuildContext context, PackageOffer offer) async {
+    var date = DateTime.now();
+    var cash = true;
+    await showDialog<void>(
+      context: context,
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (context, setDialog) => AlertDialog(
+          title: Text(offer.title),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(offer.branchName),
+              TextButton(
+                onPressed: () async {
+                  final chosen = await showDatePicker(
+                    context: context,
+                    firstDate: DateTime.now(),
+                    lastDate: DateTime.now().add(const Duration(days: 365)),
+                    initialDate: date,
+                  );
+                  if (chosen != null) setDialog(() => date = chosen);
+                },
+                child: Text(
+                    'Earliest start: ${date.day}.${date.month}.${date.year}'),
+              ),
+              RadioListTile<bool>(
+                  value: true,
+                  groupValue: cash,
+                  onChanged: (value) => setDialog(() => cash = value!),
+                  title: const Text('Cash')),
+              RadioListTile<bool>(
+                  value: false,
+                  groupValue: cash,
+                  onChanged: (value) => setDialog(() => cash = value!),
+                  title: const Text('Credit card')),
+            ],
           ),
-          const SizedBox(height: 32),
-          _PackageOptionCard(
-            title: '8 class package',
-            detail: 'A considered start for a regular practice.',
-            icon: Icons.spa_outlined,
-            onTap: onExplorePackages,
-          ),
-          const SizedBox(height: 14),
-          _PackageOptionCard(
-            title: '12 class package',
-            detail: 'More space to build a steady habit.',
-            icon: Icons.self_improvement_outlined,
-            onTap: onExplorePackages,
-          ),
-          const SizedBox(height: 14),
-          _PackageOptionCard(
-            title: '20 class package',
-            detail: 'A longer commitment to your movement.',
-            icon: Icons.favorite_outline,
-            onTap: onExplorePackages,
-          ),
-          const SizedBox(height: 24),
-          const Text(
-            'Package details, branch-specific prices and purchasing will be connected in a later step.',
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 12, color: AppTheme.sage),
-          ),
-        ],
+          actions: [
+            TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Cancel')),
+            FilledButton(
+              onPressed: () async {
+                if (!cash) {
+                  ScaffoldMessenger.of(this.context).showSnackBar(
+                      const SnackBar(
+                          content:
+                              Text('Card payments will be available soon.')));
+                  return;
+                }
+                try {
+                  await widget.purchases.requestCashPurchase(
+                      offerId: offer.id, requestedStartDate: date);
+                  if (context.mounted) Navigator.pop(context);
+                  if (mounted)
+                    ScaffoldMessenger.of(this.context).showSnackBar(
+                        const SnackBar(
+                            content: Text(
+                                'Cash payment request sent to the studio.')));
+                } on PurchaseFailure catch (error) {
+                  if (mounted)
+                    ScaffoldMessenger.of(this.context)
+                        .showSnackBar(SnackBar(content: Text(error.message)));
+                }
+              },
+              child: const Text('Send request'),
+            ),
+          ],
+        ),
       ),
     );
   }

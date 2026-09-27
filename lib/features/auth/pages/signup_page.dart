@@ -2,16 +2,24 @@ import 'package:flutter/material.dart';
 
 import '../../account/data/account_role_resolver.dart';
 import '../../account/pages/account_home_page.dart';
+import '../../purchases/data/purchase_gateway.dart';
 import '../data/auth_gateway.dart';
 import '../validation/auth_validators.dart';
 import '../widgets/auth_layout.dart';
 import '../widgets/password_field.dart';
 
 class SignupPage extends StatefulWidget {
-  const SignupPage({super.key, required this.auth, required this.roles});
+  const SignupPage(
+      {super.key,
+      required this.auth,
+      required this.roles,
+      this.purchases = const UnconfiguredPurchaseGateway(),
+      this.adminPurchases = const UnconfiguredAdminPurchaseGateway()});
 
   final AuthGateway auth;
   final AccountRoleResolver roles;
+  final PurchaseGateway purchases;
+  final AdminPurchaseGateway adminPurchases;
 
   @override
   State<SignupPage> createState() => _SignupPageState();
@@ -52,8 +60,11 @@ class _SignupPageState extends State<SignupPage> {
       if (result == SignupResult.signedIn) {
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute<void>(
-            builder: (_) =>
-                AccountHomePage(auth: widget.auth, roles: widget.roles),
+            builder: (_) => AccountHomePage(
+                auth: widget.auth,
+                roles: widget.roles,
+                purchases: widget.purchases,
+                adminPurchases: widget.adminPurchases),
           ),
           (_) => false,
         );

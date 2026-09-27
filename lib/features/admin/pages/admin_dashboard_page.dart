@@ -3,17 +3,23 @@ import 'package:flutter/material.dart';
 import '../../account/data/account_role_resolver.dart';
 import '../../auth/data/auth_gateway.dart';
 import '../../auth/pages/login_page.dart';
+import '../../purchases/data/purchase_gateway.dart';
 import '../data/admin_dashboard_data.dart';
 import '../../../theme/app_theme.dart';
-import 'active_members_page.dart';
-import 'manual_package_grant_page.dart';
+import 'cash_purchase_requests_page.dart';
 
 class AdminDashboardPage extends StatefulWidget {
   const AdminDashboardPage(
-      {super.key, required this.auth, required this.roles});
+      {super.key,
+      required this.auth,
+      required this.roles,
+      required this.purchases,
+      required this.adminPurchases});
 
   final AuthGateway auth;
   final AccountRoleResolver roles;
+  final PurchaseGateway purchases;
+  final AdminPurchaseGateway adminPurchases;
 
   @override
   State<AdminDashboardPage> createState() => _AdminDashboardPageState();
@@ -30,7 +36,12 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
       if (!mounted) return;
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute<void>(
-          builder: (_) => LoginPage(auth: widget.auth, roles: widget.roles),
+          builder: (_) => LoginPage(
+            auth: widget.auth,
+            roles: widget.roles,
+            purchases: widget.purchases,
+            adminPurchases: widget.adminPurchases,
+          ),
         ),
         (_) => false,
       );
@@ -121,31 +132,20 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
               const _SectionLabel(title: 'MEMBERSHIP MANAGEMENT'),
               const SizedBox(height: 10),
               _AdminActionCard(
-                icon: Icons.group_outlined,
-                title: 'Active member packages',
-                detail: 'View every active package and remaining class rights.',
+                icon: Icons.pending_actions_outlined,
+                title: 'Payments awaiting approval',
+                detail: 'Review payment requests and activate member packages.',
                 onTap: () => Navigator.of(context).push(
                   MaterialPageRoute<void>(
-                    builder: (_) => ActiveMembersPage(members: _data.members),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 14),
-              _AdminActionCard(
-                icon: Icons.account_balance_wallet_outlined,
-                title: 'Record a cash payment',
-                detail:
-                    '${_data.cashPaymentsToRecord} cash payments awaiting entry.',
-                onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute<void>(
-                    builder: (_) =>
-                        ManualPackageGrantPage(members: _data.members),
+                    builder: (_) => CashPurchaseRequestsPage(
+                      purchases: widget.adminPurchases,
+                    ),
                   ),
                 ),
               ),
               const SizedBox(height: 24),
               const Text(
-                'Reporting, members and cash-payment details are preview data until purchases and memberships are connected.',
+                'Reporting and active-member totals are preview data. Cash payment requests are live.',
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 12, color: AppTheme.sage),
               ),

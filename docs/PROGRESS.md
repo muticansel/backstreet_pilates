@@ -17,10 +17,10 @@
 
 ## Next steps
 
-1. Review the admin dashboard and promote one development user to admin only after approval.
-2. Review the video-library database foundation before applying its migration.
-3. Design the member video-library page after the data model is approved.
-4. Define the purchased-membership, class-session and booking tables that will replace dashboard preview data.
+1. Review the cash package-purchase migration before applying it, then connect the member package screen and admin queue.
+2. Review the admin dashboard and promote one development user to admin only after approval.
+3. Review the video-library database foundation before applying its migration.
+4. Design the member video-library page after the data model is approved.
 
 ## Git setup
 
@@ -102,6 +102,22 @@
 - Reporting, member and payment data are mock data; the form validates input but does not write a payment or membership.
 - Review notes and development-only role setup: `docs/reviews/05-admin-dashboard.md`.
 - Verification: Flutter analyze clean, all 6 widget tests passed, and iOS Simulator build artifact regenerated successfully.
+
+## Cash package purchase foundation
+
+- Prepared a member cash-payment request model and an admin-only confirmation RPC.
+- The request snapshots the active offer's price, branch and package rules before it enters the admin queue.
+- Confirming cash creates one membership. A future requested date remains `pending_start`; a current date becomes `active`.
+- Card payment is intentionally excluded until a verified payment-provider flow is implemented.
+- Migration and review notes are local only: `supabase/migrations/20260927000300_cash_purchase_requests.sql` and `docs/CASH_PURCHASE_FLOW.md`.
+- User applied `20260927000300_cash_purchase_requests.sql` successfully in the development Supabase project.
+- First approved catalogue offer: İncek, 8 classes, twice weekly, 4 weeks, 5,000 TRY. Its activation SQL is prepared locally and awaits application.
+- Added the admin cash-payment request page. It reads pending requests through
+  RLS and calls the existing server-side confirmation RPC; no client-side
+  membership write was added. Review notes: `docs/reviews/06-cash-payment-requests.md`.
+- Verification: `dart format lib test` and all 6 widget tests pass. `flutter
+  analyze` reports only four pre-existing `RadioListTile` deprecation infos in
+  the member package chooser; the new admin queue has no analyzer findings.
 
 ## Video library foundation
 

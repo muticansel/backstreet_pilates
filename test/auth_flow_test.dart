@@ -151,16 +151,10 @@ void main() {
     expect(find.text('ADMIN OVERVIEW'), findsOneWidget);
     expect(find.text('₺68.400'), findsOneWidget);
 
-    await tester.tap(find.text('Active member packages'));
-    await tester.pumpAndSettle();
-    expect(find.text('Aylin Demir'), findsOneWidget);
-
-    await tester.pageBack();
-    await tester.pumpAndSettle();
-    final cashPayment = find.text('Record a cash payment');
+    final cashPayment = find.text('Payments awaiting approval');
     await tester.ensureVisible(cashPayment);
     await tester.tap(cashPayment);
     await tester.pumpAndSettle();
-    expect(find.text('Amount received (TRY)'), findsOneWidget);
+    expect(find.text('No cash payments are waiting.'), findsOneWidget);
   });
 }
