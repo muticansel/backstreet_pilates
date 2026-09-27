@@ -88,5 +88,6 @@
 - Dashboard presents greeting, remaining class rights, active package, package discovery and recent practice.
 - The values are typed preview data, not Supabase membership or booking records.
 - Purchase action is explanatory only; no payment or membership write exists.
+- Added bottom navigation with Home, Packages and Usage. Packages and Usage are dummy flows; Home holds the dashboard overview.
 - Review notes: `docs/reviews/04-member-dashboard.md`.
-- Verification: Dart format unchanged, flutter analyze clean, all 3 widget tests passed, iOS simulator build succeeded with Supabase dependencies.
+- Verification: Dart format clean, flutter analyze clean, all 5 widget tests passed, and the iOS simulator build succeeded with Supabase dependencies.

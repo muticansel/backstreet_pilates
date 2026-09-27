@@ -104,4 +104,25 @@ void main() {
     expect(find.text('Check your details and try again.'), findsOneWidget);
     expect(find.text('Welcome back.'), findsOneWidget);
   });
+
+  testWidgets('member navigation opens all three flows', (tester) async {
+    await tester.pumpWidget(PilatesApp(auth: FakeAuthGateway()));
+    await tester.enterText(
+        find.byType(TextFormField).at(0), 'hello@example.com');
+    await tester.enterText(find.byType(TextFormField).at(1), 'practice123');
+    await tester.tap(find.text('Log in'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Packages'));
+    await tester.pumpAndSettle();
+    expect(find.text('Find a rhythm that fits your week.'), findsOneWidget);
+
+    await tester.tap(find.text('Usage'));
+    await tester.pumpAndSettle();
+    expect(find.text('Your practice history'), findsOneWidget);
+
+    await tester.tap(find.text('Home'));
+    await tester.pumpAndSettle();
+    expect(find.text('YOUR CURRENT PACKAGE'), findsOneWidget);
+  });
 }

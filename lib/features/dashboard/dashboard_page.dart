@@ -16,6 +16,7 @@ class DashboardPage extends StatefulWidget {
 
 class _DashboardPageState extends State<DashboardPage> {
   bool _signingOut = false;
+  int _selectedIndex = 0;
 
   DashboardData get _dashboard => widget.dashboard ?? DashboardData.preview;
 
@@ -64,8 +65,48 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
+  NavigationBar _navigationBar() {
+    return NavigationBar(
+      selectedIndex: _selectedIndex,
+      onDestinationSelected: (index) => setState(() => _selectedIndex = index),
+      destinations: const [
+        NavigationDestination(
+          icon: Icon(Icons.home_outlined),
+          selectedIcon: Icon(Icons.home),
+          label: 'Home',
+        ),
+        NavigationDestination(
+          icon: Icon(Icons.style_outlined),
+          selectedIcon: Icon(Icons.style),
+          label: 'Packages',
+        ),
+        NavigationDestination(
+          icon: Icon(Icons.history_outlined),
+          selectedIcon: Icon(Icons.history),
+          label: 'Usage',
+        ),
+      ],
+    );
+  }
+
+  Widget _placeholderScaffold(Widget child) {
+    return Scaffold(
+      body: SafeArea(child: child),
+      bottomNavigationBar: _navigationBar(),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (_selectedIndex == 1) {
+      return _placeholderScaffold(
+        _PackagesPlaceholder(onExplorePackages: _showPurchasePreview),
+      );
+    }
+    if (_selectedIndex == 2) {
+      return _placeholderScaffold(const _UsagePlaceholder());
+    }
+
     final dashboard = _dashboard;
     return Scaffold(
       body: SafeArea(
@@ -128,6 +169,7 @@ class _DashboardPageState extends State<DashboardPage> {
           ),
         ),
       ),
+      bottomNavigationBar: _navigationBar(),
     );
   }
 }
@@ -362,6 +404,149 @@ class _HistoryCard extends StatelessWidget {
               const Divider(height: 1, indent: 72, endIndent: 20),
           ],
         ],
+      ),
+    );
+  }
+}
+
+class _PackagesPlaceholder extends StatelessWidget {
+  const _PackagesPlaceholder({required this.onExplorePackages});
+
+  final VoidCallback onExplorePackages;
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(24, 32, 24, 36),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const Icon(Icons.style_outlined, color: AppTheme.sage, size: 34),
+          const SizedBox(height: 24),
+          Text('Packages', style: Theme.of(context).textTheme.headlineLarge),
+          const SizedBox(height: 10),
+          Text(
+            'Find a rhythm that fits your week.',
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
+          const SizedBox(height: 32),
+          _PackageOptionCard(
+            title: '8 class package',
+            detail: 'A considered start for a regular practice.',
+            icon: Icons.spa_outlined,
+            onTap: onExplorePackages,
+          ),
+          const SizedBox(height: 14),
+          _PackageOptionCard(
+            title: '12 class package',
+            detail: 'More space to build a steady habit.',
+            icon: Icons.self_improvement_outlined,
+            onTap: onExplorePackages,
+          ),
+          const SizedBox(height: 14),
+          _PackageOptionCard(
+            title: '20 class package',
+            detail: 'A longer commitment to your movement.',
+            icon: Icons.favorite_outline,
+            onTap: onExplorePackages,
+          ),
+          const SizedBox(height: 24),
+          const Text(
+            'Package details, branch-specific prices and purchasing will be connected in a later step.',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 12, color: AppTheme.sage),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PackageOptionCard extends StatelessWidget {
+  const _PackageOptionCard({
+    required this.title,
+    required this.detail,
+    required this.icon,
+    required this.onTap,
+  });
+
+  final String title;
+  final String detail;
+  final IconData icon;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(20),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(20),
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Row(
+            children: [
+              CircleAvatar(
+                backgroundColor: const Color(0xFFE3E9DD),
+                foregroundColor: AppTheme.sage,
+                child: Icon(icon),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(title,
+                        style: const TextStyle(fontWeight: FontWeight.w700)),
+                    const SizedBox(height: 4),
+                    Text(detail),
+                  ],
+                ),
+              ),
+              const Icon(Icons.arrow_forward, color: AppTheme.sage),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _UsagePlaceholder extends StatelessWidget {
+  const _UsagePlaceholder();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              height: 82,
+              width: 82,
+              decoration: const BoxDecoration(
+                color: Color(0xFFE3E9DD),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.history_outlined,
+                  color: AppTheme.sage, size: 38),
+            ),
+            const SizedBox(height: 24),
+            Text(
+              'Your practice history',
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.headlineLarge,
+            ),
+            const SizedBox(height: 12),
+            const Text(
+              'Completed classes, remaining rights and cancelled sessions will live here.',
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
       ),
     );
   }
