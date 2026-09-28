@@ -26,6 +26,14 @@ The list refreshes after confirmation and supports pull-to-refresh and the
 toolbar refresh button. The app never displays a successful result until the
 server RPC has returned successfully.
 
+## Duplicate package requests
+
+The follow-up migration `20260929000100_prevent_overlapping_package_requests.sql`
+rejects a second pending request or a new request that overlaps the same
+branch-bound package the member already has. The member package chooser already
+shows the returned server message as a SnackBar, so no client-side duplicate
+state can be bypassed by another device.
+
 ## Access control
 
 The navigation entry is shown only after the current account resolves as an

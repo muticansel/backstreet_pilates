@@ -130,6 +130,10 @@
 - Verification: `dart format lib test` and all 6 widget tests pass. `flutter
   analyze` reports only four pre-existing `RadioListTile` deprecation infos in
   the member package chooser; the new admin queue has no analyzer findings.
+- Added a follow-up migration that blocks duplicate pending cash requests and
+  overlapping copies of the same branch/package. The existing package request
+  SnackBar displays the server rejection message. It awaits application to
+  Supabase: `20260929000100_prevent_overlapping_package_requests.sql`.
 
 ## Member approved packages
 

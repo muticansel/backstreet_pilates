@@ -557,9 +557,21 @@ class _PackagesPlaceholderState extends State<_PackagesPlaceholder> {
                             content: Text(
                                 'Cash payment request sent to the studio.')));
                 } on PurchaseFailure catch (error) {
-                  if (mounted)
-                    ScaffoldMessenger.of(this.context)
-                        .showSnackBar(SnackBar(content: Text(error.message)));
+                  if (context.mounted) Navigator.of(context).pop();
+                  if (mounted) {
+                    ScaffoldMessenger.of(this.context).showSnackBar(
+                      SnackBar(
+                        behavior: SnackBarBehavior.floating,
+                        backgroundColor: AppTheme.terracotta,
+                        showCloseIcon: true,
+                        closeIconColor: Colors.white,
+                        content: Text(
+                          error.message,
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    );
+                  }
                 }
               },
               child: const Text('Send request'),

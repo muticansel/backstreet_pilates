@@ -15,6 +15,10 @@ UI review against a development admin account.
    price and package rules, then writes `cash_payment_pending`.
 5. Credit card will use a payment-provider flow later. It must not create a
    cash request or mark a membership paid.
+6. The server rejects a duplicate pending request and any request that would
+   overlap an active or future-start package for the same branch and plan. The
+   app closes the request dialog and shows the server's message in a floating,
+   terracotta error toast/SnackBar.
 
 ## Admin flow
 
@@ -32,6 +36,8 @@ safe against a duplicate confirmation.
 ## Before applying
 
 - Review `supabase/migrations/20260927000300_cash_purchase_requests.sql`.
+- Apply `supabase/migrations/20260929000100_prevent_overlapping_package_requests.sql`
+  after the cash-purchase migration to enforce duplicate-package prevention.
 - At least one branch-bound offer and its plan must be active before a member
   can submit a request. The existing development seed offers are deliberately
   inactive.

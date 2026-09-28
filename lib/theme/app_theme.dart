@@ -4,6 +4,7 @@ class AppTheme {
   static const cream = Color(0xFFF7F5EF);
   static const sage = Color(0xFF385648);
   static const ink = Color(0xFF26382E);
+  static const terracotta = Color(0xFF93443E);
 
   static ThemeData get light {
     final scheme = ColorScheme.fromSeed(
