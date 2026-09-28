@@ -1,6 +1,11 @@
 enum SignupResult { signedIn, confirmationRequired }
 
 abstract interface class AuthGateway {
+  /// Whether a previous, valid signed-in session is available on this device.
+  ///
+  /// Implementations must never expose or persist the user's password here.
+  Future<bool> hasActiveSession();
+
   Future<void> signIn({required String email, required String password});
 
   Future<SignupResult> signUp({
@@ -23,6 +28,9 @@ class UnconfiguredAuthGateway implements AuthGateway {
 
   static const _message =
       'Account service is not configured. Start the app with its Supabase settings.';
+
+  @override
+  Future<bool> hasActiveSession() async => false;
 
   @override
   Future<void> signIn({required String email, required String password}) {

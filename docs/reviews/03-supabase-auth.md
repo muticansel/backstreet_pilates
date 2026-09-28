@@ -13,7 +13,8 @@ It does not add the member dashboard, admin panel, reservations, or payments.
 4. `lib/features/auth/data/supabase_auth_gateway.dart`: performs password login and signup.
 5. `login_page.dart`: validates, prevents repeat taps while waiting, and displays a safe failure message.
 6. `signup_page.dart`: sends the display name as user metadata and directs users to confirm email when required.
-7. `signed_in_page.dart`: temporary signed-in state until the member home page is designed.
+7. `app.dart`: checks for a prior Supabase session at launch and opens the
+   account home when one exists.
 
 ## Behavior to verify
 
@@ -22,7 +23,17 @@ It does not add the member dashboard, admin panel, reservations, or payments.
 - With Confirm email on, signup states that the user must confirm their email before logging in.
 - Backend failure stays on the form and gives a non-sensitive message.
 - Buttons prevent repeat submission while a request is running.
+- Closing and reopening the app retains a valid Supabase session and opens the
+  appropriate member or admin home without asking for credentials again.
+- Signing out clears the Supabase session, so the next launch opens Login.
 - The URL and publishable key are not stored in Git; a secret/service-role key is never used by Flutter.
+
+## Session storage
+
+Supabase Flutter securely persists the session and refresh token on the device.
+The app only asks the Supabase client whether a session exists; it does not
+store, log, or replay a password. The role is resolved again after launch, so a
+previous session never bypasses the admin role check.
 
 ## Required Supabase dashboard setting
 

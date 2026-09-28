@@ -10,6 +10,9 @@ class SupabaseAuthGateway implements AuthGateway {
   static const _confirmationRedirect = 'backstreetpilates://login-callback/';
 
   @override
+  Future<bool> hasActiveSession() async => _client.currentSession != null;
+
+  @override
   Future<void> signIn({
     required String email,
     required String password,

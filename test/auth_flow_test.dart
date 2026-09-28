@@ -5,12 +5,19 @@ import 'package:backstreet_pilates/features/account/data/account_role_resolver.d
 import 'package:backstreet_pilates/features/auth/data/auth_gateway.dart';
 
 class FakeAuthGateway implements AuthGateway {
-  FakeAuthGateway({this.signUpResult = SignupResult.confirmationRequired});
+  FakeAuthGateway({
+    this.signUpResult = SignupResult.confirmationRequired,
+    this.hasSession = false,
+  });
 
   final SignupResult signUpResult;
+  final bool hasSession;
   AuthFailure? signInFailure;
   AuthFailure? signUpFailure;
   int signOutCount = 0;
+
+  @override
+  Future<bool> hasActiveSession() async => hasSession;
 
   @override
   Future<void> signIn({required String email, required String password}) async {
@@ -69,6 +76,17 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('YOUR CURRENT PACKAGE'), findsOneWidget);
     expect(find.text('8 class package'), findsOneWidget);
+  });
+
+  testWidgets('a previous Supabase session opens the account home on launch',
+      (tester) async {
+    await tester.pumpWidget(PilatesApp(
+      auth: FakeAuthGateway(hasSession: true),
+    ));
+    await tester.pumpAndSettle();
+
+    expect(find.text('YOUR CURRENT PACKAGE'), findsOneWidget);
+    expect(find.text('Welcome back.'), findsNothing);
   });
 
   testWidgets('signup checks confirmation and returns to login',

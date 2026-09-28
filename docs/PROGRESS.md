@@ -2,6 +2,10 @@
 
 ## Current state
 
+- App launch now restores a previously persisted Supabase session and routes it
+  through the normal role resolver to member or admin home. Passwords are not
+  stored by the app; Supabase Flutter owns the secure session persistence.
+
 - English/Turkish localization foundation added. Users can change the active
   language from the app; selection is session-only for now. See `docs/LOCALIZATION.md`.
 - Localization verification: the language-switch widget test and all other 6

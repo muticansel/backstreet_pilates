@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'features/account/data/account_role_resolver.dart';
+import 'features/account/pages/account_home_page.dart';
 import 'features/auth/data/auth_gateway.dart';
 import 'features/auth/pages/login_page.dart';
 import 'features/purchases/data/purchase_gateway.dart';
@@ -28,6 +29,7 @@ class PilatesApp extends StatefulWidget {
 
 class _PilatesAppState extends State<PilatesApp> {
   final _language = AppLanguage();
+  late final Future<bool> _hasActiveSession = widget.auth.hasActiveSession();
 
   @override
   void dispose() {
@@ -52,7 +54,8 @@ class _PilatesAppState extends State<PilatesApp> {
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
           ],
-          home: LoginPage(
+          home: _AppLaunchGate(
+            hasActiveSession: _hasActiveSession,
             auth: widget.auth,
             roles: widget.roles,
             purchases: widget.purchases,
@@ -62,4 +65,46 @@ class _PilatesAppState extends State<PilatesApp> {
       ),
     );
   }
+}
+
+class _AppLaunchGate extends StatelessWidget {
+  const _AppLaunchGate({
+    required this.hasActiveSession,
+    required this.auth,
+    required this.roles,
+    required this.purchases,
+    required this.adminPurchases,
+  });
+
+  final Future<bool> hasActiveSession;
+  final AuthGateway auth;
+  final AccountRoleResolver roles;
+  final PurchaseGateway purchases;
+  final AdminPurchaseGateway adminPurchases;
+
+  @override
+  Widget build(BuildContext context) => FutureBuilder<bool>(
+        future: hasActiveSession,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState != ConnectionState.done) {
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
+          }
+          if (snapshot.data == true) {
+            return AccountHomePage(
+              auth: auth,
+              roles: roles,
+              purchases: purchases,
+              adminPurchases: adminPurchases,
+            );
+          }
+          return LoginPage(
+            auth: auth,
+            roles: roles,
+            purchases: purchases,
+            adminPurchases: adminPurchases,
+          );
+        },
+      );
 }
