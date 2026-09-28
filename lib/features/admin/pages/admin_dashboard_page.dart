@@ -8,6 +8,7 @@ import '../data/admin_dashboard_data.dart';
 import '../../../theme/app_theme.dart';
 import '../../../l10n/app_localizations.dart';
 import 'cash_purchase_requests_page.dart';
+import 'admin_users_page.dart';
 
 class AdminDashboardPage extends StatefulWidget {
   const AdminDashboardPage(
@@ -131,6 +132,14 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                 ],
               ),
               const SizedBox(height: 30),
+              _AdminActionCard(
+                  icon: Icons.people_outline,
+                  title: strings.text('users'),
+                  detail: strings.text('manageUsers'),
+                  onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                          builder: (_) => const AdminUsersPage()))),
+              const SizedBox(height: 14),
               _SectionLabel(title: strings.text('membershipManagement')),
               const SizedBox(height: 10),
               _AdminActionCard(
