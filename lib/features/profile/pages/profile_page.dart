@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../theme/app_theme.dart';
+import '../../../theme/app_snack_bars.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -66,11 +67,13 @@ class _ProfilePageState extends State<ProfilePage> {
         );
       }
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(emailChanged
-            ? 'Profile saved. Confirm your new email address to finish changing it.'
-            : 'Profile saved.'),
-      ));
+      ScaffoldMessenger.of(context).showSnackBar(
+        AppSnackBars.success(
+          emailChanged
+              ? 'Profile saved. Confirm your new email address to finish changing it.'
+              : 'Profile saved.',
+        ),
+      );
       Navigator.pop(context, true);
     } on AuthException catch (error) {
       _showError(error.message);

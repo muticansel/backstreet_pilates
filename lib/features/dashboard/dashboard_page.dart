@@ -7,6 +7,7 @@ import '../purchases/data/purchase_gateway.dart';
 import '../purchases/pages/approved_packages_page.dart';
 import '../profile/pages/profile_page.dart';
 import '../../../theme/app_theme.dart';
+import '../../../theme/app_snack_bars.dart';
 import '../../../l10n/app_localizations.dart';
 
 class DashboardPage extends StatefulWidget {
@@ -161,7 +162,7 @@ class _DashboardPageState extends State<DashboardPage> {
                     icon: const Icon(Icons.logout_outlined),
                   ),
                   IconButton(
-                    tooltip: 'Edit profile',
+                    tooltip: AppLocalizations.of(context).text('editProfile'),
                     onPressed: () => Navigator.of(context).push(
                       MaterialPageRoute<void>(
                           builder: (_) => const ProfilePage()),
@@ -556,9 +557,9 @@ class _PackagesPlaceholderState extends State<_PackagesPlaceholder> {
               onPressed: () async {
                 if (!cash) {
                   ScaffoldMessenger.of(this.context).showSnackBar(
-                      const SnackBar(
+                      SnackBar(
                           content:
-                              Text('Card payments will be available soon.')));
+                              Text(AppLocalizations.of(this.context).text('cardPaymentsSoon'))));
                   return;
                 }
                 try {
@@ -567,9 +568,10 @@ class _PackagesPlaceholderState extends State<_PackagesPlaceholder> {
                   if (context.mounted) Navigator.pop(context);
                   if (mounted)
                     ScaffoldMessenger.of(this.context).showSnackBar(
-                        const SnackBar(
-                            content: Text(
-                                'Cash payment request sent to the studio.')));
+                      AppSnackBars.success(
+                        AppLocalizations.of(this.context).text('cashRequestSent'),
+                      ),
+                    );
                 } on PurchaseFailure catch (error) {
                   if (context.mounted) Navigator.of(context).pop();
                   if (mounted) {

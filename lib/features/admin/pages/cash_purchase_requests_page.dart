@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../theme/app_theme.dart';
+import '../../../theme/app_snack_bars.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../purchases/data/purchase_gateway.dart';
 
@@ -59,10 +60,11 @@ class _CashPurchaseRequestsPageState extends State<CashPurchaseRequestsPage> {
       await widget.purchases.confirmCashPurchase(request.id);
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-            content: Text(strings
-                .text('membershipCreated')
-                .replaceAll('{name}', request.memberName))),
+        AppSnackBars.success(
+          strings
+              .text('membershipCreated')
+              .replaceAll('{name}', request.memberName),
+        ),
       );
       await _reload();
     } on PurchaseFailure catch (error) {

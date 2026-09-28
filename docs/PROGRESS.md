@@ -157,6 +157,12 @@
   database before loading or saving birth date and gender. Review notes:
   `docs/reviews/08-member-profile.md`.
 
+## Feedback styling
+
+- Successful cash-request, package-confirmation and profile-save messages now
+  use a shared floating sage-green SnackBar. Error states retain the distinct
+  terracotta color.
+
 ## Push notification plan
 
 - Recorded the requested cash-purchase notification flow for later work:
