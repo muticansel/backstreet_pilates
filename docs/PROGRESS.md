@@ -25,8 +25,10 @@
 
 1. Review the member approved-packages page and its Active / Old status wording.
 2. Review the admin dashboard and promote one development user to admin only after approval.
-3. Review the video-library database foundation before applying its migration.
-4. Design the member video-library page after the data model is approved.
+3. Complete Apple Developer/APNs and Firebase configuration, then implement the
+   deferred push-notification plan in `docs/NOTIFICATIONS.md`.
+4. Review the video-library database foundation before applying its migration.
+5. Design the member video-library page after the data model is approved.
 
 ## Git setup
 
@@ -133,6 +135,18 @@
   **Old**, and approved future-start packages **Starts soon**. It is read-only.
 - Review notes: `docs/reviews/07-member-approved-packages.md`.
 - Verification is pending after this implementation.
+
+## Push notification plan
+
+- Recorded the requested cash-purchase notification flow for later work:
+  admins receive new cash-request notifications, notification taps open the
+  approval screen, and the member receives a confirmation notification after
+  approval.
+- The planned design persists FCM device tokens server-side against the signed-in
+  Supabase user; a locally persisted authentication session alone cannot send a
+  notification to an offline device.
+- Implementation is deferred until the Apple Developer account, APNs setup, and
+  Firebase iOS configuration are ready. See `docs/NOTIFICATIONS.md`.
 
 ## Video library foundation
 
