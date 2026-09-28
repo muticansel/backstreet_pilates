@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../theme/app_theme.dart';
 import '../../../theme/pilates_loading_indicator.dart';
+import '../../../l10n/app_localizations.dart';
 import '../data/purchase_gateway.dart';
 
 class ApprovedPackagesPage extends StatefulWidget {
@@ -62,7 +63,8 @@ class _PageHeader extends StatelessWidget {
         children: [
           const Icon(Icons.verified_outlined, color: AppTheme.sage, size: 34),
           const SizedBox(height: 24),
-          Text('My packages', style: Theme.of(context).textTheme.headlineLarge),
+          Text(AppLocalizations.of(context).text('myPackages'),
+              style: Theme.of(context).textTheme.headlineLarge),
           const SizedBox(height: 10),
           Text(
             '$count approved ${count == 1 ? 'package' : 'packages'}',
@@ -165,7 +167,7 @@ class _EmptyPackages extends StatelessWidget {
           const SizedBox(height: 80),
           const Icon(Icons.style_outlined, color: AppTheme.sage, size: 48),
           const SizedBox(height: 20),
-          Text('No approved packages yet',
+          Text(AppLocalizations.of(context).text('noApprovedPackages'),
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.headlineSmall),
           const SizedBox(height: 10),
@@ -188,13 +190,14 @@ class _LoadError extends StatelessWidget {
           const SizedBox(height: 80),
           const Icon(Icons.error_outline, color: AppTheme.sage, size: 48),
           const SizedBox(height: 20),
-          Text('Packages could not be loaded',
+          Text(AppLocalizations.of(context).text('approvedPackagesLoadError'),
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.headlineSmall),
           const SizedBox(height: 14),
           Center(
               child: OutlinedButton(
-                  onPressed: onRetry, child: const Text('Try again'))),
+                  onPressed: onRetry,
+                  child: Text(AppLocalizations.of(context).text('tryAgain')))),
         ],
       );
 }

@@ -66,7 +66,8 @@ class _DashboardPageState extends State<DashboardPage> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Packages', style: Theme.of(context).textTheme.headlineSmall),
+            Text(AppLocalizations.of(context).text('packages'),
+                style: Theme.of(context).textTheme.headlineSmall),
             const SizedBox(height: 10),
             const Text(
               'This is where you’ll compare packages and purchase the one that suits your practice.',
@@ -74,7 +75,7 @@ class _DashboardPageState extends State<DashboardPage> {
             const SizedBox(height: 22),
             FilledButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Got it'),
+              child: Text(AppLocalizations.of(context).text('gotIt')),
             ),
           ],
         ),
@@ -189,15 +190,15 @@ class _DashboardPageState extends State<DashboardPage> {
                 style: Theme.of(context).textTheme.bodyLarge,
               ),
               const SizedBox(height: 30),
-              const _SectionLabel(title: 'YOUR CURRENT PACKAGE'),
+              const _SectionLabel(titleKey: 'currentPackage'),
               const SizedBox(height: 10),
               _MembershipCard(membership: dashboard.membership),
               const SizedBox(height: 30),
-              const _SectionLabel(title: 'FIND YOUR NEXT RHYTHM'),
+              const _SectionLabel(titleKey: 'nextRhythm'),
               const SizedBox(height: 10),
               _ExplorePackagesCard(onPressed: _showPurchasePreview),
               const SizedBox(height: 30),
-              const _SectionLabel(title: 'YOUR RECENT PRACTICE'),
+              const _SectionLabel(titleKey: 'recentPractice'),
               const SizedBox(height: 10),
               _HistoryCard(activities: dashboard.recentActivities),
               const SizedBox(height: 20),
@@ -266,14 +267,14 @@ class PracticeActivity {
 }
 
 class _SectionLabel extends StatelessWidget {
-  const _SectionLabel({required this.title});
+  const _SectionLabel({required this.titleKey});
 
-  final String title;
+  final String titleKey;
 
   @override
   Widget build(BuildContext context) {
     return Text(
-      title,
+      AppLocalizations.of(context).text(titleKey),
       style: const TextStyle(
         color: AppTheme.sage,
         fontSize: 11,
@@ -475,7 +476,7 @@ class _PackagesPlaceholderState extends State<_PackagesPlaceholder> {
                   const Icon(Icons.style_outlined,
                       color: AppTheme.sage, size: 34),
                   const SizedBox(height: 24),
-                  Text('Packages',
+                  Text(AppLocalizations.of(context).text('packages'),
                       style: Theme.of(context).textTheme.headlineLarge),
                   const SizedBox(height: 10),
                   Text(
@@ -489,7 +490,9 @@ class _PackagesPlaceholderState extends State<_PackagesPlaceholder> {
                             padding: EdgeInsets.all(32),
                             child: PilatesLoadingIndicator()))
                   else if (snapshot.hasError || snapshot.data!.isEmpty)
-                    const Text('No packages are available right now.',
+                    Text(
+                        AppLocalizations.of(context)
+                            .text('noPackagesAvailable'),
                         textAlign: TextAlign.center)
                   else
                     for (final offer in snapshot.data!) ...[
@@ -542,18 +545,18 @@ class _PackagesPlaceholderState extends State<_PackagesPlaceholder> {
                   value: true,
                   groupValue: cash,
                   onChanged: (value) => setDialog(() => cash = value!),
-                  title: const Text('Cash')),
+                  title: Text(AppLocalizations.of(context).text('cash'))),
               RadioListTile<bool>(
                   value: false,
                   groupValue: cash,
                   onChanged: (value) => setDialog(() => cash = value!),
-                  title: const Text('Credit card')),
+                  title: Text(AppLocalizations.of(context).text('creditCard'))),
             ],
           ),
           actions: [
             TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text('Cancel')),
+                child: Text(AppLocalizations.of(context).text('cancel'))),
             FilledButton(
               onPressed: () async {
                 if (!cash) {
@@ -591,7 +594,7 @@ class _PackagesPlaceholderState extends State<_PackagesPlaceholder> {
                   }
                 }
               },
-              child: const Text('Send request'),
+              child: Text(AppLocalizations.of(context).text('sendRequest')),
             ),
           ],
         ),

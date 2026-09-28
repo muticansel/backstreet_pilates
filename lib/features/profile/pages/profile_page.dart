@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../theme/app_theme.dart';
 import '../../../theme/app_snack_bars.dart';
 import '../../../theme/pilates_loading_indicator.dart';
+import 'change_password_page.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -183,6 +184,27 @@ class _ProfilePageState extends State<ProfilePage> {
                           child: Text('Prefer not to say')),
                     ],
                     onChanged: (value) => setState(() => _gender = value),
+                  ),
+                  const SizedBox(height: 32),
+                  const Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text('ACCOUNT & SECURITY',
+                        style: TextStyle(
+                            color: AppTheme.sage,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 1.4)),
+                  ),
+                  const SizedBox(height: 8),
+                  Card(
+                    child: ListTile(
+                      leading: const Icon(Icons.lock_outline),
+                      title: const Text('Change password'),
+                      subtitle: const Text('Keep your account secure.'),
+                      trailing: const Icon(Icons.chevron_right),
+                      onTap: () => Navigator.of(context).push(
+                          MaterialPageRoute<void>(
+                              builder: (_) => const ChangePasswordPage())),
+                    ),
                   ),
                   const SizedBox(height: 30),
                   FilledButton(
