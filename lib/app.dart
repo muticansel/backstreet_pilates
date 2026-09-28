@@ -8,6 +8,7 @@ import 'features/auth/pages/login_page.dart';
 import 'features/purchases/data/purchase_gateway.dart';
 import 'l10n/app_localizations.dart';
 import 'theme/app_theme.dart';
+import 'theme/pilates_loading_indicator.dart';
 
 class PilatesApp extends StatefulWidget {
   const PilatesApp({
@@ -88,7 +89,7 @@ class _AppLaunchGate extends StatelessWidget {
         builder: (context, snapshot) {
           if (snapshot.connectionState != ConnectionState.done) {
             return const Scaffold(
-              body: Center(child: CircularProgressIndicator()),
+              body: Center(child: PilatesLoadingIndicator()),
             );
           }
           if (snapshot.data == true) {

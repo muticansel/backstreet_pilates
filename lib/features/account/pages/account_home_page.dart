@@ -5,6 +5,7 @@ import '../../auth/data/auth_gateway.dart';
 import '../../dashboard/dashboard_page.dart';
 import '../../purchases/data/purchase_gateway.dart';
 import '../data/account_role_resolver.dart';
+import '../../../theme/pilates_loading_indicator.dart';
 
 class AccountHomePage extends StatefulWidget {
   const AccountHomePage({
@@ -34,7 +35,7 @@ class _AccountHomePageState extends State<AccountHomePage> {
       builder: (context, snapshot) {
         if (snapshot.connectionState != ConnectionState.done) {
           return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
+            body: Center(child: PilatesLoadingIndicator()),
           );
         }
         if (snapshot.data == AccountRole.admin) {

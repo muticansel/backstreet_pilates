@@ -3,6 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../theme/app_theme.dart';
 import '../../../theme/app_snack_bars.dart';
+import '../../../theme/pilates_loading_indicator.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -102,7 +103,7 @@ class _ProfilePageState extends State<ProfilePage> {
           future: _profile,
           builder: (context, snapshot) {
             if (snapshot.connectionState != ConnectionState.done) {
-              return const Center(child: CircularProgressIndicator());
+              return const Center(child: PilatesLoadingIndicator());
             }
             if (snapshot.hasError) {
               return Center(child: Text('Profile could not be loaded.'));

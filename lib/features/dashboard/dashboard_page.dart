@@ -8,6 +8,7 @@ import '../purchases/pages/approved_packages_page.dart';
 import '../profile/pages/profile_page.dart';
 import '../../../theme/app_theme.dart';
 import '../../../theme/app_snack_bars.dart';
+import '../../../theme/pilates_loading_indicator.dart';
 import '../../../l10n/app_localizations.dart';
 
 class DashboardPage extends StatefulWidget {
@@ -486,7 +487,7 @@ class _PackagesPlaceholderState extends State<_PackagesPlaceholder> {
                     const Center(
                         child: Padding(
                             padding: EdgeInsets.all(32),
-                            child: CircularProgressIndicator()))
+                            child: PilatesLoadingIndicator()))
                   else if (snapshot.hasError || snapshot.data!.isEmpty)
                     const Text('No packages are available right now.',
                         textAlign: TextAlign.center)
@@ -556,10 +557,9 @@ class _PackagesPlaceholderState extends State<_PackagesPlaceholder> {
             FilledButton(
               onPressed: () async {
                 if (!cash) {
-                  ScaffoldMessenger.of(this.context).showSnackBar(
-                      SnackBar(
-                          content:
-                              Text(AppLocalizations.of(this.context).text('cardPaymentsSoon'))));
+                  ScaffoldMessenger.of(this.context).showSnackBar(SnackBar(
+                      content: Text(AppLocalizations.of(this.context)
+                          .text('cardPaymentsSoon'))));
                   return;
                 }
                 try {
@@ -569,7 +569,8 @@ class _PackagesPlaceholderState extends State<_PackagesPlaceholder> {
                   if (mounted)
                     ScaffoldMessenger.of(this.context).showSnackBar(
                       AppSnackBars.success(
-                        AppLocalizations.of(this.context).text('cashRequestSent'),
+                        AppLocalizations.of(this.context)
+                            .text('cashRequestSent'),
                       ),
                     );
                 } on PurchaseFailure catch (error) {

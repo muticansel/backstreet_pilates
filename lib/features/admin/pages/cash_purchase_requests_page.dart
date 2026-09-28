@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../theme/app_theme.dart';
 import '../../../theme/app_snack_bars.dart';
+import '../../../theme/pilates_loading_indicator.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../purchases/data/purchase_gateway.dart';
 
@@ -94,7 +95,7 @@ class _CashPurchaseRequestsPageState extends State<CashPurchaseRequestsPage> {
           future: _requests,
           builder: (context, snapshot) {
             if (snapshot.connectionState != ConnectionState.done) {
-              return const Center(child: CircularProgressIndicator());
+              return const Center(child: PilatesLoadingIndicator());
             }
             if (snapshot.hasError) return _LoadError(onRetry: _reload);
             final requests = snapshot.data!;
@@ -170,7 +171,7 @@ class _RequestCard extends StatelessWidget {
                   ? const SizedBox(
                       height: 18,
                       width: 18,
-                      child: CircularProgressIndicator(strokeWidth: 2))
+                      child: PilatesLoadingIndicator(size: 18))
                   : const Icon(Icons.check_circle_outline),
               label:
                   Text(strings.text(confirming ? 'confirming' : 'confirmCash')),

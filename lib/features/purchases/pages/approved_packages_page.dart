@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../theme/app_theme.dart';
+import '../../../theme/pilates_loading_indicator.dart';
 import '../data/purchase_gateway.dart';
 
 class ApprovedPackagesPage extends StatefulWidget {
@@ -30,7 +31,7 @@ class _ApprovedPackagesPageState extends State<ApprovedPackagesPage> {
       builder: (context, snapshot) {
         final content = switch (snapshot.connectionState) {
           ConnectionState.waiting =>
-            const Center(child: CircularProgressIndicator()),
+            const Center(child: PilatesLoadingIndicator()),
           _ when snapshot.hasError => _LoadError(onRetry: _refresh),
           _ when snapshot.data!.isEmpty => const _EmptyPackages(),
           _ => ListView.separated(
