@@ -5,6 +5,7 @@ import '../auth/data/auth_gateway.dart';
 import '../auth/pages/login_page.dart';
 import '../purchases/data/purchase_gateway.dart';
 import '../purchases/pages/approved_packages_page.dart';
+import '../profile/pages/profile_page.dart';
 import '../../../theme/app_theme.dart';
 import '../../../l10n/app_localizations.dart';
 
@@ -158,6 +159,19 @@ class _DashboardPageState extends State<DashboardPage> {
                     tooltip: 'Sign out',
                     onPressed: _signingOut ? null : _signOut,
                     icon: const Icon(Icons.logout_outlined),
+                  ),
+                  IconButton(
+                    tooltip: 'Edit profile',
+                    onPressed: () => Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                          builder: (_) => const ProfilePage()),
+                    ),
+                    icon: const CircleAvatar(
+                      radius: 15,
+                      backgroundColor: AppTheme.sage,
+                      foregroundColor: Colors.white,
+                      child: Icon(Icons.person, size: 18),
+                    ),
                   ),
                   const LanguageMenuButton(),
                 ],

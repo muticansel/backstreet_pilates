@@ -144,6 +144,19 @@
 - Review notes: `docs/reviews/07-member-approved-packages.md`.
 - Verification is pending after this implementation.
 
+## Member profile
+
+- Added a normal-member profile entry in the dashboard header and a profile
+  screen for name, email, phone, birth date and gender.
+- Profile fields use the member's own RLS-protected profile record. Email is
+  updated through Supabase Auth and requires the normal confirmation flow;
+  passwords are never stored or shown.
+- The first version uses a round person/initial avatar. Photo upload is deferred
+  until Supabase Storage and privacy rules are reviewed.
+- Apply `20260929000200_add_member_profile_fields.sql` to the development
+  database before loading or saving birth date and gender. Review notes:
+  `docs/reviews/08-member-profile.md`.
+
 ## Push notification plan
 
 - Recorded the requested cash-purchase notification flow for later work:
