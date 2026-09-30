@@ -6,6 +6,7 @@ class PackageOffer {
     required this.totalCredits,
     required this.durationWeeks,
     required this.priceMinor,
+    required this.startsOn,
   });
 
   final String id;
@@ -14,6 +15,7 @@ class PackageOffer {
   final int totalCredits;
   final int durationWeeks;
   final int priceMinor;
+  final DateTime startsOn;
 }
 
 /// A package that has been approved for the currently signed-in member.

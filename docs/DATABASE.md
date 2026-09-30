@@ -18,6 +18,7 @@ Teknik öneri: Supabase üzerinde PostgreSQL; kullanıcı kimliği için Supabas
 - Rezervasyonlu derse gelinmezse ders hakkı kullanılmış sayılır.
 - İleride iptal veya katılamama hakkı içeren paketler satılabilecek.
 - Adminler iki şubeyi de yönetebilir ve birleşik/şube bazlı raporları görebilir.
+- Sabit ders serilerinde Oran en fazla 3, İncek en fazla 6 üyeye açıktır.
 - Ücretli videolar ileride ayrı dijital ürün ve erişim kayıtlarıyla eklenebilir.
 
 ## Henüz kararlaştırılmayan kurallar

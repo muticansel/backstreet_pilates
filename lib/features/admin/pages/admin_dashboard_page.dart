@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 import '../../account/data/account_role_resolver.dart';
 import '../../auth/data/auth_gateway.dart';
 import '../../auth/pages/login_page.dart';
+import '../../bookings/data/booking_gateway.dart';
 import '../../purchases/data/purchase_gateway.dart';
 import '../data/admin_dashboard_data.dart';
 import '../../../theme/app_theme.dart';
 import '../../../l10n/app_localizations.dart';
 import 'cash_purchase_requests_page.dart';
 import 'admin_users_page.dart';
+import 'class_schedule_page.dart';
 
 class AdminDashboardPage extends StatefulWidget {
   const AdminDashboardPage(
@@ -16,12 +18,14 @@ class AdminDashboardPage extends StatefulWidget {
       required this.auth,
       required this.roles,
       required this.purchases,
-      required this.adminPurchases});
+      required this.adminPurchases,
+      required this.adminBookings});
 
   final AuthGateway auth;
   final AccountRoleResolver roles;
   final PurchaseGateway purchases;
   final AdminPurchaseGateway adminPurchases;
+  final AdminBookingGateway adminBookings;
 
   @override
   State<AdminDashboardPage> createState() => _AdminDashboardPageState();
@@ -142,6 +146,15 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
               const SizedBox(height: 14),
               _SectionLabel(title: strings.text('membershipManagement')),
               const SizedBox(height: 10),
+              _AdminActionCard(
+                icon: Icons.calendar_month_outlined,
+                title: strings.text('classSchedule'),
+                detail: strings.text('manageClassSchedule'),
+                onTap: () => Navigator.of(context).push(MaterialPageRoute<void>(
+                    builder: (_) =>
+                        ClassSchedulePage(bookings: widget.adminBookings))),
+              ),
+              const SizedBox(height: 14),
               _AdminActionCard(
                 icon: Icons.pending_actions_outlined,
                 title: strings.text('paymentsAwaitingApproval'),

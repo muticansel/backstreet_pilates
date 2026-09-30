@@ -69,12 +69,10 @@ class _ProfilePageState extends State<ProfilePage> {
         );
       }
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        AppSnackBars.success(
-          emailChanged
-              ? 'Profile saved. Confirm your new email address to finish changing it.'
-              : 'Profile saved.',
-        ),
+      AppNotifications.success(
+        emailChanged
+            ? 'Profile saved. Confirm your new email address to finish changing it.'
+            : 'Profile saved.',
       );
       Navigator.pop(context, true);
     } on AuthException catch (error) {
@@ -90,11 +88,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   void _showError(String message) {
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      behavior: SnackBarBehavior.floating,
-      backgroundColor: AppTheme.terracotta,
-      content: Text(message, style: const TextStyle(color: Colors.white)),
-    ));
+    AppNotifications.error(message);
   }
 
   @override

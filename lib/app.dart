@@ -5,9 +5,11 @@ import 'features/account/data/account_role_resolver.dart';
 import 'features/account/pages/account_home_page.dart';
 import 'features/auth/data/auth_gateway.dart';
 import 'features/auth/pages/login_page.dart';
+import 'features/bookings/data/booking_gateway.dart';
 import 'features/purchases/data/purchase_gateway.dart';
 import 'l10n/app_localizations.dart';
 import 'theme/app_theme.dart';
+import 'theme/app_snack_bars.dart';
 import 'theme/pilates_loading_indicator.dart';
 
 class PilatesApp extends StatefulWidget {
@@ -17,12 +19,16 @@ class PilatesApp extends StatefulWidget {
     this.roles = const MemberAccountRoleResolver(),
     this.purchases = const UnconfiguredPurchaseGateway(),
     this.adminPurchases = const UnconfiguredAdminPurchaseGateway(),
+    this.bookings = const UnconfiguredBookingGateway(),
+    this.adminBookings = const UnconfiguredAdminBookingGateway(),
   });
 
   final AuthGateway auth;
   final AccountRoleResolver roles;
   final PurchaseGateway purchases;
   final AdminPurchaseGateway adminPurchases;
+  final BookingGateway bookings;
+  final AdminBookingGateway adminBookings;
 
   @override
   State<PilatesApp> createState() => _PilatesAppState();
@@ -45,6 +51,7 @@ class _PilatesAppState extends State<PilatesApp> {
       child: AnimatedBuilder(
         animation: _language,
         builder: (context, _) => MaterialApp(
+          navigatorKey: AppNotifications.navigatorKey,
           title: 'Backstreet Pilates',
           debugShowCheckedModeBanner: false,
           theme: AppTheme.light,
@@ -61,6 +68,8 @@ class _PilatesAppState extends State<PilatesApp> {
             roles: widget.roles,
             purchases: widget.purchases,
             adminPurchases: widget.adminPurchases,
+            bookings: widget.bookings,
+            adminBookings: widget.adminBookings,
           ),
         ),
       ),
@@ -75,6 +84,8 @@ class _AppLaunchGate extends StatelessWidget {
     required this.roles,
     required this.purchases,
     required this.adminPurchases,
+    required this.bookings,
+    required this.adminBookings,
   });
 
   final Future<bool> hasActiveSession;
@@ -82,6 +93,8 @@ class _AppLaunchGate extends StatelessWidget {
   final AccountRoleResolver roles;
   final PurchaseGateway purchases;
   final AdminPurchaseGateway adminPurchases;
+  final BookingGateway bookings;
+  final AdminBookingGateway adminBookings;
 
   @override
   Widget build(BuildContext context) => FutureBuilder<bool>(
@@ -98,6 +111,8 @@ class _AppLaunchGate extends StatelessWidget {
               roles: roles,
               purchases: purchases,
               adminPurchases: adminPurchases,
+              bookings: bookings,
+              adminBookings: adminBookings,
             );
           }
           return LoginPage(
@@ -105,6 +120,8 @@ class _AppLaunchGate extends StatelessWidget {
             roles: roles,
             purchases: purchases,
             adminPurchases: adminPurchases,
+            bookings: bookings,
+            adminBookings: adminBookings,
           );
         },
       );

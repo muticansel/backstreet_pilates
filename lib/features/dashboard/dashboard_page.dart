@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../account/data/account_role_resolver.dart';
 import '../auth/data/auth_gateway.dart';
 import '../auth/pages/login_page.dart';
+import '../bookings/data/booking_gateway.dart';
+import '../bookings/pages/upcoming_classes_page.dart';
 import '../purchases/data/purchase_gateway.dart';
 import '../purchases/pages/approved_packages_page.dart';
 import '../profile/pages/profile_page.dart';
@@ -17,12 +19,14 @@ class DashboardPage extends StatefulWidget {
     required this.auth,
     required this.roles,
     required this.purchases,
+    required this.bookings,
     this.dashboard,
   });
 
   final AuthGateway auth;
   final AccountRoleResolver roles;
   final PurchaseGateway purchases;
+  final BookingGateway bookings;
   final DashboardData? dashboard;
 
   @override
@@ -48,9 +52,7 @@ class _DashboardPageState extends State<DashboardPage> {
       );
     } on AuthFailure catch (error) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(error.message)),
-      );
+      AppNotifications.error(error.message);
     } finally {
       if (mounted) setState(() => _signingOut = false);
     }
@@ -84,29 +86,30 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   NavigationBar _navigationBar() {
+    final strings = AppLocalizations.of(context);
     return NavigationBar(
       selectedIndex: _selectedIndex,
       onDestinationSelected: (index) => setState(() => _selectedIndex = index),
-      destinations: const [
+      destinations: [
         NavigationDestination(
-          icon: Icon(Icons.home_outlined),
-          selectedIcon: Icon(Icons.home),
-          label: 'Home',
+          icon: const Icon(Icons.home_outlined),
+          selectedIcon: const Icon(Icons.home),
+          label: strings.text('home'),
         ),
         NavigationDestination(
-          icon: Icon(Icons.style_outlined),
-          selectedIcon: Icon(Icons.style),
-          label: 'Packages',
+          icon: const Icon(Icons.style_outlined),
+          selectedIcon: const Icon(Icons.style),
+          label: strings.text('packages'),
         ),
         NavigationDestination(
-          icon: Icon(Icons.history_outlined),
-          selectedIcon: Icon(Icons.history),
-          label: 'Usage',
+          icon: const Icon(Icons.calendar_month_outlined),
+          selectedIcon: const Icon(Icons.calendar_month),
+          label: strings.text('classes'),
         ),
         NavigationDestination(
-          icon: Icon(Icons.verified_outlined),
-          selectedIcon: Icon(Icons.verified),
-          label: 'My packages',
+          icon: const Icon(Icons.verified_outlined),
+          selectedIcon: const Icon(Icons.verified),
+          label: strings.text('myPackages'),
         ),
       ],
     );
@@ -127,7 +130,9 @@ class _DashboardPageState extends State<DashboardPage> {
       );
     }
     if (_selectedIndex == 2) {
-      return _placeholderScaffold(const _UsagePlaceholder());
+      return _placeholderScaffold(
+        UpcomingClassesPage(bookings: widget.bookings),
+      );
     }
     if (_selectedIndex == 3) {
       return _placeholderScaffold(
@@ -498,16 +503,21 @@ class _PackagesPlaceholderState extends State<_PackagesPlaceholder> {
                     for (final offer in snapshot.data!) ...[
                       _PackageOptionCard(
                         title: offer.title,
-                        detail:
-                            '${offer.branchName} · ${offer.totalCredits} classes · ${offer.durationWeeks} weeks · ₺${offer.priceMinor ~/ 100}',
+                        detail: AppLocalizations.of(context)
+                            .text('packageDetails')
+                            .replaceAll('{branch}', offer.branchName)
+                            .replaceAll('{classes}', '${offer.totalCredits}')
+                            .replaceAll('{weeks}', '${offer.durationWeeks}')
+                            .replaceAll(
+                                '{price}', '₺${offer.priceMinor ~/ 100}'),
                         icon: Icons.spa_outlined,
                         onTap: () => _showRequest(context, offer),
                       ),
                       const SizedBox(height: 14),
                     ],
                   const SizedBox(height: 24),
-                  const Text(
-                    'Package details, branch-specific prices and purchasing will be connected in a later step.',
+                  Text(
+                    AppLocalizations.of(context).text('cashPaymentOnly'),
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 12, color: AppTheme.sage),
                   ),
@@ -517,7 +527,6 @@ class _PackagesPlaceholderState extends State<_PackagesPlaceholder> {
   }
 
   Future<void> _showRequest(BuildContext context, PackageOffer offer) async {
-    var date = DateTime.now();
     var cash = true;
     await showDialog<void>(
       context: context,
@@ -528,18 +537,15 @@ class _PackagesPlaceholderState extends State<_PackagesPlaceholder> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(offer.branchName),
-              TextButton(
-                onPressed: () async {
-                  final chosen = await showDatePicker(
-                    context: context,
-                    firstDate: DateTime.now(),
-                    lastDate: DateTime.now().add(const Duration(days: 365)),
-                    initialDate: date,
-                  );
-                  if (chosen != null) setDialog(() => date = chosen);
-                },
-                child: Text(
-                    'Earliest start: ${date.day}.${date.month}.${date.year}'),
+              Text(
+                AppLocalizations.of(context)
+                    .text('fixedPackageStarts')
+                    .replaceAll(
+                      '{date}',
+                      '${offer.startsOn.day.toString().padLeft(2, '0')}.'
+                          '${offer.startsOn.month.toString().padLeft(2, '0')}.'
+                          '${offer.startsOn.year}',
+                    ),
               ),
               RadioListTile<bool>(
                   value: true,
@@ -560,37 +566,21 @@ class _PackagesPlaceholderState extends State<_PackagesPlaceholder> {
             FilledButton(
               onPressed: () async {
                 if (!cash) {
-                  ScaffoldMessenger.of(this.context).showSnackBar(SnackBar(
-                      content: Text(AppLocalizations.of(this.context)
-                          .text('cardPaymentsSoon'))));
+                  AppNotifications.error(AppLocalizations.of(this.context)
+                      .text('cardPaymentsSoon'));
                   return;
                 }
                 try {
                   await widget.purchases.requestCashPurchase(
-                      offerId: offer.id, requestedStartDate: date);
+                      offerId: offer.id, requestedStartDate: offer.startsOn);
                   if (context.mounted) Navigator.pop(context);
                   if (mounted)
-                    ScaffoldMessenger.of(this.context).showSnackBar(
-                      AppSnackBars.success(
-                        AppLocalizations.of(this.context)
-                            .text('cashRequestSent'),
-                      ),
-                    );
+                    AppNotifications.success(AppLocalizations.of(this.context)
+                        .text('cashRequestSent'));
                 } on PurchaseFailure catch (error) {
                   if (context.mounted) Navigator.of(context).pop();
                   if (mounted) {
-                    ScaffoldMessenger.of(this.context).showSnackBar(
-                      SnackBar(
-                        behavior: SnackBarBehavior.floating,
-                        backgroundColor: AppTheme.terracotta,
-                        showCloseIcon: true,
-                        closeIconColor: Colors.white,
-                        content: Text(
-                          error.message,
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                      ),
-                    );
+                    AppNotifications.error(error.message);
                   }
                 }
               },
@@ -648,45 +638,6 @@ class _PackageOptionCard extends StatelessWidget {
               const Icon(Icons.arrow_forward, color: AppTheme.sage),
             ],
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class _UsagePlaceholder extends StatelessWidget {
-  const _UsagePlaceholder();
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              height: 82,
-              width: 82,
-              decoration: const BoxDecoration(
-                color: Color(0xFFE3E9DD),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(Icons.history_outlined,
-                  color: AppTheme.sage, size: 38),
-            ),
-            const SizedBox(height: 24),
-            Text(
-              'Your practice history',
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.headlineLarge,
-            ),
-            const SizedBox(height: 12),
-            const Text(
-              'Completed classes, remaining rights and cancelled sessions will live here.',
-              textAlign: TextAlign.center,
-            ),
-          ],
         ),
       ),
     );

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../theme/app_snack_bars.dart';
-import '../../../theme/app_theme.dart';
 import '../../../l10n/app_localizations.dart';
 
 class ChangePasswordPage extends StatefulWidget {
@@ -33,19 +32,11 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
         UserAttributes(password: _password.text),
       );
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        AppSnackBars.success(
-            AppLocalizations.of(context).text('passwordChanged')),
-      );
+      AppNotifications.success(
+          AppLocalizations.of(context).text('passwordChanged'));
       Navigator.pop(context);
     } on AuthException catch (error) {
-      if (mounted)
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          behavior: SnackBarBehavior.floating,
-          backgroundColor: AppTheme.terracotta,
-          content:
-              Text(error.message, style: const TextStyle(color: Colors.white)),
-        ));
+      if (mounted) AppNotifications.error(error.message);
     } finally {
       if (mounted) setState(() => _saving = false);
     }

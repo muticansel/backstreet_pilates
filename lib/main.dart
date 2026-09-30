@@ -5,6 +5,7 @@ import 'app.dart';
 import 'config/supabase_config.dart';
 import 'features/account/data/supabase_account_role_resolver.dart';
 import 'features/auth/data/supabase_auth_gateway.dart';
+import 'features/bookings/data/supabase_booking_gateway.dart';
 import 'features/purchases/data/supabase_purchase_gateway.dart';
 
 Future<void> main() async {
@@ -27,5 +28,7 @@ Future<void> main() async {
     roles: SupabaseAccountRoleResolver(Supabase.instance.client),
     purchases: SupabasePurchaseGateway(Supabase.instance.client),
     adminPurchases: SupabasePurchaseGateway(Supabase.instance.client),
+    bookings: SupabaseBookingGateway(Supabase.instance.client),
+    adminBookings: SupabaseBookingGateway(Supabase.instance.client),
   ));
 }

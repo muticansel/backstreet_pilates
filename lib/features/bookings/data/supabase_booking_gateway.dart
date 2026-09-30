@@ -1,0 +1,99 @@
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+import 'booking_gateway.dart';
+
+class SupabaseBookingGateway implements BookingGateway, AdminBookingGateway {
+  SupabaseBookingGateway(this._client);
+  final SupabaseClient _client;
+
+  @override
+  Future<List<ScheduledClass>> loadUpcomingClasses() async {
+    final rows = await _client
+        .from('bookings')
+        .select(
+            'id, class_sessions!inner(starts_at, ends_at, class_series!inner(title, branches!inner(name)))')
+        .eq('status', 'booked')
+        .gt('class_sessions.starts_at',
+            DateTime.now().toUtc().toIso8601String())
+        .order('starts_at', referencedTable: 'class_sessions');
+    return (rows as List<dynamic>).map((row) {
+      final session = row['class_sessions'] as Map<String, dynamic>;
+      final series = session['class_series'] as Map<String, dynamic>;
+      final branch = series['branches'] as Map<String, dynamic>;
+      return ScheduledClass(
+        id: row['id'] as String,
+        title: series['title'] as String,
+        branchName: branch['name'] as String,
+        startsAt: DateTime.parse(session['starts_at'] as String).toLocal(),
+        endsAt: DateTime.parse(session['ends_at'] as String).toLocal(),
+      );
+    }).toList();
+  }
+
+  @override
+  Future<List<StudioBranch>> loadBranches() async {
+    final rows =
+        await _client.from('branches').select('id, name').eq('is_active', true);
+    return (rows as List<dynamic>).map((row) {
+      return StudioBranch(
+        id: row['id'] as String,
+        name: row['name'] as String,
+      );
+    }).toList();
+  }
+
+  @override
+  Future<List<AdminFixedOffer>> loadFixedOffers() async {
+    final rows = await _client
+        .from('branch_offers')
+        .select(
+            'id, price_minor, membership_plans!inner(name), class_series!inner(capacity, branches!inner(name))')
+        .eq('is_active', true)
+        .order('created_at');
+    return (rows as List<dynamic>).map((row) {
+      final plan = row['membership_plans'] as Map<String, dynamic>;
+      final series = row['class_series'] as Map<String, dynamic>;
+      final branch = series['branches'] as Map<String, dynamic>;
+      return AdminFixedOffer(
+        id: row['id'] as String,
+        title: plan['name'] as String,
+        branchName: branch['name'] as String,
+        capacity: series['capacity'] as int,
+        priceMinor: row['price_minor'] as int,
+      );
+    }).toList();
+  }
+
+  @override
+  Future<String> createFixedOffer({
+    required String name,
+    required String branchId,
+    required int priceMinor,
+    required int capacity,
+    required int totalClasses,
+    required int sessionsPerWeek,
+    required DateTime startsOn,
+    required List<int> weekdays,
+    required List<TimeOfDayValue> startTimes,
+  }) async =>
+      (await _client.rpc('admin_create_fixed_offer', params: {
+        'target_name': name,
+        'target_branch_id': branchId,
+        'target_price_minor': priceMinor,
+        'target_capacity': capacity,
+        'target_total_credits': totalClasses,
+        'target_sessions_per_week': sessionsPerWeek,
+        'target_starts_on':
+            '${startsOn.year.toString().padLeft(4, '0')}-${startsOn.month.toString().padLeft(2, '0')}-${startsOn.day.toString().padLeft(2, '0')}',
+        'target_weekdays': weekdays,
+        'target_start_times':
+            startTimes.map((time) => time.databaseValue).toList(),
+      })) as String;
+
+  @override
+  Future<void> deleteFixedOffer({required String offerId}) async {
+    await _client.rpc('admin_delete_fixed_offer', params: {
+      'target_offer_id': offerId,
+    });
+  }
+}

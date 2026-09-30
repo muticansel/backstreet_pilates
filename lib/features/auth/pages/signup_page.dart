@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../account/data/account_role_resolver.dart';
 import '../../account/pages/account_home_page.dart';
+import '../../bookings/data/booking_gateway.dart';
 import '../../purchases/data/purchase_gateway.dart';
 import '../../../l10n/app_localizations.dart';
 import '../data/auth_gateway.dart';
@@ -15,12 +16,16 @@ class SignupPage extends StatefulWidget {
       required this.auth,
       required this.roles,
       this.purchases = const UnconfiguredPurchaseGateway(),
-      this.adminPurchases = const UnconfiguredAdminPurchaseGateway()});
+      this.adminPurchases = const UnconfiguredAdminPurchaseGateway(),
+      this.bookings = const UnconfiguredBookingGateway(),
+      this.adminBookings = const UnconfiguredAdminBookingGateway()});
 
   final AuthGateway auth;
   final AccountRoleResolver roles;
   final PurchaseGateway purchases;
   final AdminPurchaseGateway adminPurchases;
+  final BookingGateway bookings;
+  final AdminBookingGateway adminBookings;
 
   @override
   State<SignupPage> createState() => _SignupPageState();
@@ -65,7 +70,9 @@ class _SignupPageState extends State<SignupPage> {
                 auth: widget.auth,
                 roles: widget.roles,
                 purchases: widget.purchases,
-                adminPurchases: widget.adminPurchases),
+                adminPurchases: widget.adminPurchases,
+                bookings: widget.bookings,
+                adminBookings: widget.adminBookings),
           ),
           (_) => false,
         );

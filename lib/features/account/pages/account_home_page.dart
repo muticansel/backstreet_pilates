@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../admin/pages/admin_dashboard_page.dart';
 import '../../auth/data/auth_gateway.dart';
+import '../../bookings/data/booking_gateway.dart';
 import '../../dashboard/dashboard_page.dart';
 import '../../purchases/data/purchase_gateway.dart';
 import '../data/account_role_resolver.dart';
@@ -14,12 +15,16 @@ class AccountHomePage extends StatefulWidget {
     required this.roles,
     required this.purchases,
     required this.adminPurchases,
+    required this.bookings,
+    required this.adminBookings,
   });
 
   final AuthGateway auth;
   final AccountRoleResolver roles;
   final PurchaseGateway purchases;
   final AdminPurchaseGateway adminPurchases;
+  final BookingGateway bookings;
+  final AdminBookingGateway adminBookings;
 
   @override
   State<AccountHomePage> createState() => _AccountHomePageState();
@@ -44,12 +49,14 @@ class _AccountHomePageState extends State<AccountHomePage> {
             roles: widget.roles,
             purchases: widget.purchases,
             adminPurchases: widget.adminPurchases,
+            adminBookings: widget.adminBookings,
           );
         }
         return DashboardPage(
             auth: widget.auth,
             roles: widget.roles,
-            purchases: widget.purchases);
+            purchases: widget.purchases,
+            bookings: widget.bookings);
       },
     );
   }

@@ -51,6 +51,7 @@ void main() {
   testWidgets('language menu changes the login screen to Turkish',
       (tester) async {
     await tester.pumpWidget(PilatesApp(auth: FakeAuthGateway()));
+    await tester.pumpAndSettle();
     await tester.tap(find.byIcon(Icons.language_outlined));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Türkçe'));
@@ -63,6 +64,7 @@ void main() {
   testWidgets('login rejects empty fields and valid input opens the dashboard',
       (tester) async {
     await tester.pumpWidget(PilatesApp(auth: FakeAuthGateway()));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Log in'));
     await tester.pumpAndSettle();
     expect(find.text('Enter your email address.'), findsOneWidget);
@@ -86,12 +88,12 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('YOUR CURRENT PACKAGE'), findsOneWidget);
-    expect(find.text('Welcome back.'), findsNothing);
   });
 
   testWidgets('signup checks confirmation and returns to login',
       (tester) async {
     await tester.pumpWidget(PilatesApp(auth: FakeAuthGateway()));
+    await tester.pumpAndSettle();
     await tester.ensureVisible(find.text('Create an account'));
     await tester.tap(find.text('Create an account'));
     await tester.pumpAndSettle();
@@ -125,6 +127,7 @@ void main() {
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
     await tester.pumpWidget(PilatesApp(auth: FakeAuthGateway()));
+    await tester.pumpAndSettle();
     await tester.ensureVisible(find.text('Create an account'));
     await tester.tap(find.text('Create an account'));
     await tester.pumpAndSettle();
@@ -136,6 +139,7 @@ void main() {
     final auth = FakeAuthGateway()
       ..signInFailure = const AuthFailure('Check your details and try again.');
     await tester.pumpWidget(PilatesApp(auth: auth));
+    await tester.pumpAndSettle();
     await tester.enterText(
         find.byType(TextFormField).at(0), 'hello@example.com');
     await tester.enterText(find.byType(TextFormField).at(1), 'practice123');
@@ -147,6 +151,7 @@ void main() {
 
   testWidgets('member navigation opens all three flows', (tester) async {
     await tester.pumpWidget(PilatesApp(auth: FakeAuthGateway()));
+    await tester.pumpAndSettle();
     await tester.enterText(
         find.byType(TextFormField).at(0), 'hello@example.com');
     await tester.enterText(find.byType(TextFormField).at(1), 'practice123');
@@ -157,9 +162,9 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Find a rhythm that fits your week.'), findsOneWidget);
 
-    await tester.tap(find.text('Usage'));
+    await tester.tap(find.text('Classes'));
     await tester.pumpAndSettle();
-    expect(find.text('Your practice history'), findsOneWidget);
+    expect(find.text('You have no upcoming classes yet.'), findsOneWidget);
 
     await tester.tap(find.text('My packages'));
     await tester.pumpAndSettle();
@@ -176,6 +181,7 @@ void main() {
       auth: FakeAuthGateway(),
       roles: const FakeRoleResolver(AccountRole.admin),
     ));
+    await tester.pumpAndSettle();
     await tester.enterText(
         find.byType(TextFormField).at(0), 'admin@example.com');
     await tester.enterText(find.byType(TextFormField).at(1), 'practice123');

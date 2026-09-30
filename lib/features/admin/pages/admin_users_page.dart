@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../theme/app_snack_bars.dart';
 
 class AdminUsersPage extends StatefulWidget {
   const AdminUsersPage({super.key});
@@ -21,16 +22,14 @@ class _AdminUsersPageState extends State<AdminUsersPage> {
     } catch (_) {
       if (!mounted) return;
       final strings = AppLocalizations.of(context);
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(strings.text('userActionFailed'))));
+      AppNotifications.error(strings.text('userActionFailed'));
       return;
     }
     if (!mounted) return;
     final strings = AppLocalizations.of(context);
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(action == 'send_password_reset'
-            ? strings.text('passwordResetSent')
-            : strings.text('userStatusUpdated'))));
+    AppNotifications.success(action == 'send_password_reset'
+        ? strings.text('passwordResetSent')
+        : strings.text('userStatusUpdated'));
     setState(() => _users = _load());
   }
 

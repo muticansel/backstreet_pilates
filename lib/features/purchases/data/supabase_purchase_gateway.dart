@@ -10,11 +10,15 @@ class SupabasePurchaseGateway implements PurchaseGateway, AdminPurchaseGateway {
   @override
   Future<List<PackageOffer>> loadActiveOffers() async {
     try {
-      final rows = await _client.from('branch_offers').select(
-          'id, price_minor, branches!inner(name), membership_plans!inner(name, total_credits, duration_weeks)');
+      final rows = await _client
+          .from('branch_offers')
+          .select(
+              'id, price_minor, branches!inner(name), membership_plans!inner(name, total_credits, duration_weeks), class_series!inner(starts_on)')
+          .eq('is_active', true);
       return rows.map((row) {
         final branch = row['branches'] as Map<String, dynamic>;
         final plan = row['membership_plans'] as Map<String, dynamic>;
+        final series = row['class_series'] as Map<String, dynamic>;
         return PackageOffer(
           id: row['id'] as String,
           title: plan['name'] as String,
@@ -22,6 +26,7 @@ class SupabasePurchaseGateway implements PurchaseGateway, AdminPurchaseGateway {
           totalCredits: plan['total_credits'] as int,
           durationWeeks: plan['duration_weeks'] as int,
           priceMinor: row['price_minor'] as int,
+          startsOn: DateTime.parse(series['starts_on'] as String),
         );
       }).toList();
     } catch (_) {

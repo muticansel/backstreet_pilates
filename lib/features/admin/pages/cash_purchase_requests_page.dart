@@ -60,18 +60,15 @@ class _CashPurchaseRequestsPageState extends State<CashPurchaseRequestsPage> {
     try {
       await widget.purchases.confirmCashPurchase(request.id);
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        AppSnackBars.success(
-          strings
-              .text('membershipCreated')
-              .replaceAll('{name}', request.memberName),
-        ),
+      AppNotifications.success(
+        strings
+            .text('membershipCreated')
+            .replaceAll('{name}', request.memberName),
       );
       await _reload();
     } on PurchaseFailure catch (error) {
       if (mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(error.message)));
+        AppNotifications.error(error.message);
       }
     } finally {
       if (mounted) setState(() => _confirmingId = null);

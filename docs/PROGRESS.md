@@ -27,12 +27,64 @@
 
 ## Next steps
 
-1. Review the member approved-packages page and its Active / Old status wording.
+1. Review the member classes page and its fixed-package, read-only schedule.
 2. Review the admin dashboard and promote one development user to admin only after approval.
 3. Complete Apple Developer/APNs and Firebase configuration, then implement the
    deferred push-notification plan in `docs/NOTIFICATIONS.md`.
 4. Review the video-library database foundation before applying its migration.
 5. Design the member video-library page after the data model is approved.
+
+## Planned product improvements — 2026-10-01
+
+The following roadmap is confirmed for subsequent iterations: class
+reservations, member progress, post-class feedback, package-ending experience,
+admin operations dashboard, stronger brand presentation, and complete English/
+Turkish localization. Work begins with reservations; each page remains subject
+to user review before it is marked approved.
+
+### Fixed-series capacity rule
+
+- Oran class series have a maximum capacity of 3 members.
+- İncek class series have a maximum capacity of 6 members.
+- The upcoming sales-linked reservation migration must enforce these limits on
+  the server, rather than trusting an admin-entered capacity in Flutter.
+
+## Member classes and reservation foundation — 2026-10-01
+
+- Added a **My classes / Derslerim** member tab that lists upcoming scheduled
+  reservations using a dedicated gateway and safe empty/error states.
+- Prepared, but did not apply, `20261001000100_class_booking_foundation.sql`.
+  It adds `class_sessions` and `bookings` with authenticated read-only access;
+  members can read only their own bookings.
+- Client-side booking, cancellation and date changes are intentionally absent
+  until the fixed-package cancellation rules are reviewed. Admin scheduling and
+  booking are now guarded by atomic server RPCs. See
+  `docs/reviews/09-member-classes.md`.
+- Rewrote the reservation foundation to use sales-linked fixed class series.
+  Admins link an offer to one series and add its dated sessions; they no longer
+  select members manually. A cash request holds every future session seat, and
+  payment confirmation automatically creates every booking. The server rejects
+  incomplete schedules and any series that is full at even one session.
+- The previous manual class-session migration had already been applied to the
+  development project. `20261001000200_remove_manual_booking_draft.sql` now
+  safely clears only an empty old draft, then `20261001000100...` can be run
+  manually with the new fixed-series schema. See `docs/FIXED_SERIES_UPGRADE.md`.
+- Verification: `dart format lib test` completed and all 9 widget tests pass.
+  `flutter analyze` reports only the four existing `RadioListTile` deprecation
+  infos in the package chooser; the new reservation flow has no findings.
+- Reworked the un-applied reservation migration and the admin schedule page to
+  match the confirmed package-sales model. Admin now creates one sellable
+  package with branch, price, capacity, total classes, weekly count, first
+  class date and weekday/time slots; the server generates every dated session.
+  The active offer appears in the member Packages tab without a separate admin
+  offer/series-linking step.
+- Server capacity validation remains branch-bound (Oran ≤ 3, İncek ≤ 6).
+  A cash request holds all sessions; confirmation creates all bookings for the
+  user automatically, while the member schedule reads only future bookings.
+  Package removal is a safe deactivation that preserves historic records.
+- The old manual booking draft and its development data were explicitly
+  deleted from the cloud project with the user's confirmation. The current
+  migration still needs to be applied before the new admin screen is used.
 
 ## Git setup
 
