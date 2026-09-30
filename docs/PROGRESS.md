@@ -42,6 +42,35 @@ admin operations dashboard, stronger brand presentation, and complete English/
 Turkish localization. Work begins with reservations; each page remains subject
 to user review before it is marked approved.
 
+## Member progress preview — 2026-10-01
+
+- Expanded the member dashboard preview with an English/Turkish localized
+  progress card: a six-month attendance bar chart, current and best weekly
+  consistency series, and small class milestones.
+- The progress information remains typed preview data in `DashboardData`; it
+  does not read or infer attendance from bookings yet. This keeps the visual
+  review honest until attendance/no-show records and their member-facing rules
+  are implemented.
+- Chart bars and milestones include semantic labels for assistive technology.
+- Verification: `dart format lib test` completed; all 9 widget tests pass.
+  `flutter analyze` has only the existing four `RadioListTile` deprecation
+  infos in the package chooser.
+- Review the updated dashboard page in `docs/reviews/04-member-dashboard.md`.
+
+### Progress data correction
+
+- Removed the attendance-chart, consistency and milestone preview values. The
+  dashboard now reads only the signed-in member's `attended` booking dates and
+  derives the last six months, current/best consecutive weeks and milestones
+  from those records.
+- With no completed bookings, the dashboard displays a localized empty state;
+  it does not show invented activity. Loading errors have their own message.
+- Added `20261001000400_member_attendance_progress_read.sql`. Apply it after
+  the fixed-series booking migration so members can read the dated class session
+  behind their own booking; it does not widen access to any other member's data.
+- Verification: all 9 widget tests pass. `flutter analyze` has only the four
+  pre-existing `RadioListTile` deprecation infos in the package chooser.
+
 ### Fixed-series capacity rule
 
 - Oran class series have a maximum capacity of 3 members.

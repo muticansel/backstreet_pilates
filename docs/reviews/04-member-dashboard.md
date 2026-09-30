@@ -9,15 +9,21 @@ Source: `lib/features/dashboard/dashboard_page.dart`.
 1. A welcome message and a sign-out control.
 2. A current-package card with branch, package, remaining classes, completion progress and expiry date.
 3. A package-exploration card that establishes the future purchase entry point.
-4. A recent-practice card for completed classes.
-5. Bottom navigation for Home, Packages and Usage.
+4. A progress card derived from the member's completed (`attended`) bookings:
+   six months of attendance, a current/best weekly consistency series, and
+   compact class milestones. It shows a clear empty state before a first
+   completed class.
+5. A recent-practice card for completed classes.
+6. Bottom navigation for Home, Packages and Usage.
 
 ## Current data state
 
 The dashboard deliberately uses `DashboardData.preview`. It shows example values
-for visual review only: an 8-class Oran package with four remaining classes and
-two previous classes. It neither reads nor writes purchase, membership, class or
-booking data. Those tables have not been implemented yet.
+for visual review only: an 8-class Oran package with four remaining classes,
+two previous classes. Package and recent-practice values remain preview data.
+The progress card is different: it reads only the signed-in member's completed
+booking dates through `BookingGateway`; it never substitutes example attendance
+when there are no completed bookings.
 
 The preview is kept in a typed model, rather than scattered hard-coded widget
 text, so the later membership repository can provide the same screen structure
@@ -34,6 +40,13 @@ the initial selected tab and contains the dashboard overview.
 
 - The member can see remaining use rights, current package and recent practice at a glance.
 - The package card makes the branch and expiry date easy to identify.
+- The progress card rewards regular attendance without making a missed class
+  feel punitive: it shows a six-month view, current and best consistency, and
+  attainable milestones.
+- Each chart bar and milestone has an accessibility label.
+- A missing progress record is not an error: the dashboard says that progress
+  will appear after the first completed class. A database/load error is shown
+  separately.
 - The screen scrolls on small devices and retains the app's cream/sage style.
 - Sign out returns to login.
 - The bottom navigation moves between Home, Packages and Usage without recreating the app session.

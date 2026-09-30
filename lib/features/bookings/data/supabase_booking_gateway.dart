@@ -31,6 +31,19 @@ class SupabaseBookingGateway implements BookingGateway, AdminBookingGateway {
   }
 
   @override
+  Future<List<DateTime>> loadCompletedClassDates() async {
+    final rows = await _client
+        .from('bookings')
+        .select('class_sessions!inner(starts_at)')
+        .eq('status', 'attended')
+        .order('starts_at', referencedTable: 'class_sessions');
+    return (rows as List<dynamic>).map((row) {
+      final session = row['class_sessions'] as Map<String, dynamic>;
+      return DateTime.parse(session['starts_at'] as String).toLocal();
+    }).toList();
+  }
+
+  @override
   Future<List<StudioBranch>> loadBranches() async {
     final rows =
         await _client.from('branches').select('id, name').eq('is_active', true);

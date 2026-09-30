@@ -14,6 +14,7 @@ class ScheduledClass {
 
 abstract interface class BookingGateway {
   Future<List<ScheduledClass>> loadUpcomingClasses();
+  Future<List<DateTime>> loadCompletedClassDates();
 }
 
 class StudioBranch {
@@ -70,6 +71,9 @@ class UnconfiguredBookingGateway implements BookingGateway {
   const UnconfiguredBookingGateway();
   @override
   Future<List<ScheduledClass>> loadUpcomingClasses() async => const [];
+
+  @override
+  Future<List<DateTime>> loadCompletedClassDates() async => const [];
 }
 
 class UnconfiguredAdminBookingGateway implements AdminBookingGateway {

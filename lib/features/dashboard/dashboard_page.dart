@@ -36,8 +36,15 @@ class DashboardPage extends StatefulWidget {
 class _DashboardPageState extends State<DashboardPage> {
   bool _signingOut = false;
   int _selectedIndex = 0;
+  late final Future<List<DateTime>> _completedClassDates;
 
   DashboardData get _dashboard => widget.dashboard ?? DashboardData.preview;
+
+  @override
+  void initState() {
+    super.initState();
+    _completedClassDates = widget.bookings.loadCompletedClassDates();
+  }
 
   Future<void> _signOut() async {
     setState(() => _signingOut = true);
@@ -199,6 +206,11 @@ class _DashboardPageState extends State<DashboardPage> {
               const SizedBox(height: 10),
               _MembershipCard(membership: dashboard.membership),
               const SizedBox(height: 30),
+              const _SectionLabel(titleKey: 'yourProgress'),
+              const SizedBox(height: 10),
+              _PracticeProgressSection(
+                  completedClassDates: _completedClassDates),
+              const SizedBox(height: 30),
               const _SectionLabel(titleKey: 'nextRhythm'),
               const SizedBox(height: 10),
               _ExplorePackagesCard(onPressed: _showPurchasePreview),
@@ -222,8 +234,10 @@ class _DashboardPageState extends State<DashboardPage> {
 }
 
 class DashboardData {
-  const DashboardData(
-      {required this.membership, required this.recentActivities});
+  const DashboardData({
+    required this.membership,
+    required this.recentActivities,
+  });
 
   final MembershipSummary membership;
   final List<PracticeActivity> recentActivities;
@@ -367,6 +381,313 @@ class _MembershipCard extends StatelessWidget {
       ),
     );
   }
+}
+
+class _PracticeProgressSection extends StatelessWidget {
+  const _PracticeProgressSection({required this.completedClassDates});
+
+  final Future<List<DateTime>> completedClassDates;
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<List<DateTime>>(
+      future: completedClassDates,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState != ConnectionState.done) {
+          return const SizedBox(
+            height: 120,
+            child: Center(child: PilatesLoadingIndicator(size: 38)),
+          );
+        }
+        if (snapshot.hasError) return const _ProgressLoadError();
+        if (snapshot.data!.isEmpty) return const _NoProgressCard();
+        return _ProgressCard(progress: PracticeProgress.from(snapshot.data!));
+      },
+    );
+  }
+}
+
+class PracticeProgress {
+  PracticeProgress._({
+    required this.monthlyAttendance,
+    required this.monthKeys,
+    required this.currentWeeks,
+    required this.bestWeeks,
+    required this.completedClasses,
+  });
+
+  final List<int> monthlyAttendance;
+  final List<String> monthKeys;
+  final int currentWeeks;
+  final int bestWeeks;
+  final int completedClasses;
+
+  factory PracticeProgress.from(List<DateTime> completedClassDates) {
+    final now = DateTime.now();
+    final monthStarts = List<DateTime>.generate(
+      6,
+      (index) => DateTime(now.year, now.month - 5 + index),
+    );
+    final attendance = monthStarts
+        .map((month) => completedClassDates
+            .where(
+                (date) => date.year == month.year && date.month == month.month)
+            .length)
+        .toList();
+    final weeks = completedClassDates.map(_weekStart).toSet().toList()..sort();
+    var best = 0;
+    var running = 0;
+    DateTime? previous;
+    for (final week in weeks) {
+      running = previous != null && week.difference(previous).inDays == 7
+          ? running + 1
+          : 1;
+      best = best > running ? best : running;
+      previous = week;
+    }
+    var current = 0;
+    var cursor = _weekStart(now);
+    while (weeks.contains(cursor)) {
+      current++;
+      cursor = cursor.subtract(const Duration(days: 7));
+    }
+    return PracticeProgress._(
+      monthlyAttendance: attendance,
+      monthKeys: monthStarts.map((month) => 'month${month.month}').toList(),
+      currentWeeks: current,
+      bestWeeks: best,
+      completedClasses: completedClassDates.length,
+    );
+  }
+
+  static DateTime _weekStart(DateTime date) =>
+      DateTime(date.year, date.month, date.day)
+          .subtract(Duration(days: date.weekday - DateTime.monday));
+}
+
+class _ProgressCard extends StatelessWidget {
+  const _ProgressCard({required this.progress});
+
+  final PracticeProgress progress;
+
+  @override
+  Widget build(BuildContext context) {
+    final strings = AppLocalizations.of(context);
+    final maximum = progress.monthlyAttendance
+        .fold(1, (maximum, value) => value > maximum ? value : maximum);
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: const Color(0xFFD8DED5)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(strings.text('monthlyAttendance'),
+              style:
+                  const TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
+          const SizedBox(height: 4),
+          Text(strings.text('monthlyAttendanceSubtitle'),
+              style: Theme.of(context).textTheme.bodySmall),
+          const SizedBox(height: 18),
+          SizedBox(
+            height: 116,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                for (var index = 0;
+                    index < progress.monthlyAttendance.length;
+                    index++)
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 3),
+                      child: Semantics(
+                        label: strings
+                            .text('attendanceBarLabel')
+                            .replaceAll('{month}',
+                                strings.text(progress.monthKeys[index]))
+                            .replaceAll('{count}',
+                                '${progress.monthlyAttendance[index]}'),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Text('${progress.monthlyAttendance[index]}',
+                                style: const TextStyle(
+                                    color: AppTheme.sage,
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w700)),
+                            const SizedBox(height: 5),
+                            Container(
+                              height: 58 *
+                                  progress.monthlyAttendance[index] /
+                                  maximum,
+                              decoration: BoxDecoration(
+                                color: AppTheme.sage,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(strings.text(progress.monthKeys[index]),
+                                style: const TextStyle(fontSize: 10)),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          const Divider(height: 32),
+          Row(
+            children: [
+              const CircleAvatar(
+                backgroundColor: Color(0xFFE3E9DD),
+                foregroundColor: AppTheme.sage,
+                child: Icon(Icons.local_fire_department_outlined),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(strings.text('consistency'),
+                        style: const TextStyle(fontWeight: FontWeight.w700)),
+                    Text(
+                      strings
+                          .text('consistencyDetail')
+                          .replaceAll('{current}', '${progress.currentWeeks}')
+                          .replaceAll('{best}', '${progress.bestWeeks}'),
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          Text(strings.text('milestones'),
+              style: const TextStyle(fontWeight: FontWeight.w700)),
+          const SizedBox(height: 10),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              _MilestoneChip(
+                  titleKey: 'firstClass',
+                  reached: progress.completedClasses >= 1),
+              _MilestoneChip(
+                  titleKey: 'fourClasses',
+                  reached: progress.completedClasses >= 4),
+              _MilestoneChip(
+                  titleKey: 'eightClasses',
+                  reached: progress.completedClasses >= 8),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _MilestoneChip extends StatelessWidget {
+  const _MilestoneChip({required this.titleKey, required this.reached});
+
+  final String titleKey;
+  final bool reached;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = reached ? AppTheme.sage : const Color(0xFF89958A);
+    return Semantics(
+      label: AppLocalizations.of(context)
+          .text(reached ? 'milestoneReached' : 'milestoneAhead')
+          .replaceAll(
+              '{milestone}', AppLocalizations.of(context).text(titleKey)),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+        decoration: BoxDecoration(
+          color: reached ? const Color(0xFFE3E9DD) : Colors.white,
+          borderRadius: BorderRadius.circular(99),
+          border: Border.all(color: color),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(reached ? Icons.check_circle : Icons.flag_outlined,
+                color: color, size: 16),
+            const SizedBox(width: 5),
+            Text(AppLocalizations.of(context).text(titleKey),
+                style: TextStyle(
+                    color: color, fontSize: 12, fontWeight: FontWeight.w600)),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _NoProgressCard extends StatelessWidget {
+  const _NoProgressCard();
+
+  @override
+  Widget build(BuildContext context) => _ProgressMessageCard(
+        icon: Icons.insights_outlined,
+        titleKey: 'noProgressYet',
+        detailKey: 'noProgressYetDetail',
+      );
+}
+
+class _ProgressLoadError extends StatelessWidget {
+  const _ProgressLoadError();
+
+  @override
+  Widget build(BuildContext context) => _ProgressMessageCard(
+        icon: Icons.cloud_off_outlined,
+        titleKey: 'progressLoadError',
+        detailKey: 'progressLoadErrorDetail',
+      );
+}
+
+class _ProgressMessageCard extends StatelessWidget {
+  const _ProgressMessageCard({
+    required this.icon,
+    required this.titleKey,
+    required this.detailKey,
+  });
+
+  final IconData icon;
+  final String titleKey;
+  final String detailKey;
+
+  @override
+  Widget build(BuildContext context) => Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: const Color(0xFFD8DED5)),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, color: AppTheme.sage, size: 30),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(AppLocalizations.of(context).text(titleKey),
+                      style: const TextStyle(fontWeight: FontWeight.w700)),
+                  const SizedBox(height: 3),
+                  Text(AppLocalizations.of(context).text(detailKey)),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
 }
 
 class _ExplorePackagesCard extends StatelessWidget {

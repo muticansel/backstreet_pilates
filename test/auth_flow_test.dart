@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:backstreet_pilates/app.dart';
 import 'package:backstreet_pilates/features/account/data/account_role_resolver.dart';
 import 'package:backstreet_pilates/features/auth/data/auth_gateway.dart';
+import 'package:backstreet_pilates/features/bookings/data/booking_gateway.dart';
 
 class FakeAuthGateway implements AuthGateway {
   FakeAuthGateway({
@@ -38,6 +39,18 @@ class FakeAuthGateway implements AuthGateway {
   Future<void> signOut() async => signOutCount++;
 }
 
+class FakeBookingGateway implements BookingGateway {
+  const FakeBookingGateway(this.completedClasses);
+
+  final List<DateTime> completedClasses;
+
+  @override
+  Future<List<DateTime>> loadCompletedClassDates() async => completedClasses;
+
+  @override
+  Future<List<ScheduledClass>> loadUpcomingClasses() async => const [];
+}
+
 class FakeRoleResolver implements AccountRoleResolver {
   const FakeRoleResolver(this.role);
 
@@ -63,7 +76,13 @@ void main() {
 
   testWidgets('login rejects empty fields and valid input opens the dashboard',
       (tester) async {
-    await tester.pumpWidget(PilatesApp(auth: FakeAuthGateway()));
+    await tester.pumpWidget(PilatesApp(
+      auth: FakeAuthGateway(),
+      bookings: FakeBookingGateway([
+        DateTime.now(),
+        DateTime.now().subtract(const Duration(days: 7)),
+      ]),
+    ));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Log in'));
     await tester.pumpAndSettle();
@@ -78,6 +97,8 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('YOUR CURRENT PACKAGE'), findsOneWidget);
     expect(find.text('8 class package'), findsOneWidget);
+    expect(find.text('Monthly attendance'), findsOneWidget);
+    expect(find.text('Your consistency'), findsOneWidget);
   });
 
   testWidgets('a previous Supabase session opens the account home on launch',
