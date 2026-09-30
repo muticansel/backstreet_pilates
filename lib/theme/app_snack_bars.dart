@@ -27,20 +27,20 @@ class AppNotifications {
   static void error(String message) => _show(message, AppTheme.terracotta);
 
   static void _show(String message, Color color) {
-    _current?.remove();
+    _dismiss(_current);
     final overlay = navigatorKey.currentState?.overlay;
     if (overlay == null) return;
     late final OverlayEntry entry;
     entry = OverlayEntry(
       builder: (context) => Positioned(
-        top: MediaQuery.paddingOf(context).top + 16,
+        bottom: MediaQuery.viewInsetsOf(context).bottom + 16,
         left: 16,
         right: 16,
         child: SafeArea(
           child: Material(
             color: Colors.transparent,
             child: GestureDetector(
-              onTap: entry.remove,
+              onTap: () => _dismiss(entry),
               child: DecoratedBox(
                 decoration: BoxDecoration(
                   color: color,
@@ -63,10 +63,13 @@ class AppNotifications {
     _current = entry;
     overlay.insert(entry);
     Future<void>.delayed(const Duration(seconds: 4), () {
-      if (_current == entry) {
-        entry.remove();
-        _current = null;
-      }
+      _dismiss(entry);
     });
+  }
+
+  static void _dismiss(OverlayEntry? entry) {
+    if (entry == null || _current != entry) return;
+    entry.remove();
+    _current = null;
   }
 }
