@@ -10,6 +10,7 @@ import '../../../theme/app_theme.dart';
 import '../../../l10n/app_localizations.dart';
 import 'cash_purchase_requests_page.dart';
 import 'admin_users_page.dart';
+import 'attendance_page.dart';
 import 'class_schedule_page.dart';
 
 class AdminDashboardPage extends StatefulWidget {
@@ -153,6 +154,14 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                 onTap: () => Navigator.of(context).push(MaterialPageRoute<void>(
                     builder: (_) =>
                         ClassSchedulePage(bookings: widget.adminBookings))),
+              ),
+              const SizedBox(height: 14),
+              _AdminActionCard(
+                icon: Icons.fact_check_outlined,
+                title: strings.text('attendance'),
+                detail: strings.text('manageAttendance'),
+                onTap: () => Navigator.of(context).push(MaterialPageRoute<void>(
+                    builder: (_) => AttendancePage(bookings: widget.adminBookings))),
               ),
               const SizedBox(height: 14),
               _AdminActionCard(

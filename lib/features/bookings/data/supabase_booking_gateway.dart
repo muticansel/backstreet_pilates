@@ -122,6 +122,57 @@ class SupabaseBookingGateway implements BookingGateway, AdminBookingGateway {
   }
 
   @override
+  Future<List<AdminAttendanceRecord>> loadPastAttendance() async {
+    final rows = await _client
+        .from('bookings')
+        .select(
+            'id, user_id, status, class_sessions!inner(starts_at, class_series!inner(title, branches!inner(name)))')
+        .inFilter('status', ['booked', 'attended', 'no_show'])
+        .lt('class_sessions.starts_at', DateTime.now().toUtc().toIso8601String())
+        .order('starts_at', referencedTable: 'class_sessions');
+    final memberIds = (rows as List<dynamic>)
+        .map((row) => row['user_id'] as String)
+        .toSet()
+        .toList();
+    final profileRows = memberIds.isEmpty
+        ? <Map<String, dynamic>>[]
+        : await _client
+            .from('profiles')
+            .select('id, display_name')
+            .inFilter('id', memberIds);
+    final namesByMemberId = {
+      for (final profile in profileRows)
+        profile['id'] as String: profile['display_name'] as String,
+    };
+    return rows.map((row) {
+      final session = row['class_sessions'] as Map<String, dynamic>;
+      final series = session['class_series'] as Map<String, dynamic>;
+      final branch = series['branches'] as Map<String, dynamic>;
+      final memberId = row['user_id'] as String;
+      return AdminAttendanceRecord(
+        bookingId: row['id'] as String,
+        memberId: memberId,
+        memberName: namesByMemberId[memberId] ?? 'Member',
+        title: series['title'] as String,
+        branchName: branch['name'] as String,
+        startsAt: DateTime.parse(session['starts_at'] as String).toLocal(),
+        status: row['status'] as String,
+      );
+    }).toList()
+      ..sort((first, second) => first.startsAt.compareTo(second.startsAt));
+  }
+
+  @override
+  Future<void> recordAttendance({
+    required String bookingId,
+    required bool attended,
+  }) =>
+      _client.rpc('admin_record_booking_attendance', params: {
+        'target_booking_id': bookingId,
+        'target_status': attended ? 'attended' : 'no_show',
+      });
+
+  @override
   Future<String> createFixedOffer({
     required String name,
     required String branchId,

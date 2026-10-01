@@ -77,6 +77,16 @@ class AppLocalizations {
           'Your classes could not be loaded. Pull to try again.',
       'classChangesLater':
           'Class changes and cancellations will be available after the studio policy is confirmed.',
+      'attendance': 'Attendance',
+      'manageAttendance': 'Record attendance for completed class dates.',
+      'selectMember': 'Select a member',
+      'noPastClasses': 'There are no past classes to review.',
+      'noPastClassesForMember': 'This member has no past classes to review.',
+      'attendancePending': 'Attendance not recorded',
+      'attended': 'Attended',
+      'didNotAttend': 'Did not attend',
+      'attendanceSaved': 'Attendance saved.',
+      'attendanceSaveError': 'Attendance could not be saved. Try again.',
       'classFeedback': 'Class feedback',
       'classFeedbackSubtitle':
           'Two quick taps after a class help you and your instructor see what supports your practice.',
@@ -306,6 +316,16 @@ class AppLocalizations {
           'Derslerin yüklenemedi. Tekrar denemek için aşağı çek.',
       'classChangesLater':
           'Stüdyo kuralları netleştikten sonra ders değişikliği ve iptal işlemleri burada kullanılabilecek.',
+      'attendance': 'Yoklama',
+      'manageAttendance': 'Geçmiş dersler için katılım durumunu kaydet.',
+      'selectMember': 'Üye seç',
+      'noPastClasses': 'Kontrol edilecek geçmiş ders bulunmuyor.',
+      'noPastClassesForMember': 'Bu üyenin kontrol edilecek geçmiş dersi bulunmuyor.',
+      'attendancePending': 'Yoklama girilmedi',
+      'attended': 'Katıldı',
+      'didNotAttend': 'Katılmadı',
+      'attendanceSaved': 'Yoklama kaydedildi.',
+      'attendanceSaveError': 'Yoklama kaydedilemedi. Tekrar dene.',
       'classFeedback': 'Ders geri bildirimi',
       'classFeedbackSubtitle':
           'Ders sonrası iki hızlı dokunuş, pratiğini destekleyen şeyleri senin ve eğitmenin için görünür kılar.',

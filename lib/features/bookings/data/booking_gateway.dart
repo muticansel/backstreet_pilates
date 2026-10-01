@@ -68,6 +68,26 @@ class AdminFixedOffer {
   final int priceMinor;
 }
 
+class AdminAttendanceRecord {
+  const AdminAttendanceRecord({
+    required this.bookingId,
+    required this.memberId,
+    required this.memberName,
+    required this.title,
+    required this.branchName,
+    required this.startsAt,
+    required this.status,
+  });
+
+  final String bookingId;
+  final String memberId;
+  final String memberName;
+  final String title;
+  final String branchName;
+  final DateTime startsAt;
+  final String status;
+}
+
 class TimeOfDayValue {
   const TimeOfDayValue({required this.hour, required this.minute});
 
@@ -81,6 +101,11 @@ class TimeOfDayValue {
 abstract interface class AdminBookingGateway {
   Future<List<StudioBranch>> loadBranches();
   Future<List<AdminFixedOffer>> loadFixedOffers();
+  Future<List<AdminAttendanceRecord>> loadPastAttendance();
+  Future<void> recordAttendance({
+    required String bookingId,
+    required bool attended,
+  });
   Future<String> createFixedOffer({
     required String name,
     required String branchId,
@@ -110,6 +135,13 @@ class UnconfiguredAdminBookingGateway implements AdminBookingGateway {
   Future<List<StudioBranch>> loadBranches() async => const [];
   @override
   Future<List<AdminFixedOffer>> loadFixedOffers() async => const [];
+  @override
+  Future<List<AdminAttendanceRecord>> loadPastAttendance() async => const [];
+  @override
+  Future<void> recordAttendance({
+    required String bookingId,
+    required bool attended,
+  }) async {}
   @override
   Future<String> createFixedOffer({
     required String name,
