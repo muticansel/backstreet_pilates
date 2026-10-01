@@ -70,6 +70,9 @@ class AppLocalizations {
       'myClasses': 'My classes',
       'myClassesSubtitle': 'Your upcoming studio sessions, all in one place.',
       'noUpcomingClasses': 'You have no upcoming classes yet.',
+      'filterClassesByDate': 'Filter by date',
+      'clearDateFilter': 'Clear filter',
+      'noClassesOnSelectedDate': 'You have no classes on this date.',
       'classesLoadError':
           'Your classes could not be loaded. Pull to try again.',
       'classChangesLater':
@@ -296,6 +299,9 @@ class AppLocalizations {
       'myClasses': 'Derslerim',
       'myClassesSubtitle': 'Yaklaşan stüdyo derslerin tek bir yerde.',
       'noUpcomingClasses': 'Henüz yaklaşan bir dersin yok.',
+      'filterClassesByDate': 'Tarihe göre filtrele',
+      'clearDateFilter': 'Filtreyi temizle',
+      'noClassesOnSelectedDate': 'Bu tarihte dersin yok.',
       'classesLoadError':
           'Derslerin yüklenemedi. Tekrar denemek için aşağı çek.',
       'classChangesLater':

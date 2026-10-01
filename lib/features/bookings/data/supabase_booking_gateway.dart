@@ -16,7 +16,7 @@ class SupabaseBookingGateway implements BookingGateway, AdminBookingGateway {
         .gt('class_sessions.starts_at',
             DateTime.now().toUtc().toIso8601String())
         .order('starts_at', referencedTable: 'class_sessions');
-    return (rows as List<dynamic>).map((row) {
+    final classes = (rows as List<dynamic>).map((row) {
       final session = row['class_sessions'] as Map<String, dynamic>;
       final series = session['class_series'] as Map<String, dynamic>;
       final branch = series['branches'] as Map<String, dynamic>;
@@ -27,7 +27,9 @@ class SupabaseBookingGateway implements BookingGateway, AdminBookingGateway {
         startsAt: DateTime.parse(session['starts_at'] as String).toLocal(),
         endsAt: DateTime.parse(session['ends_at'] as String).toLocal(),
       );
-    }).toList();
+    }).toList()
+      ..sort((first, second) => first.startsAt.compareTo(second.startsAt));
+    return classes;
   }
 
   @override

@@ -17,10 +17,38 @@ class UpcomingClassesPage extends StatefulWidget {
 class _UpcomingClassesPageState extends State<UpcomingClassesPage> {
   late Future<List<ScheduledClass>> _classes =
       widget.bookings.loadUpcomingClasses();
+  DateTime? _selectedDate;
 
   Future<void> _refresh() async {
     setState(() => _classes = widget.bookings.loadUpcomingClasses());
     await _classes;
+  }
+
+  Future<void> _selectDate() async {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final selected = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate ?? today,
+      firstDate: today,
+      lastDate: DateTime(today.year + 5),
+    );
+    if (selected != null && mounted) {
+      setState(() => _selectedDate = selected);
+    }
+  }
+
+  List<ScheduledClass> _filteredClasses(List<ScheduledClass> classes) {
+    final filtered = _selectedDate == null
+        ? classes
+        : classes.where((scheduledClass) {
+            final date = scheduledClass.startsAt;
+            return date.year == _selectedDate!.year &&
+                date.month == _selectedDate!.month &&
+                date.day == _selectedDate!.day;
+          }).toList();
+    return [...filtered]
+      ..sort((first, second) => first.startsAt.compareTo(second.startsAt));
   }
 
   @override
@@ -30,15 +58,36 @@ class _UpcomingClassesPageState extends State<UpcomingClassesPage> {
       onRefresh: _refresh,
       child: FutureBuilder<List<ScheduledClass>>(
         future: _classes,
-        builder: (context, snapshot) => ListView(
-          padding: const EdgeInsets.fromLTRB(24, 28, 24, 36),
-          children: [
+        builder: (context, snapshot) {
+          final classes = snapshot.hasData
+              ? _filteredClasses(snapshot.data!)
+              : const <ScheduledClass>[];
+          return ListView(
+            padding: const EdgeInsets.fromLTRB(24, 28, 24, 36),
+            children: [
             Text(strings.text('myClasses'),
                 style: Theme.of(context).textTheme.headlineLarge),
             const SizedBox(height: 8),
             Text(strings.text('myClassesSubtitle'),
                 style: Theme.of(context).textTheme.bodyLarge),
             const SizedBox(height: 28),
+            OutlinedButton.icon(
+              onPressed: _selectDate,
+              icon: const Icon(Icons.calendar_month_outlined),
+              label: Text(_selectedDate == null
+                  ? strings.text('filterClassesByDate')
+                  : MaterialLocalizations.of(context)
+                      .formatMediumDate(_selectedDate!)),
+            ),
+            if (_selectedDate != null)
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  onPressed: () => setState(() => _selectedDate = null),
+                  child: Text(strings.text('clearDateFilter')),
+                ),
+              ),
+            const SizedBox(height: 12),
             if (snapshot.connectionState != ConnectionState.done)
               const Padding(
                 padding: EdgeInsets.all(32),
@@ -49,13 +98,15 @@ class _UpcomingClassesPageState extends State<UpcomingClassesPage> {
                 icon: Icons.cloud_off_outlined,
                 message: strings.text('classesLoadError'),
               )
-            else if (snapshot.data!.isEmpty)
+            else if (classes.isEmpty)
               _EmptyState(
                 icon: Icons.event_available_outlined,
-                message: strings.text('noUpcomingClasses'),
+                message: _selectedDate == null
+                    ? strings.text('noUpcomingClasses')
+                    : strings.text('noClassesOnSelectedDate'),
               )
             else
-              ...snapshot.data!.map(
+              ...classes.map(
                 (scheduledClass) => Padding(
                   padding: const EdgeInsets.only(bottom: 14),
                   child: _ClassCard(scheduledClass: scheduledClass),
@@ -68,7 +119,8 @@ class _UpcomingClassesPageState extends State<UpcomingClassesPage> {
               style: const TextStyle(fontSize: 12, color: AppTheme.sage),
             ),
           ],
-        ),
+          );
+        },
       ),
     );
   }
