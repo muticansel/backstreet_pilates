@@ -10,11 +10,17 @@ class SupabasePurchaseGateway implements PurchaseGateway, AdminPurchaseGateway {
   @override
   Future<List<PackageOffer>> loadActiveOffers() async {
     try {
+      final now = DateTime.now();
+      final today = DateTime(now.year, now.month, now.day);
       final rows = await _client
           .from('branch_offers')
           .select(
               'id, price_minor, branches!inner(name), membership_plans!inner(name, total_credits, duration_weeks), class_series!inner(starts_on)')
-          .eq('is_active', true);
+          .eq('is_active', true)
+          // A series remains purchasable on its first-class day, but must not
+          // be shown once that date has passed.
+          .gte('class_series.starts_on', today.toIso8601String().split('T').first)
+          .order('starts_on', referencedTable: 'class_series');
       return rows.map((row) {
         final branch = row['branches'] as Map<String, dynamic>;
         final plan = row['membership_plans'] as Map<String, dynamic>;

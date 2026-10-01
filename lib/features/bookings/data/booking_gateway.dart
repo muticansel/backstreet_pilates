@@ -12,9 +12,37 @@ class ScheduledClass {
   final DateTime endsAt;
 }
 
-abstract interface class BookingGateway {
+class FeedbackClass {
+  const FeedbackClass({
+    required this.bookingId,
+    required this.title,
+    required this.branchName,
+    required this.startsAt,
+    this.enjoyment,
+    this.difficulty,
+  });
+
+  final String bookingId;
+  final String title;
+  final String branchName;
+  final DateTime startsAt;
+  final int? enjoyment;
+  final int? difficulty;
+
+  bool get hasFeedback => enjoyment != null && difficulty != null;
+}
+
+abstract class BookingGateway {
+  const BookingGateway();
+
   Future<List<ScheduledClass>> loadUpcomingClasses();
   Future<List<DateTime>> loadCompletedClassDates();
+  Future<List<FeedbackClass>> loadFeedbackClasses() async => const [];
+  Future<void> saveClassFeedback({
+    required String bookingId,
+    required int enjoyment,
+    required int difficulty,
+  }) async {}
 }
 
 class StudioBranch {
@@ -67,7 +95,7 @@ abstract interface class AdminBookingGateway {
   Future<void> deleteFixedOffer({required String offerId});
 }
 
-class UnconfiguredBookingGateway implements BookingGateway {
+class UnconfiguredBookingGateway extends BookingGateway {
   const UnconfiguredBookingGateway();
   @override
   Future<List<ScheduledClass>> loadUpcomingClasses() async => const [];

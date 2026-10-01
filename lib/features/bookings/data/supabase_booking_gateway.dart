@@ -44,6 +44,48 @@ class SupabaseBookingGateway implements BookingGateway, AdminBookingGateway {
   }
 
   @override
+  Future<List<FeedbackClass>> loadFeedbackClasses() async {
+    final rows = await _client
+        .from('bookings')
+        .select(
+            'id, class_sessions!inner(starts_at, class_series!inner(title, branches!inner(name))), class_feedback(enjoyment, difficulty)')
+        .eq('status', 'attended')
+        .order('starts_at',
+            referencedTable: 'class_sessions', ascending: false);
+    return (rows as List<dynamic>).map((row) {
+      final session = row['class_sessions'] as Map<String, dynamic>;
+      final series = session['class_series'] as Map<String, dynamic>;
+      final branch = series['branches'] as Map<String, dynamic>;
+      final rawFeedback = row['class_feedback'];
+      final feedback = rawFeedback is Map<String, dynamic>
+          ? rawFeedback
+          : rawFeedback is List<dynamic> && rawFeedback.isNotEmpty
+              ? rawFeedback.first as Map<String, dynamic>
+              : null;
+      return FeedbackClass(
+        bookingId: row['id'] as String,
+        title: series['title'] as String,
+        branchName: branch['name'] as String,
+        startsAt: DateTime.parse(session['starts_at'] as String).toLocal(),
+        enjoyment: feedback?['enjoyment'] as int?,
+        difficulty: feedback?['difficulty'] as int?,
+      );
+    }).toList();
+  }
+
+  @override
+  Future<void> saveClassFeedback({
+    required String bookingId,
+    required int enjoyment,
+    required int difficulty,
+  }) =>
+      _client.from('class_feedback').upsert({
+        'booking_id': bookingId,
+        'enjoyment': enjoyment,
+        'difficulty': difficulty,
+      }, onConflict: 'booking_id');
+
+  @override
   Future<List<StudioBranch>> loadBranches() async {
     final rows =
         await _client.from('branches').select('id, name').eq('is_active', true);

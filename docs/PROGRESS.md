@@ -27,7 +27,7 @@
 
 ## Next steps
 
-1. Review the member classes page and its fixed-package, read-only schedule.
+1. Review the post-class feedback page and its two-touch member record.
 2. Review the admin dashboard and promote one development user to admin only after approval.
 3. Complete Apple Developer/APNs and Firebase configuration, then implement the
    deferred push-notification plan in `docs/NOTIFICATIONS.md`.
@@ -50,7 +50,25 @@ to user review before it is marked approved.
 - The progress information remains typed preview data in `DashboardData`; it
   does not read or infer attendance from bookings yet. This keeps the visual
   review honest until attendance/no-show records and their member-facing rules
-  are implemented.
+are implemented.
+
+## Post-class feedback — 2026-10-02
+
+- Added a member-facing, English/Turkish localized feedback history accessed
+  from the dashboard. For each attended class, the member records two required
+  three-choice ratings: how the class was and its challenge level.
+- The completed-class feedback view preserves saved ratings as the member's
+  personal history. No free text is collected in this first version.
+- Prepared, but did not apply,
+  `20261002000100_post_class_feedback.sql`. It allows one feedback record per
+  attended booking, restricts member writes to their own records, and allows
+  admin read access for instructor/studio follow-up. It depends on the fixed
+  booking migration.
+- Review the flow and wording in `docs/reviews/10-post-class-feedback.md`.
+- Verification: `dart format` and direct Dart analysis pass with only the four
+  pre-existing `RadioListTile` deprecation infos. `flutter test` remains
+  blocked by pre-existing Flutter SDK startup locks from other active local
+  build/run processes.
 - Chart bars and milestones include semantic labels for assistive technology.
 - Verification: `dart format lib test` completed; all 9 widget tests pass.
   `flutter analyze` has only the existing four `RadioListTile` deprecation

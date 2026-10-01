@@ -39,7 +39,7 @@ class FakeAuthGateway implements AuthGateway {
   Future<void> signOut() async => signOutCount++;
 }
 
-class FakeBookingGateway implements BookingGateway {
+class FakeBookingGateway extends BookingGateway {
   const FakeBookingGateway(this.completedClasses);
 
   final List<DateTime> completedClasses;

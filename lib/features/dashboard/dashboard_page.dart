@@ -4,6 +4,7 @@ import '../account/data/account_role_resolver.dart';
 import '../auth/data/auth_gateway.dart';
 import '../auth/pages/login_page.dart';
 import '../bookings/data/booking_gateway.dart';
+import '../bookings/pages/class_feedback_page.dart';
 import '../bookings/pages/upcoming_classes_page.dart';
 import '../purchases/data/purchase_gateway.dart';
 import '../purchases/pages/approved_packages_page.dart';
@@ -187,6 +188,16 @@ class _DashboardPageState extends State<DashboardPage> {
                       foregroundColor: Colors.white,
                       child: Icon(Icons.person, size: 18),
                     ),
+                  ),
+                  IconButton(
+                    tooltip: AppLocalizations.of(context).text('classFeedback'),
+                    onPressed: () => Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (_) =>
+                            ClassFeedbackPage(bookings: widget.bookings),
+                      ),
+                    ),
+                    icon: const Icon(Icons.rate_review_outlined),
                   ),
                   const LanguageMenuButton(),
                 ],
