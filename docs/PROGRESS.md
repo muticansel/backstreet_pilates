@@ -67,6 +67,13 @@ to user review before it is marked approved.
   filter; it decodes the RLS-protected joined sessions and filters past dates
   locally before loading member names. This preserves the same attendance rule
   while avoiding the unreliable embedded relation filter.
+- Separated attendance-save and post-save refresh failures. A completed RPC now
+  always reports its saved state; a subsequent reload failure is reported as a
+  distinct attendance-load issue instead of incorrectly claiming the save
+  failed.
+- Added pull-to-refresh to the member dashboard. It reloads completed booking
+  dates so a newly recorded attendance result appears without requiring the
+  member to sign out or restart the app.
 
 ## Member progress preview — 2026-10-01
 

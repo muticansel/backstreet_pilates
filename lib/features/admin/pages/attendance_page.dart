@@ -38,18 +38,27 @@ class _AttendancePageState extends State<AttendancePage> {
         bookingId: record.bookingId,
         attended: attended,
       );
-      if (!mounted) return;
-      AppNotifications.success(
-          AppLocalizations.of(context).text('attendanceSaved'));
-      await _refresh();
     } catch (_) {
       if (mounted) {
         AppNotifications.error(
             AppLocalizations.of(context).text('attendanceSaveError'));
       }
+      return;
     } finally {
       if (mounted) {
         setState(() => _savingBookingIds.remove(record.bookingId));
+      }
+    }
+
+    if (!mounted) return;
+    AppNotifications.success(
+        AppLocalizations.of(context).text('attendanceSaved'));
+    try {
+      await _refresh();
+    } catch (_) {
+      if (mounted) {
+        AppNotifications.error(
+            AppLocalizations.of(context).text('attendanceLoadError'));
       }
     }
   }
@@ -70,7 +79,7 @@ class _AttendancePageState extends State<AttendancePage> {
             if (snapshot.hasError) {
               return ListView(children: [
                 const SizedBox(height: 100),
-                _EmptyState(message: strings.text('attendanceSaveError')),
+                _EmptyState(message: strings.text('attendanceLoadError')),
               ]);
             }
             final records = snapshot.data!;

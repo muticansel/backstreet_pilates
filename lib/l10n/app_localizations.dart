@@ -87,6 +87,7 @@ class AppLocalizations {
       'didNotAttend': 'Did not attend',
       'attendanceSaved': 'Attendance saved.',
       'attendanceSaveError': 'Attendance could not be saved. Try again.',
+      'attendanceLoadError': 'Attendance could not be loaded. Try again.',
       'classFeedback': 'Class feedback',
       'classFeedbackSubtitle':
           'Two quick taps after a class help you and your instructor see what supports your practice.',
@@ -333,6 +334,7 @@ class AppLocalizations {
       'didNotAttend': 'Katılmadı',
       'attendanceSaved': 'Yoklama kaydedildi.',
       'attendanceSaveError': 'Yoklama kaydedilemedi. Tekrar dene.',
+      'attendanceLoadError': 'Yoklama yüklenemedi. Tekrar dene.',
       'classFeedback': 'Ders geri bildirimi',
       'classFeedbackSubtitle':
           'Ders sonrası iki hızlı dokunuş, pratiğini destekleyen şeyleri senin ve eğitmenin için görünür kılar.',
