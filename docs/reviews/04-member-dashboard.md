@@ -15,6 +15,8 @@ Source: `lib/features/dashboard/dashboard_page.dart`.
    completed class.
 5. A recent-practice card for completed classes.
 6. Bottom navigation for Home, Packages and Usage.
+7. A branded studio moment: a calm instructor photograph, soft editorial
+   overlay and a small organic form before the member's package summary.
 
 ## Current data state
 
@@ -48,6 +50,9 @@ the initial selected tab and contains the dashboard overview.
   will appear after the first completed class. A database/load error is shown
   separately.
 - The screen scrolls on small devices and retains the app's cream/sage style.
+- The dashboard now uses a restrained Georgia display face for headings; the
+  rest of the UI stays readable in the platform sans-serif. The studio image is
+  an original generated project asset, not a remote image dependency.
 - Sign out returns to login.
 - The bottom navigation moves between Home, Packages and Usage without recreating the app session.
 - The screen does not imply real membership data until the membership and booking model is connected.

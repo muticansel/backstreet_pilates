@@ -18,12 +18,28 @@ class AppTheme {
       scaffoldBackgroundColor: cream,
       textTheme: const TextTheme(
         headlineLarge: TextStyle(
+          fontFamily: 'Georgia',
           fontSize: 38,
-          fontWeight: FontWeight.w500,
+          fontWeight: FontWeight.w400,
           color: ink,
-          letterSpacing: -1.2,
+          letterSpacing: -1.5,
+          height: 1.04,
+        ),
+        headlineMedium: TextStyle(
+          fontFamily: 'Georgia',
+          fontSize: 28,
+          fontWeight: FontWeight.w400,
+          color: ink,
+          letterSpacing: -0.8,
         ),
         bodyLarge: TextStyle(fontSize: 16, height: 1.5, color: ink),
+      ),
+      navigationBarTheme: const NavigationBarThemeData(
+        backgroundColor: Color(0xFFFFFEFA),
+        indicatorColor: Color(0xFFE1E9DB),
+        labelTextStyle: WidgetStatePropertyAll(
+          TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
+        ),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,

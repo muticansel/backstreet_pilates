@@ -215,14 +215,16 @@ class _DashboardPageState extends State<DashboardPage> {
                 ),
                 const SizedBox(height: 34),
                 Text(
-                  'Welcome back.',
+                  AppLocalizations.of(context).text('welcomeBack'),
                   style: Theme.of(context).textTheme.headlineLarge,
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  'A little movement can change your whole day.',
+                  AppLocalizations.of(context).text('dashboardIntro'),
                   style: Theme.of(context).textTheme.bodyLarge,
                 ),
+                const SizedBox(height: 24),
+                const _StudioMomentCard(),
                 const SizedBox(height: 30),
                 const _SectionLabel(titleKey: 'currentPackage'),
                 const SizedBox(height: 10),
@@ -322,6 +324,86 @@ class _SectionLabel extends StatelessWidget {
         fontSize: 11,
         fontWeight: FontWeight.w700,
         letterSpacing: 1.8,
+      ),
+    );
+  }
+}
+
+class _StudioMomentCard extends StatelessWidget {
+  const _StudioMomentCard();
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      image: true,
+      label: AppLocalizations.of(context).text('studioMomentA11y'),
+      child: Container(
+        height: 218,
+        clipBehavior: Clip.antiAlias,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(28),
+          color: const Color(0xFFDCE5D5),
+        ),
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            Image.asset(
+              'assets/images/studio-instructor.png',
+              fit: BoxFit.cover,
+              alignment: const Alignment(0.45, 0.15),
+            ),
+            DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    AppTheme.sage.withValues(alpha: .82),
+                    AppTheme.sage.withValues(alpha: .12),
+                  ],
+                  stops: const [0, .7],
+                ),
+              ),
+            ),
+            Positioned(
+              left: -32,
+              bottom: -38,
+              child: Container(
+                height: 128,
+                width: 178,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFE4CFA9).withValues(alpha: .38),
+                  borderRadius: BorderRadius.circular(90),
+                ),
+              ),
+            ),
+            Positioned(
+              left: 20,
+              bottom: 18,
+              right: 126,
+              child: Text(
+                AppLocalizations.of(context).text('studioMoment'),
+                style: const TextStyle(
+                  fontFamily: 'Georgia',
+                  color: Colors.white,
+                  fontSize: 24,
+                  height: 1.08,
+                ),
+              ),
+            ),
+            Positioned(
+              left: 22,
+              top: 18,
+              child: Text(
+                AppLocalizations.of(context).text('studioMomentLabel'),
+                style: const TextStyle(
+                  color: Color(0xFFF8F4EB),
+                  fontSize: 10,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 1.6,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -689,20 +771,32 @@ class _ProgressMessageCard extends StatelessWidget {
   Widget build(BuildContext context) => Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: const Color(0xFFD8DED5)),
+          color: const Color(0xFFEEF1E8),
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: const Color(0xFFD4DDCD)),
         ),
         child: Row(
           children: [
-            Icon(icon, color: AppTheme.sage, size: 30),
+            Container(
+              height: 52,
+              width: 52,
+              decoration: const BoxDecoration(
+                color: Color(0xFFD5E0CF),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, color: AppTheme.sage, size: 27),
+            ),
             const SizedBox(width: 14),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(AppLocalizations.of(context).text(titleKey),
-                      style: const TextStyle(fontWeight: FontWeight.w700)),
+                      style: const TextStyle(
+                        fontFamily: 'Georgia',
+                        fontSize: 18,
+                        fontWeight: FontWeight.w400,
+                      )),
                   const SizedBox(height: 3),
                   Text(AppLocalizations.of(context).text(detailKey)),
                 ],

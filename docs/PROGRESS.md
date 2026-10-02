@@ -2,6 +2,12 @@
 
 ## Current state
 
+- Member dashboard brand pass: added a dedicated serif display treatment,
+  refined navigation surface, an original local studio/instructor image with
+  quiet organic overlay shapes, and a warmer, more purposeful progress empty
+  state. New content is localized in English and Turkish. Review this visual
+  update together with `docs/reviews/04-member-dashboard.md`.
+
 - App launch now restores a previously persisted Supabase session and routes it
   through the normal role resolver to member or admin home. Passwords are not
   stored by the app; Supabase Flutter owns the secure session persistence.
