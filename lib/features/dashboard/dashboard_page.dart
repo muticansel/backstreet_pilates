@@ -37,7 +37,7 @@ class DashboardPage extends StatefulWidget {
 class _DashboardPageState extends State<DashboardPage> {
   bool _signingOut = false;
   int _selectedIndex = 0;
-  late final Future<List<DateTime>> _completedClassDates;
+  late Future<List<DateTime>> _completedClassDates;
 
   DashboardData get _dashboard => widget.dashboard ?? DashboardData.preview;
 
@@ -45,6 +45,13 @@ class _DashboardPageState extends State<DashboardPage> {
   void initState() {
     super.initState();
     _completedClassDates = widget.bookings.loadCompletedClassDates();
+  }
+
+  Future<void> _refreshDashboard() async {
+    setState(() {
+      _completedClassDates = widget.bookings.loadCompletedClassDates();
+    });
+    await _completedClassDates;
   }
 
   Future<void> _signOut() async {
@@ -151,91 +158,96 @@ class _DashboardPageState extends State<DashboardPage> {
     final dashboard = _dashboard;
     return Scaffold(
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(24, 20, 24, 36),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Row(
-                children: [
-                  const Icon(Icons.spa_outlined,
-                      color: AppTheme.sage, size: 28),
-                  const SizedBox(width: 10),
-                  const Expanded(
-                    child: Text(
-                      'Backstreet Pilates',
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 1.5,
+        child: RefreshIndicator(
+          onRefresh: _refreshDashboard,
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: const EdgeInsets.fromLTRB(24, 20, 24, 36),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  children: [
+                    const Icon(Icons.spa_outlined,
+                        color: AppTheme.sage, size: 28),
+                    const SizedBox(width: 10),
+                    const Expanded(
+                      child: Text(
+                        'Backstreet Pilates',
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 1.5,
+                        ),
                       ),
                     ),
-                  ),
-                  IconButton(
-                    tooltip: 'Sign out',
-                    onPressed: _signingOut ? null : _signOut,
-                    icon: const Icon(Icons.logout_outlined),
-                  ),
-                  IconButton(
-                    tooltip: AppLocalizations.of(context).text('editProfile'),
-                    onPressed: () => Navigator.of(context).push(
-                      MaterialPageRoute<void>(
-                          builder: (_) => const ProfilePage()),
+                    IconButton(
+                      tooltip: 'Sign out',
+                      onPressed: _signingOut ? null : _signOut,
+                      icon: const Icon(Icons.logout_outlined),
                     ),
-                    icon: const CircleAvatar(
-                      radius: 15,
-                      backgroundColor: AppTheme.sage,
-                      foregroundColor: Colors.white,
-                      child: Icon(Icons.person, size: 18),
-                    ),
-                  ),
-                  IconButton(
-                    tooltip: AppLocalizations.of(context).text('classFeedback'),
-                    onPressed: () => Navigator.of(context).push(
-                      MaterialPageRoute<void>(
-                        builder: (_) =>
-                            ClassFeedbackPage(bookings: widget.bookings),
+                    IconButton(
+                      tooltip: AppLocalizations.of(context).text('editProfile'),
+                      onPressed: () => Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                            builder: (_) => const ProfilePage()),
+                      ),
+                      icon: const CircleAvatar(
+                        radius: 15,
+                        backgroundColor: AppTheme.sage,
+                        foregroundColor: Colors.white,
+                        child: Icon(Icons.person, size: 18),
                       ),
                     ),
-                    icon: const Icon(Icons.rate_review_outlined),
-                  ),
-                  const LanguageMenuButton(),
-                ],
-              ),
-              const SizedBox(height: 34),
-              Text(
-                'Welcome back.',
-                style: Theme.of(context).textTheme.headlineLarge,
-              ),
-              const SizedBox(height: 10),
-              Text(
-                'A little movement can change your whole day.',
-                style: Theme.of(context).textTheme.bodyLarge,
-              ),
-              const SizedBox(height: 30),
-              const _SectionLabel(titleKey: 'currentPackage'),
-              const SizedBox(height: 10),
-              _MembershipCard(membership: dashboard.membership),
-              const SizedBox(height: 30),
-              const _SectionLabel(titleKey: 'yourProgress'),
-              const SizedBox(height: 10),
-              _PracticeProgressSection(
-                  completedClassDates: _completedClassDates),
-              const SizedBox(height: 30),
-              const _SectionLabel(titleKey: 'nextRhythm'),
-              const SizedBox(height: 10),
-              _ExplorePackagesCard(onPressed: _showPurchasePreview),
-              const SizedBox(height: 30),
-              const _SectionLabel(titleKey: 'recentPractice'),
-              const SizedBox(height: 10),
-              _HistoryCard(activities: dashboard.recentActivities),
-              const SizedBox(height: 20),
-              const Text(
-                'Dashboard content is currently preview data while memberships and bookings are being connected.',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 12, color: AppTheme.sage),
-              ),
-            ],
+                    IconButton(
+                      tooltip:
+                          AppLocalizations.of(context).text('classFeedback'),
+                      onPressed: () => Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (_) =>
+                              ClassFeedbackPage(bookings: widget.bookings),
+                        ),
+                      ),
+                      icon: const Icon(Icons.rate_review_outlined),
+                    ),
+                    const LanguageMenuButton(),
+                  ],
+                ),
+                const SizedBox(height: 34),
+                Text(
+                  'Welcome back.',
+                  style: Theme.of(context).textTheme.headlineLarge,
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  'A little movement can change your whole day.',
+                  style: Theme.of(context).textTheme.bodyLarge,
+                ),
+                const SizedBox(height: 30),
+                const _SectionLabel(titleKey: 'currentPackage'),
+                const SizedBox(height: 10),
+                _MembershipCard(membership: dashboard.membership),
+                const SizedBox(height: 30),
+                const _SectionLabel(titleKey: 'yourProgress'),
+                const SizedBox(height: 10),
+                _PracticeProgressSection(
+                    completedClassDates: _completedClassDates),
+                const SizedBox(height: 30),
+                const _SectionLabel(titleKey: 'nextRhythm'),
+                const SizedBox(height: 10),
+                _ExplorePackagesCard(onPressed: _showPurchasePreview),
+                const SizedBox(height: 30),
+                const _SectionLabel(titleKey: 'recentPractice'),
+                const SizedBox(height: 10),
+                _HistoryCard(activities: dashboard.recentActivities),
+                const SizedBox(height: 20),
+                const Text(
+                  'Dashboard content is currently preview data while memberships and bookings are being connected.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 12, color: AppTheme.sage),
+                ),
+              ],
+            ),
           ),
         ),
       ),
