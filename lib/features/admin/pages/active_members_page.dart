@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../data/admin_dashboard_data.dart';
 import '../../../theme/app_theme.dart';
+import '../../../l10n/app_localizations.dart';
 
 class ActiveMembersPage extends StatelessWidget {
   const ActiveMembersPage({super.key, required this.members});
@@ -11,12 +12,13 @@ class ActiveMembersPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Active member packages')),
+      appBar: AppBar(
+          title: Text(AppLocalizations.of(context).text('activePackages'))),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(24, 8, 24, 32),
         children: [
-          const Text(
-            'Preview list — it will show every active membership after the membership model is connected.',
+          Text(
+            AppLocalizations.of(context).text('activePackagesPreview'),
             style: TextStyle(color: AppTheme.sage),
           ),
           const SizedBox(height: 20),
@@ -54,10 +56,16 @@ class _MemberCard extends StatelessWidget {
             const SizedBox(height: 14),
             Row(
               children: [
-                Text('${member.remainingCredits} classes remaining',
+                Text(
+                    AppLocalizations.of(context)
+                        .text('classesRemaining')
+                        .replaceAll('{count}', '${member.remainingCredits}'),
                     style: const TextStyle(color: AppTheme.sage)),
                 const Spacer(),
-                Text('Until ${member.validUntil}',
+                Text(
+                    AppLocalizations.of(context)
+                        .text('until')
+                        .replaceAll('{date}', member.validUntil),
                     style: const TextStyle(fontSize: 12)),
               ],
             ),

@@ -2,6 +2,16 @@
 
 ## Current state
 
+- User-facing static copy in the member dashboard, authentication layout,
+  profile, active-member list, approved-package empty state and selected admin
+  summaries now reads from the English/Turkish localization catalog. Dynamic
+  count/date copy uses the same localized templates.
+
+- User-facing static copy in the member dashboard, authentication layout,
+  profile, active-member list and approved-packages empty state now reads from
+  the English/Turkish localization catalog. Dynamic count/date copy uses the
+  same localized templates.
+
 - Member dashboard brand pass: added a dedicated serif display treatment,
   refined navigation surface, an original local studio/instructor image with
   quiet organic overlay shapes, and a warmer, more purposeful progress empty

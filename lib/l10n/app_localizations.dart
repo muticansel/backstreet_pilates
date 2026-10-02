@@ -47,6 +47,11 @@ class AppLocalizations {
       'emailAddress': 'Email address',
       'password': 'Password',
       'welcomeBack': 'Welcome back.',
+      'secureAccountDetail': 'Your account details are handled securely.',
+      'authBrandEyebrow': 'A LITTLE SPACE FOR YOU',
+      'authBrandTitle': 'Find your balance.\nMove at your pace.',
+      'authBrandDetail':
+          'Mindful movement. Everyday strength.\nYour Pilates practice starts here.',
       'dashboardIntro': 'A little movement can change your whole day.',
       'studioMomentLabel': 'A MOMENT AT THE STUDIO',
       'studioMoment': 'Make space for your practice.',
@@ -128,6 +133,12 @@ class AppLocalizations {
       'adminOverview': 'ADMIN OVERVIEW',
       'studioAtGlance': 'Your studio, at a glance.',
       'adminSubtitle': 'Keep track of the month and support your members.',
+      'thisMonth': 'THIS MONTH',
+      'activeMembers': 'ACTIVE MEMBERS',
+      'completedSales': '{count} completed sales',
+      'oranAndIncek': 'Oran + İncek',
+      'adminDashboardPreviewNote':
+          'Reporting and active-member totals are preview data. Cash payment requests are live.',
       'membershipManagement': 'MEMBERSHIP MANAGEMENT',
       'paymentsAwaitingApproval': 'Payments awaiting approval',
       'reviewCashPayments':
@@ -135,6 +146,10 @@ class AppLocalizations {
       'cashRequests': 'Cash payment requests',
       'refresh': 'Refresh',
       'confirmCashPayment': 'Confirm cash payment?',
+      'cashPaymentConfirmationDetail':
+          '{name} will receive {package}. This creates the membership and cannot be undone here.',
+      'cashRequestPackageDetail':
+          '{classes} classes · {weekly} per week · {weeks} weeks',
       'confirmPayment': 'Confirm payment',
       'cancel': 'Cancel',
       'membershipCreated': 'Membership for {name} was created.',
@@ -152,6 +167,7 @@ class AppLocalizations {
       'profileSavedConfirmEmail':
           'Profile saved. Confirm your new email address to finish changing it.',
       'profileLoadError': 'Profile could not be loaded.',
+      'validEmailRequired': 'Enter a valid email address.',
       'name': 'Name',
       'phoneNumber': 'Phone number',
       'dateOfBirth': 'Date of birth',
@@ -173,6 +189,17 @@ class AppLocalizations {
       'packages': 'Packages',
       'gotIt': 'Got it',
       'explorePackages': 'Explore packages',
+      'explorePackagesTitle': 'More time for you',
+      'explorePackagesDetail': 'Explore a package that fits your pace.',
+      'packagePreviewDetail':
+          'This is where you’ll compare packages and purchase the one that suits your practice.',
+      'dashboardPreviewNote':
+          'Dashboard content is currently preview data while memberships and bookings are being connected.',
+      'classesRemainingCompact': 'classes\nremaining',
+      'membershipProgressDetail':
+          '{completed} of {total} classes completed · valid through {date}',
+      'completed': 'Completed',
+      'packagesIntro': 'Find a rhythm that fits your week.',
       'currentPackage': 'YOUR CURRENT PACKAGE',
       'nextRhythm': 'FIND YOUR NEXT RHYTHM',
       'recentPractice': 'YOUR RECENT PRACTICE',
@@ -199,10 +226,15 @@ class AppLocalizations {
       'creditCard': 'Credit card',
       'sendRequest': 'Send request',
       'activePackages': 'Active member packages',
+      'activePackagesPreview':
+          'Preview list — it will show every active membership after the membership model is connected.',
       'classesRemaining': '{count} classes remaining',
       'until': 'Until {date}',
       'myPackages': 'My packages',
       'noApprovedPackages': 'No approved packages yet',
+      'approvedPackagesCount': '{count} approved packages',
+      'noApprovedPackagesDetail':
+          'Approved packages will appear here after the studio confirms your payment.',
       'approvedPackagesLoadError': 'Packages could not be loaded',
       'packageEndingTitle': 'Only {count} classes left',
       'packageEndingDetail':
@@ -318,6 +350,11 @@ class AppLocalizations {
       'emailAddress': 'E-posta adresi',
       'password': 'Şifre',
       'welcomeBack': 'Tekrar hoş geldin.',
+      'secureAccountDetail': 'Hesap bilgilerin güvenle işlenir.',
+      'authBrandEyebrow': 'KENDİN İÇİN KÜÇÜK BİR ALAN',
+      'authBrandTitle': 'Dengeni bul.\nKendi ritminde hareket et.',
+      'authBrandDetail':
+          'Bilinçli hareket. Günlük güç.\nPilates pratiğin burada başlar.',
       'dashboardIntro': 'Küçük bir hareket, bütün gününü değiştirebilir.',
       'studioMomentLabel': 'STÜDYODAN BİR ANI',
       'studioMoment': 'Pratiğin için kendine alan aç.',
@@ -400,6 +437,12 @@ class AppLocalizations {
       'adminOverview': 'YÖNETİCİ GENEL BAKIŞ',
       'studioAtGlance': 'Stüdyon, bir bakışta.',
       'adminSubtitle': 'Ayı takip et ve üyelerini destekle.',
+      'thisMonth': 'BU AY',
+      'activeMembers': 'AKTİF ÜYELER',
+      'completedSales': '{count} tamamlanan satış',
+      'oranAndIncek': 'Oran + İncek',
+      'adminDashboardPreviewNote':
+          'Raporlama ve aktif üye toplamları örnek veridir. Nakit ödeme talepleri canlıdır.',
       'membershipManagement': 'ÜYELİK YÖNETİMİ',
       'paymentsAwaitingApproval': 'Onay bekleyen ödemeler',
       'reviewCashPayments':
@@ -407,6 +450,10 @@ class AppLocalizations {
       'cashRequests': 'Nakit ödeme talepleri',
       'refresh': 'Yenile',
       'confirmCashPayment': 'Nakit ödeme onaylansın mı?',
+      'cashPaymentConfirmationDetail':
+          '{name}, {package} paketini alacak. Bu işlem üyeliği oluşturur ve burada geri alınamaz.',
+      'cashRequestPackageDetail':
+          '{classes} ders · haftada {weekly} ders · {weeks} hafta',
       'confirmPayment': 'Ödemeyi onayla',
       'cancel': 'Vazgeç',
       'membershipCreated': '{name} için üyelik oluşturuldu.',
@@ -424,6 +471,7 @@ class AppLocalizations {
       'profileSavedConfirmEmail':
           'Profil kaydedildi. E-posta değişikliğini tamamlamak için yeni adresini onayla.',
       'profileLoadError': 'Profil yüklenemedi.',
+      'validEmailRequired': 'Geçerli bir e-posta adresi gir.',
       'name': 'Ad',
       'phoneNumber': 'Telefon numarası',
       'dateOfBirth': 'Doğum tarihi',
@@ -445,6 +493,17 @@ class AppLocalizations {
       'packages': 'Paketler',
       'gotIt': 'Anladım',
       'explorePackages': 'Paketleri keşfet',
+      'explorePackagesTitle': 'Kendine daha çok zaman ayır',
+      'explorePackagesDetail': 'Ritmine uygun bir paketi keşfet.',
+      'packagePreviewDetail':
+          'Pratiğine uygun paketi burada karşılaştırıp satın alabileceksin.',
+      'dashboardPreviewNote':
+          'Üyelikler ve rezervasyonlar bağlanırken kontrol paneli örnek veriler gösterir.',
+      'classesRemainingCompact': 'ders\nkaldı',
+      'membershipProgressDetail':
+          '{total} dersin {completed} tanesi tamamlandı · geçerlilik: {date}',
+      'completed': 'Tamamlandı',
+      'packagesIntro': 'Haftana uygun bir ritim bul.',
       'currentPackage': 'MEVCUT PAKETİN',
       'nextRhythm': 'SIRADAKİ RİTMİN',
       'recentPractice': 'SON PRATİKLERİN',
@@ -470,10 +529,15 @@ class AppLocalizations {
       'creditCard': 'Kredi kartı',
       'sendRequest': 'Talep gönder',
       'activePackages': 'Aktif üye paketleri',
+      'activePackagesPreview':
+          'Önizleme listesi — üyelik modeli bağlandığında tüm aktif üyelikleri gösterir.',
       'classesRemaining': '{count} ders kaldı',
       'until': '{date} tarihine kadar',
       'myPackages': 'Paketlerim',
       'noApprovedPackages': 'Henüz onaylanmış paketin yok',
+      'approvedPackagesCount': '{count} onaylanmış paket',
+      'noApprovedPackagesDetail':
+          'Stüdyo ödemenizi onayladıktan sonra paketlerin burada görünür.',
       'approvedPackagesLoadError': 'Paketler yüklenemedi',
       'packageEndingTitle': 'Yalnızca {count} ders hakkın kaldı',
       'packageEndingDetail':

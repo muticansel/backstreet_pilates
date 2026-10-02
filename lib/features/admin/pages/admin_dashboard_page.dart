@@ -132,18 +132,20 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                 children: [
                   Expanded(
                     child: _MetricCard(
-                      label: 'THIS MONTH',
+                      label: strings.text('thisMonth'),
                       value: _formatTry(_data.monthlySalesMinor),
-                      detail: '${_data.completedSales} completed sales',
+                      detail: strings
+                          .text('completedSales')
+                          .replaceAll('{count}', '${_data.completedSales}'),
                       icon: Icons.payments_outlined,
                     ),
                   ),
                   const SizedBox(width: 14),
                   Expanded(
                     child: _MetricCard(
-                      label: 'ACTIVE MEMBERS',
+                      label: strings.text('activeMembers'),
                       value: '${_data.activeMembers}',
-                      detail: 'Oran + İncek',
+                      detail: strings.text('oranAndIncek'),
                       icon: Icons.people_outline,
                     ),
                   ),
@@ -194,8 +196,8 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
               const Align(
                   alignment: Alignment.centerRight,
                   child: LanguageMenuButton()),
-              const Text(
-                'Reporting and active-member totals are preview data. Cash payment requests are live.',
+              Text(
+                strings.text('adminDashboardPreviewNote'),
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 12, color: AppTheme.sage),
               ),

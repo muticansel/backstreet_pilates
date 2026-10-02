@@ -115,7 +115,7 @@ class _ProfilePageState extends State<ProfilePage> {
             return const Center(child: PilatesLoadingIndicator());
           }
           if (snapshot.hasError) {
-            return Center(child: Text('Profile could not be loaded.'));
+            return Center(child: Text(strings.text('profileLoadError')));
           }
           return SingleChildScrollView(
             padding: const EdgeInsets.fromLTRB(24, 24, 24, 36),
@@ -154,23 +154,26 @@ class _ProfilePageState extends State<ProfilePage> {
                 TextFormField(
                   controller: _email,
                   keyboardType: TextInputType.emailAddress,
-                  decoration: const InputDecoration(labelText: 'Email address'),
+                  decoration:
+                      InputDecoration(labelText: strings.text('emailAddress')),
                   validator: (value) => value == null || !value.contains('@')
-                      ? 'Enter a valid email address.'
+                      ? strings.text('validEmailRequired')
                       : null,
                 ),
                 const SizedBox(height: 18),
                 TextFormField(
                   controller: _phone,
                   keyboardType: TextInputType.phone,
-                  decoration: const InputDecoration(labelText: 'Phone number'),
+                  decoration:
+                      InputDecoration(labelText: strings.text('phoneNumber')),
                 ),
                 const SizedBox(height: 18),
                 ListTile(
                   contentPadding: EdgeInsets.zero,
-                  title: const Text('Date of birth'),
-                  subtitle: Text(
-                      _birthDate == null ? 'Not provided' : _date(_birthDate!)),
+                  title: Text(strings.text('dateOfBirth')),
+                  subtitle: Text(_birthDate == null
+                      ? strings.text('notProvided')
+                      : _date(_birthDate!)),
                   trailing: const Icon(Icons.calendar_today_outlined),
                   onTap: () async {
                     final date = await showDatePicker(
@@ -185,22 +188,26 @@ class _ProfilePageState extends State<ProfilePage> {
                 const SizedBox(height: 8),
                 DropdownButtonFormField<String>(
                   initialValue: _gender,
-                  decoration: const InputDecoration(labelText: 'Gender'),
-                  items: const [
-                    DropdownMenuItem(value: 'female', child: Text('Female')),
-                    DropdownMenuItem(value: 'male', child: Text('Male')),
+                  decoration:
+                      InputDecoration(labelText: strings.text('gender')),
+                  items: [
                     DropdownMenuItem(
-                        value: 'non_binary', child: Text('Non-binary')),
+                        value: 'female', child: Text(strings.text('female'))),
+                    DropdownMenuItem(
+                        value: 'male', child: Text(strings.text('male'))),
+                    DropdownMenuItem(
+                        value: 'non_binary',
+                        child: Text(strings.text('nonBinary'))),
                     DropdownMenuItem(
                         value: 'prefer_not_to_say',
-                        child: Text('Prefer not to say')),
+                        child: Text(strings.text('preferNotToSay'))),
                   ],
                   onChanged: (value) => setState(() => _gender = value),
                 ),
                 const SizedBox(height: 32),
-                const Align(
+                Align(
                   alignment: Alignment.centerLeft,
-                  child: Text('ACCOUNT & SECURITY',
+                  child: Text(strings.text('accountSecurity'),
                       style: TextStyle(
                           color: AppTheme.sage,
                           fontWeight: FontWeight.w700,
@@ -210,8 +217,8 @@ class _ProfilePageState extends State<ProfilePage> {
                 Card(
                   child: ListTile(
                     leading: const Icon(Icons.lock_outline),
-                    title: const Text('Change password'),
-                    subtitle: const Text('Keep your account secure.'),
+                    title: Text(strings.text('changePassword')),
+                    subtitle: Text(strings.text('keepAccountSecure')),
                     trailing: const Icon(Icons.chevron_right),
                     onTap: () => Navigator.of(context).push(
                         MaterialPageRoute<void>(

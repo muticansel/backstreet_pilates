@@ -39,8 +39,10 @@ class _CashPurchaseRequestsPageState extends State<CashPurchaseRequestsPage> {
       builder: (context) => AlertDialog(
         title: Text(strings.text('confirmCashPayment')),
         content: Text(
-          '${request.memberName} will receive ${request.packageName}. '
-          'This creates the membership and cannot be undone here.',
+          strings
+              .text('cashPaymentConfirmationDetail')
+              .replaceAll('{name}', request.memberName)
+              .replaceAll('{package}', request.packageName),
         ),
         actions: [
           TextButton(
@@ -152,8 +154,11 @@ class _RequestCard extends StatelessWidget {
                   fontWeight: FontWeight.w700)),
           const SizedBox(height: 6),
           Text(
-            '${request.totalCredits} classes · ${request.sessionsPerWeek} per week · '
-            '${request.durationWeeks} weeks',
+            strings
+                .text('cashRequestPackageDetail')
+                .replaceAll('{classes}', '${request.totalCredits}')
+                .replaceAll('{weekly}', '${request.sessionsPerWeek}')
+                .replaceAll('{weeks}', '${request.durationWeeks}'),
           ),
           const SizedBox(height: 6),
           Text(strings

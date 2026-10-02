@@ -172,7 +172,7 @@ class _SignupPageState extends State<SignupPage> {
                 controller: _confirmation,
                 validator: (value) =>
                     AuthValidators.confirmPassword(value, _password.text),
-                label: 'Confirm password',
+                label: strings.text('confirmNewPassword'),
                 isNewPassword: true,
                 onSubmitted: (_) => _submit(),
               ),

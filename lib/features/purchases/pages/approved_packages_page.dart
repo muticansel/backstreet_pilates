@@ -129,7 +129,9 @@ class _PageHeader extends StatelessWidget {
               style: Theme.of(context).textTheme.headlineLarge),
           const SizedBox(height: 10),
           Text(
-            '$count approved ${count == 1 ? 'package' : 'packages'}',
+            AppLocalizations.of(context)
+                .text('approvedPackagesCount')
+                .replaceAll('{count}', '$count'),
             style: Theme.of(context).textTheme.bodyLarge,
           ),
           const SizedBox(height: 18),
@@ -313,8 +315,7 @@ class _EmptyPackages extends StatelessWidget {
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.headlineSmall),
           const SizedBox(height: 10),
-          const Text(
-              'Approved packages will appear here after the studio confirms your payment.',
+          Text(AppLocalizations.of(context).text('noApprovedPackagesDetail'),
               textAlign: TextAlign.center),
         ],
       );

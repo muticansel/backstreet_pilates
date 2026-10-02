@@ -53,8 +53,8 @@ class AuthLayout extends StatelessWidget {
                     const SizedBox(height: 32),
                     child,
                     const SizedBox(height: 24),
-                    const Text(
-                      'Your account details are handled securely.',
+                    Text(
+                      AppLocalizations.of(context).text('secureAccountDetail'),
                       textAlign: TextAlign.center,
                       style: TextStyle(fontSize: 12, color: AppTheme.sage),
                     ),
@@ -88,7 +88,7 @@ class _BrandPanel extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('A LITTLE SPACE FOR YOU',
+              Text(AppLocalizations.of(context).text('authBrandEyebrow'),
                   style: TextStyle(
                     letterSpacing: 3,
                     color: AppTheme.sage,
@@ -106,11 +106,10 @@ class _BrandPanel extends StatelessWidget {
                     size: 120, color: AppTheme.sage),
               ),
               const SizedBox(height: 40),
-              Text('Find your balance.\nMove at your pace.',
+              Text(AppLocalizations.of(context).text('authBrandTitle'),
                   style: Theme.of(context).textTheme.headlineLarge),
               const SizedBox(height: 20),
-              const Text(
-                  'Mindful movement. Everyday strength.\nYour Pilates practice starts here.',
+              Text(AppLocalizations.of(context).text('authBrandDetail'),
                   style: TextStyle(
                       fontSize: 17, height: 1.6, color: AppTheme.sage)),
             ],

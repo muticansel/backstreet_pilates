@@ -86,9 +86,7 @@ class _DashboardPageState extends State<DashboardPage> {
             Text(AppLocalizations.of(context).text('packages'),
                 style: Theme.of(context).textTheme.headlineSmall),
             const SizedBox(height: 10),
-            const Text(
-              'This is where you’ll compare packages and purchase the one that suits your practice.',
-            ),
+            Text(AppLocalizations.of(context).text('packagePreviewDetail')),
             const SizedBox(height: 22),
             FilledButton(
               onPressed: () => Navigator.of(context).pop(),
@@ -243,8 +241,8 @@ class _DashboardPageState extends State<DashboardPage> {
                 const SizedBox(height: 10),
                 _HistoryCard(activities: dashboard.recentActivities),
                 const SizedBox(height: 20),
-                const Text(
-                  'Dashboard content is currently preview data while memberships and bookings are being connected.',
+                Text(
+                  AppLocalizations.of(context).text('dashboardPreviewNote'),
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 12, color: AppTheme.sage),
                 ),
@@ -455,8 +453,8 @@ class _MembershipCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 12),
-              const Text(
-                'classes\nremaining',
+              Text(
+                AppLocalizations.of(context).text('classesRemainingCompact'),
                 style: TextStyle(color: Color(0xFFD6E3CE), height: 1.35),
               ),
               const Spacer(),
@@ -479,7 +477,12 @@ class _MembershipCard extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           Text(
-            '${membership.totalCredits - membership.remainingCredits} of ${membership.totalCredits} classes completed · valid through ${membership.validUntil}',
+            AppLocalizations.of(context)
+                .text('membershipProgressDetail')
+                .replaceAll('{completed}',
+                    '${membership.totalCredits - membership.remainingCredits}')
+                .replaceAll('{total}', '${membership.totalCredits}')
+                .replaceAll('{date}', membership.validUntil),
             style: const TextStyle(color: Color(0xFFD6E3CE), fontSize: 12),
           ),
         ],
@@ -832,21 +835,22 @@ class _ExplorePackagesCard extends StatelessWidget {
             child: const Icon(Icons.add_circle_outline, color: AppTheme.sage),
           ),
           const SizedBox(width: 16),
-          const Expanded(
+          Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'More time for you',
+                  AppLocalizations.of(context).text('explorePackagesTitle'),
                   style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
                 ),
                 SizedBox(height: 4),
-                Text('Explore a package that fits your pace.'),
+                Text(
+                    AppLocalizations.of(context).text('explorePackagesDetail')),
               ],
             ),
           ),
           IconButton(
-            tooltip: 'Explore packages',
+            tooltip: AppLocalizations.of(context).text('explorePackages'),
             onPressed: onPressed,
             icon: const Icon(Icons.arrow_forward),
           ),
@@ -880,8 +884,8 @@ class _HistoryCard extends StatelessWidget {
               ),
               title: Text(activities[index].title),
               subtitle: Text(activities[index].detail),
-              trailing: const Text(
-                'Completed',
+              trailing: Text(
+                AppLocalizations.of(context).text('completed'),
                 style: TextStyle(fontSize: 12, color: AppTheme.sage),
               ),
             ),
@@ -923,7 +927,7 @@ class _PackagesPlaceholderState extends State<_PackagesPlaceholder> {
                       style: Theme.of(context).textTheme.headlineLarge),
                   const SizedBox(height: 10),
                   Text(
-                    'Find a rhythm that fits your week.',
+                    AppLocalizations.of(context).text('packagesIntro'),
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
                   const SizedBox(height: 32),
