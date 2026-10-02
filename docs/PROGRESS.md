@@ -59,6 +59,21 @@ to user review before it is marked approved.
   `flutter analyze` reports only the existing four `RadioListTile` deprecation
   infos in the package chooser; the new renewal flow has no findings.
 
+## Admin Today operations — 2026-10-02
+
+- Added an admin-only **Today / Bugün** operations page from the admin landing
+  screen. It consolidates today's scheduled classes and occupied seats, today's
+  recorded no-shows, packages ending within the next seven days, and all pending
+  cash payments. The no-show and payment sections link to their existing action
+  queues.
+- Prepared `20261002000300_admin_today_operations.sql`. Its one read-only RPC
+  uses Istanbul day boundaries and returns the entire snapshot only after the
+  server confirms the caller is an admin. Apply it after the fixed-series and
+  cash-purchase migrations before using the live screen.
+- Review the behavior and wording in `docs/reviews/12-admin-today-operations.md`.
+- Verification: `dart format` completed and all 9 widget tests pass. `flutter
+  analyze` reports only the existing four `RadioListTile` deprecation infos.
+
 ## Admin attendance query correction — 2026-10-02
 
 - Corrected the admin attendance lookup after production-like data verified a

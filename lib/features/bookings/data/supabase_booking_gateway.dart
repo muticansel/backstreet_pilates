@@ -172,6 +172,56 @@ class SupabaseBookingGateway implements BookingGateway, AdminBookingGateway {
   }
 
   @override
+  Future<AdminTodayOperations> loadTodayOperations() async {
+    final result = await _client.rpc('admin_today_operations');
+    final data = result as Map<String, dynamic>;
+    final classes = (data['classes'] as List<dynamic>).map((row) {
+      final value = row as Map<String, dynamic>;
+      return AdminTodayClass(
+        title: value['title'] as String,
+        branchName: value['branch_name'] as String,
+        startsAt: DateTime.parse(value['starts_at'] as String).toLocal(),
+        capacity: value['capacity'] as int,
+        bookedCount: value['booked_count'] as int,
+      );
+    }).toList();
+    final noShows = (data['no_shows'] as List<dynamic>).map((row) {
+      final value = row as Map<String, dynamic>;
+      return AdminNoShow(
+        memberName: value['member_name'] as String,
+        title: value['title'] as String,
+        branchName: value['branch_name'] as String,
+        startsAt: DateTime.parse(value['starts_at'] as String).toLocal(),
+      );
+    }).toList();
+    final endingPackages =
+        (data['ending_packages'] as List<dynamic>).map((row) {
+      final value = row as Map<String, dynamic>;
+      return AdminEndingPackage(
+        memberName: value['member_name'] as String,
+        packageName: value['package_name'] as String,
+        endDate: DateTime.parse(value['end_date'] as String),
+        remainingCredits: value['remaining_credits'] as int,
+      );
+    }).toList();
+    final pendingPayments =
+        (data['pending_payments'] as List<dynamic>).map((row) {
+      final value = row as Map<String, dynamic>;
+      return AdminPendingPayment(
+        memberName: value['member_name'] as String,
+        packageName: value['package_name'] as String,
+        priceMinor: value['price_minor'] as int,
+      );
+    }).toList();
+    return AdminTodayOperations(
+      classes: classes,
+      noShows: noShows,
+      endingPackages: endingPackages,
+      pendingPayments: pendingPayments,
+    );
+  }
+
+  @override
   Future<void> recordAttendance({
     required String bookingId,
     required bool attended,

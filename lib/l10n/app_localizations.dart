@@ -285,6 +285,25 @@ class AppLocalizations {
       'passwordResetSent': 'Password reset link sent.',
       'userStatusUpdated': 'User status updated.',
       'userActionFailed': 'The user action could not be completed. Try again.',
+      'today': 'Today',
+      'todayOperations': 'Today',
+      'todayOperationsDashboardDetail':
+          'Classes, occupancy and follow-ups in one view.',
+      'todayOperationsSubtitle':
+          'Run the studio from one up-to-date operational view.',
+      'todayOperationsLoadError':
+          'Today’s operations could not be loaded. Pull to try again.',
+      'todayClasses': 'Today’s classes',
+      'occupancy': 'Occupancy',
+      'noClassesToday': 'There are no scheduled classes today.',
+      'noShowList': 'No-show list',
+      'noNoShowsToday': 'No no-shows have been recorded today.',
+      'upcomingPackageEndings': 'Upcoming package endings',
+      'noUpcomingPackageEndings': 'No packages end in the next 7 days.',
+      'endsOn': 'Ends {date}',
+      'classesLeft': '{count} classes left',
+      'noPendingPayments': 'There are no payments awaiting approval.',
+      'viewAll': 'View all',
     },
     'tr': {
       'language': 'Dil',
@@ -530,6 +549,25 @@ class AppLocalizations {
       'passwordResetSent': 'Şifre sıfırlama bağlantısı gönderildi.',
       'userStatusUpdated': 'Kullanıcı durumu güncellendi.',
       'userActionFailed': 'Kullanıcı işlemi tamamlanamadı. Tekrar dene.',
+      'today': 'Bugün',
+      'todayOperations': 'Bugün',
+      'todayOperationsDashboardDetail':
+          'Dersler, doluluk ve takipler tek görünümde.',
+      'todayOperationsSubtitle':
+          'Stüdyoyu güncel operasyon görünümünden yönetin.',
+      'todayOperationsLoadError':
+          'Bugünün operasyonları yüklenemedi. Tekrar denemek için aşağı çek.',
+      'todayClasses': 'Bugünkü dersler',
+      'occupancy': 'Doluluk',
+      'noClassesToday': 'Bugün planlanmış ders bulunmuyor.',
+      'noShowList': 'No-show listesi',
+      'noNoShowsToday': 'Bugün kaydedilmiş no-show yok.',
+      'upcomingPackageEndings': 'Yaklaşan paket bitişleri',
+      'noUpcomingPackageEndings': 'Önümüzdeki 7 gün içinde bitecek paket yok.',
+      'endsOn': 'Bitiş: {date}',
+      'classesLeft': '{count} ders kaldı',
+      'noPendingPayments': 'Onay bekleyen ödeme bulunmuyor.',
+      'viewAll': 'Tümünü gör',
     },
   };
 }

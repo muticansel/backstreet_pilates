@@ -88,6 +88,78 @@ class AdminAttendanceRecord {
   final String status;
 }
 
+/// The operations snapshot is deliberately assembled by one admin-only RPC so
+/// every card uses the same Istanbul calendar day.
+class AdminTodayOperations {
+  const AdminTodayOperations({
+    required this.classes,
+    required this.noShows,
+    required this.endingPackages,
+    required this.pendingPayments,
+  });
+
+  final List<AdminTodayClass> classes;
+  final List<AdminNoShow> noShows;
+  final List<AdminEndingPackage> endingPackages;
+  final List<AdminPendingPayment> pendingPayments;
+}
+
+class AdminTodayClass {
+  const AdminTodayClass({
+    required this.title,
+    required this.branchName,
+    required this.startsAt,
+    required this.capacity,
+    required this.bookedCount,
+  });
+
+  final String title;
+  final String branchName;
+  final DateTime startsAt;
+  final int capacity;
+  final int bookedCount;
+}
+
+class AdminNoShow {
+  const AdminNoShow({
+    required this.memberName,
+    required this.title,
+    required this.branchName,
+    required this.startsAt,
+  });
+
+  final String memberName;
+  final String title;
+  final String branchName;
+  final DateTime startsAt;
+}
+
+class AdminEndingPackage {
+  const AdminEndingPackage({
+    required this.memberName,
+    required this.packageName,
+    required this.endDate,
+    required this.remainingCredits,
+  });
+
+  final String memberName;
+  final String packageName;
+  final DateTime endDate;
+  final int remainingCredits;
+}
+
+class AdminPendingPayment {
+  const AdminPendingPayment({
+    required this.memberName,
+    required this.packageName,
+    required this.priceMinor,
+  });
+
+  final String memberName;
+  final String packageName;
+  final int priceMinor;
+}
+
 class TimeOfDayValue {
   const TimeOfDayValue({required this.hour, required this.minute});
 
@@ -102,6 +174,7 @@ abstract interface class AdminBookingGateway {
   Future<List<StudioBranch>> loadBranches();
   Future<List<AdminFixedOffer>> loadFixedOffers();
   Future<List<AdminAttendanceRecord>> loadPastAttendance();
+  Future<AdminTodayOperations> loadTodayOperations();
   Future<void> recordAttendance({
     required String bookingId,
     required bool attended,
@@ -137,6 +210,14 @@ class UnconfiguredAdminBookingGateway implements AdminBookingGateway {
   Future<List<AdminFixedOffer>> loadFixedOffers() async => const [];
   @override
   Future<List<AdminAttendanceRecord>> loadPastAttendance() async => const [];
+  @override
+  Future<AdminTodayOperations> loadTodayOperations() async =>
+      const AdminTodayOperations(
+        classes: [],
+        noShows: [],
+        endingPackages: [],
+        pendingPayments: [],
+      );
   @override
   Future<void> recordAttendance({
     required String bookingId,

@@ -12,6 +12,7 @@ import 'cash_purchase_requests_page.dart';
 import 'admin_users_page.dart';
 import 'attendance_page.dart';
 import 'class_schedule_page.dart';
+import 'today_operations_page.dart';
 
 class AdminDashboardPage extends StatefulWidget {
   const AdminDashboardPage(
@@ -115,6 +116,18 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                 style: Theme.of(context).textTheme.bodyLarge,
               ),
               const SizedBox(height: 28),
+              _AdminActionCard(
+                icon: Icons.today_outlined,
+                title: strings.text('todayOperations'),
+                detail: strings.text('todayOperationsDashboardDetail'),
+                onTap: () => Navigator.of(context).push(MaterialPageRoute<void>(
+                  builder: (_) => TodayOperationsPage(
+                    bookings: widget.adminBookings,
+                    purchases: widget.adminPurchases,
+                  ),
+                )),
+              ),
+              const SizedBox(height: 14),
               Row(
                 children: [
                   Expanded(
@@ -161,7 +174,8 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                 title: strings.text('attendance'),
                 detail: strings.text('manageAttendance'),
                 onTap: () => Navigator.of(context).push(MaterialPageRoute<void>(
-                    builder: (_) => AttendancePage(bookings: widget.adminBookings))),
+                    builder: (_) =>
+                        AttendancePage(bookings: widget.adminBookings))),
               ),
               const SizedBox(height: 14),
               _AdminActionCard(
