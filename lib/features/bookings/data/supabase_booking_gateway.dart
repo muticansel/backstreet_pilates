@@ -127,13 +127,22 @@ class SupabaseBookingGateway implements BookingGateway, AdminBookingGateway {
         .from('bookings')
         .select(
             'id, user_id, status, class_sessions!inner(starts_at, class_series!inner(title, branches!inner(name)))')
-        .inFilter('status', ['booked', 'attended', 'no_show'])
-        .lt('class_sessions.starts_at', DateTime.now().toUtc().toIso8601String())
-        .order('starts_at', referencedTable: 'class_sessions');
-    final memberIds = (rows as List<dynamic>)
-        .map((row) => row['user_id'] as String)
-        .toSet()
-        .toList();
+        .inFilter('status', ['booked', 'attended', 'no_show']).order(
+            'starts_at',
+            referencedTable: 'class_sessions');
+    // PostgREST's embedded-resource date filter did not consistently return
+    // matching rows for this relation. Fetch only attendance-eligible booking
+    // statuses from the RLS-protected table, then apply the session-date rule
+    // after decoding the joined session.
+    final now = DateTime.now().toUtc();
+    final pastRows = (rows as List<dynamic>).where((row) {
+      final session = row['class_sessions'] as Map<String, dynamic>;
+      return DateTime.parse(session['starts_at'] as String)
+          .toUtc()
+          .isBefore(now);
+    }).toList();
+    final memberIds =
+        pastRows.map((row) => row['user_id'] as String).toSet().toList();
     final profileRows = memberIds.isEmpty
         ? <Map<String, dynamic>>[]
         : await _client
@@ -144,7 +153,7 @@ class SupabaseBookingGateway implements BookingGateway, AdminBookingGateway {
       for (final profile in profileRows)
         profile['id'] as String: profile['display_name'] as String,
     };
-    return rows.map((row) {
+    return pastRows.map((row) {
       final session = row['class_sessions'] as Map<String, dynamic>;
       final series = session['class_series'] as Map<String, dynamic>;
       final branch = series['branches'] as Map<String, dynamic>;

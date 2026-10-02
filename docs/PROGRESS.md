@@ -42,6 +42,32 @@ admin operations dashboard, stronger brand presentation, and complete English/
 Turkish localization. Work begins with reservations; each page remains subject
 to user review before it is marked approved.
 
+## Package-ending experience — 2026-10-02
+
+- Added an English/Turkish renewal panel to a member's active package when it
+  has one to three remaining class rights. It only appears when an active offer
+  matches both the member's current branch and total class count.
+- The recommendation uses the earliest matching upcoming offer. Its single
+  action creates a cash-payment request through the existing server RPC; no
+  membership is granted from Flutter. The existing server duplicate/overlap
+  protections remain authoritative, and the button is disabled while the
+  request is submitted.
+- Package history still renders if the recommendation lookup fails or no
+  suitable offer exists. Review the behavior and copy in
+  `docs/reviews/11-package-ending-experience.md`.
+- Verification: `dart format` completed and all 9 widget tests pass.
+  `flutter analyze` reports only the existing four `RadioListTile` deprecation
+  infos in the package chooser; the new renewal flow has no findings.
+
+## Admin attendance query correction — 2026-10-02
+
+- Corrected the admin attendance lookup after production-like data verified a
+  past, `booked` reservation was hidden despite valid RLS and an admin role.
+  The client no longer applies a PostgREST embedded `class_sessions.starts_at`
+  filter; it decodes the RLS-protected joined sessions and filters past dates
+  locally before loading member names. This preserves the same attendance rule
+  while avoiding the unreliable embedded relation filter.
+
 ## Member progress preview — 2026-10-01
 
 - Expanded the member dashboard preview with an English/Turkish localized

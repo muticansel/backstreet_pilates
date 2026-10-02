@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../theme/app_theme.dart';
+import '../../../theme/app_snack_bars.dart';
 import '../../../theme/pilates_loading_indicator.dart';
 import '../../../l10n/app_localizations.dart';
 import '../data/purchase_gateway.dart';
@@ -16,13 +17,39 @@ class ApprovedPackagesPage extends StatefulWidget {
 
 class _ApprovedPackagesPageState extends State<ApprovedPackagesPage> {
   late Future<List<ApprovedPackage>> _packages = _loadPackages();
+  late Future<List<PackageOffer>> _offers = _loadOffers();
+  String? _requestingOfferId;
 
   Future<List<ApprovedPackage>> _loadPackages() =>
       widget.purchases.loadApprovedPackages();
 
+  Future<List<PackageOffer>> _loadOffers() =>
+      widget.purchases.loadActiveOffers();
+
   Future<void> _refresh() async {
-    setState(() => _packages = _loadPackages());
+    setState(() {
+      _packages = _loadPackages();
+      _offers = _loadOffers();
+    });
     await _packages;
+  }
+
+  Future<void> _requestCashRenewal(PackageOffer offer) async {
+    setState(() => _requestingOfferId = offer.id);
+    try {
+      await widget.purchases.requestCashPurchase(
+        offerId: offer.id,
+        requestedStartDate: offer.startsOn,
+      );
+      if (!mounted) return;
+      AppNotifications.success(
+          AppLocalizations.of(context).text('cashRequestSent'));
+    } on PurchaseFailure catch (error) {
+      if (!mounted) return;
+      AppNotifications.error(error.message);
+    } finally {
+      if (mounted) setState(() => _requestingOfferId = null);
+    }
   }
 
   @override
@@ -35,14 +62,27 @@ class _ApprovedPackagesPageState extends State<ApprovedPackagesPage> {
             const Center(child: PilatesLoadingIndicator()),
           _ when snapshot.hasError => _LoadError(onRetry: _refresh),
           _ when snapshot.data!.isEmpty => const _EmptyPackages(),
-          _ => ListView.separated(
-              padding: const EdgeInsets.fromLTRB(24, 32, 24, 36),
-              itemCount: snapshot.data!.length + 1,
-              separatorBuilder: (_, __) => const SizedBox(height: 14),
-              itemBuilder: (context, index) {
-                if (index == 0)
-                  return _PageHeader(count: snapshot.data!.length);
-                return _ApprovedPackageCard(package: snapshot.data![index - 1]);
+          _ => FutureBuilder<List<PackageOffer>>(
+              future: _offers,
+              builder: (context, offersSnapshot) {
+                final offers = offersSnapshot.data ?? const <PackageOffer>[];
+                return ListView.separated(
+                  padding: const EdgeInsets.fromLTRB(24, 32, 24, 36),
+                  itemCount: snapshot.data!.length + 1,
+                  separatorBuilder: (_, __) => const SizedBox(height: 14),
+                  itemBuilder: (context, index) {
+                    if (index == 0) {
+                      return _PageHeader(count: snapshot.data!.length);
+                    }
+                    final package = snapshot.data![index - 1];
+                    return _ApprovedPackageCard(
+                      package: package,
+                      renewalOffer: _recommendedOffer(package, offers),
+                      requesting: _requestingOfferId != null,
+                      onRequestRenewal: _requestCashRenewal,
+                    );
+                  },
+                );
               },
             ),
         };
@@ -50,6 +90,28 @@ class _ApprovedPackagesPageState extends State<ApprovedPackagesPage> {
       },
     );
   }
+
+  PackageOffer? _recommendedOffer(
+    ApprovedPackage package,
+    List<PackageOffer> offers,
+  ) {
+    if (!_isEnding(package)) return null;
+    final matchingOffers = offers
+        .where((offer) =>
+            offer.branchName == package.branchName &&
+            offer.totalCredits == package.totalCredits)
+        .toList()
+      ..sort((a, b) => a.startsOn.compareTo(b.startsOn));
+    return matchingOffers.isEmpty ? null : matchingOffers.first;
+  }
+}
+
+bool _isEnding(ApprovedPackage package) {
+  final today = DateUtils.dateOnly(DateTime.now());
+  return package.status == 'active' &&
+      package.endDateExclusive.isAfter(today) &&
+      package.remainingCredits >= 1 &&
+      package.remainingCredits <= 3;
 }
 
 class _PageHeader extends StatelessWidget {
@@ -76,9 +138,17 @@ class _PageHeader extends StatelessWidget {
 }
 
 class _ApprovedPackageCard extends StatelessWidget {
-  const _ApprovedPackageCard({required this.package});
+  const _ApprovedPackageCard({
+    required this.package,
+    required this.renewalOffer,
+    required this.requesting,
+    required this.onRequestRenewal,
+  });
 
   final ApprovedPackage package;
+  final PackageOffer? renewalOffer;
+  final bool requesting;
+  final Future<void> Function(PackageOffer offer) onRequestRenewal;
 
   bool get _isActive {
     final today = DateUtils.dateOnly(DateTime.now());
@@ -131,11 +201,83 @@ class _ApprovedPackageCard extends StatelessWidget {
         ),
         const SizedBox(height: 6),
         Text(dateLabel),
+        if (renewalOffer != null) ...[
+          const Divider(height: 32),
+          _RenewalPrompt(
+            remainingCredits: package.remainingCredits,
+            offer: renewalOffer!,
+            requesting: requesting,
+            onPressed: () => onRequestRenewal(renewalOffer!),
+          ),
+        ],
       ]),
     );
   }
 
   String _formatDate(DateTime date) => '${date.day}.${date.month}.${date.year}';
+}
+
+class _RenewalPrompt extends StatelessWidget {
+  const _RenewalPrompt({
+    required this.remainingCredits,
+    required this.offer,
+    required this.requesting,
+    required this.onPressed,
+  });
+
+  final int remainingCredits;
+  final PackageOffer offer;
+  final bool requesting;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final strings = AppLocalizations.of(context);
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: const Color(0xFFE3E9DD),
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            strings
+                .text('packageEndingTitle')
+                .replaceAll('{count}', '$remainingCredits'),
+            style: const TextStyle(fontWeight: FontWeight.w700),
+          ),
+          const SizedBox(height: 4),
+          Text(strings.text('packageEndingDetail')),
+          const SizedBox(height: 12),
+          Text(
+            strings
+                .text('renewalRecommendation')
+                .replaceAll('{package}', offer.title)
+                .replaceAll('{price}', '₺${offer.priceMinor ~/ 100}'),
+            style: const TextStyle(fontSize: 12, color: AppTheme.sage),
+          ),
+          const SizedBox(height: 12),
+          SizedBox(
+            width: double.infinity,
+            child: FilledButton.icon(
+              onPressed: requesting ? null : onPressed,
+              icon: requesting
+                  ? const SizedBox(
+                      height: 18,
+                      width: 18,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Icon(Icons.payments_outlined),
+              label: Text(strings.text(
+                  requesting ? 'creatingCashRequest' : 'requestCashRenewal')),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 class _StatusChip extends StatelessWidget {

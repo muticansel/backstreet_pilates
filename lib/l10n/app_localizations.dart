@@ -197,6 +197,12 @@ class AppLocalizations {
       'myPackages': 'My packages',
       'noApprovedPackages': 'No approved packages yet',
       'approvedPackagesLoadError': 'Packages could not be loaded',
+      'packageEndingTitle': 'Only {count} classes left',
+      'packageEndingDetail':
+          'Keep your rhythm going by arranging your next package now.',
+      'renewalRecommendation': 'Recommended: {package} · {price}',
+      'requestCashRenewal': 'Request cash renewal',
+      'creatingCashRequest': 'Creating request…',
       'profilePhotoLater':
           'Profile photo will be available in a future update.',
       'accountSecurity': 'ACCOUNT & SECURITY',
@@ -320,7 +326,8 @@ class AppLocalizations {
       'manageAttendance': 'Geçmiş dersler için katılım durumunu kaydet.',
       'selectMember': 'Üye seç',
       'noPastClasses': 'Kontrol edilecek geçmiş ders bulunmuyor.',
-      'noPastClassesForMember': 'Bu üyenin kontrol edilecek geçmiş dersi bulunmuyor.',
+      'noPastClassesForMember':
+          'Bu üyenin kontrol edilecek geçmiş dersi bulunmuyor.',
       'attendancePending': 'Yoklama girilmedi',
       'attended': 'Katıldı',
       'didNotAttend': 'Katılmadı',
@@ -435,6 +442,12 @@ class AppLocalizations {
       'myPackages': 'Paketlerim',
       'noApprovedPackages': 'Henüz onaylanmış paketin yok',
       'approvedPackagesLoadError': 'Paketler yüklenemedi',
+      'packageEndingTitle': 'Yalnızca {count} ders hakkın kaldı',
+      'packageEndingDetail':
+          'Ritimini korumak için sıradaki paketini şimdiden ayarlayabilirsin.',
+      'renewalRecommendation': 'Önerilen: {package} · {price}',
+      'requestCashRenewal': 'Nakit yenileme talebi oluştur',
+      'creatingCashRequest': 'Talep oluşturuluyor…',
       'profilePhotoLater':
           'Profil fotoğrafı gelecekteki bir güncellemede eklenecek.',
       'accountSecurity': 'HESAP VE GÜVENLİK',
