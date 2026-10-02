@@ -2,6 +2,10 @@
 
 ## Current state
 
+- Replaced the wide login/signup brand-panel illustration with an original,
+  high-resolution studio-class photograph. A dark sage gradient and bounded
+  copy column preserve readable text contrast over the image.
+
 - User-facing static copy in the member dashboard, authentication layout,
   profile, active-member list, approved-package empty state and selected admin
   summaries now reads from the English/Turkish localization catalog. Dynamic
