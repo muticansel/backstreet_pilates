@@ -9,7 +9,8 @@ abstract interface class AuthGateway {
   Future<void> signIn({required String email, required String password});
 
   Future<SignupResult> signUp({
-    required String displayName,
+    required String firstName,
+    required String lastName,
     required String email,
     required String password,
   });
@@ -39,7 +40,8 @@ class UnconfiguredAuthGateway implements AuthGateway {
 
   @override
   Future<SignupResult> signUp({
-    required String displayName,
+    required String firstName,
+    required String lastName,
     required String email,
     required String password,
   }) {

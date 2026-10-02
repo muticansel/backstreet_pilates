@@ -57,6 +57,8 @@ class AppLocalizations {
       'signupSubtitle':
           'A stronger, calmer everyday begins with one small step.',
       'yourName': 'Your name',
+      'firstName': 'First name',
+      'lastName': 'Last name',
       'useEightCharacters': 'Use at least 8 characters.',
       'creatingAccount': 'Creating account…',
       'alreadyHaveAccount': 'Already have an account?',
@@ -322,6 +324,8 @@ class AppLocalizations {
       'signupSubtitle':
           'Daha güçlü ve sakin bir günlük yaşam küçük bir adımla başlar.',
       'yourName': 'Adın',
+      'firstName': 'Ad',
+      'lastName': 'Soyad',
       'useEightCharacters': 'En az 8 karakter kullan.',
       'creatingAccount': 'Hesap oluşturuluyor…',
       'alreadyHaveAccount': 'Zaten hesabın var mı?',

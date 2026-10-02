@@ -65,60 +65,60 @@ class _UpcomingClassesPageState extends State<UpcomingClassesPage> {
           return ListView(
             padding: const EdgeInsets.fromLTRB(24, 28, 24, 36),
             children: [
-            Text(strings.text('myClasses'),
-                style: Theme.of(context).textTheme.headlineLarge),
-            const SizedBox(height: 8),
-            Text(strings.text('myClassesSubtitle'),
-                style: Theme.of(context).textTheme.bodyLarge),
-            const SizedBox(height: 28),
-            OutlinedButton.icon(
-              onPressed: _selectDate,
-              icon: const Icon(Icons.calendar_month_outlined),
-              label: Text(_selectedDate == null
-                  ? strings.text('filterClassesByDate')
-                  : MaterialLocalizations.of(context)
-                      .formatMediumDate(_selectedDate!)),
-            ),
-            if (_selectedDate != null)
-              Align(
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                  onPressed: () => setState(() => _selectedDate = null),
-                  child: Text(strings.text('clearDateFilter')),
-                ),
+              Text(strings.text('myClasses'),
+                  style: Theme.of(context).textTheme.headlineLarge),
+              const SizedBox(height: 8),
+              Text(strings.text('myClassesSubtitle'),
+                  style: Theme.of(context).textTheme.bodyLarge),
+              const SizedBox(height: 28),
+              OutlinedButton.icon(
+                onPressed: _selectDate,
+                icon: const Icon(Icons.calendar_month_outlined),
+                label: Text(_selectedDate == null
+                    ? strings.text('filterClassesByDate')
+                    : MaterialLocalizations.of(context)
+                        .formatMediumDate(_selectedDate!)),
               ),
-            const SizedBox(height: 12),
-            if (snapshot.connectionState != ConnectionState.done)
-              const Padding(
-                padding: EdgeInsets.all(32),
-                child: Center(child: PilatesLoadingIndicator()),
-              )
-            else if (snapshot.hasError)
-              _EmptyState(
-                icon: Icons.cloud_off_outlined,
-                message: strings.text('classesLoadError'),
-              )
-            else if (classes.isEmpty)
-              _EmptyState(
-                icon: Icons.event_available_outlined,
-                message: _selectedDate == null
-                    ? strings.text('noUpcomingClasses')
-                    : strings.text('noClassesOnSelectedDate'),
-              )
-            else
-              ...classes.map(
-                (scheduledClass) => Padding(
-                  padding: const EdgeInsets.only(bottom: 14),
-                  child: _ClassCard(scheduledClass: scheduledClass),
+              if (_selectedDate != null)
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    onPressed: () => setState(() => _selectedDate = null),
+                    child: Text(strings.text('clearDateFilter')),
+                  ),
                 ),
+              const SizedBox(height: 12),
+              if (snapshot.connectionState != ConnectionState.done)
+                const Padding(
+                  padding: EdgeInsets.all(32),
+                  child: Center(child: PilatesLoadingIndicator()),
+                )
+              else if (snapshot.hasError)
+                _EmptyState(
+                  icon: Icons.cloud_off_outlined,
+                  message: strings.text('classesLoadError'),
+                )
+              else if (classes.isEmpty)
+                _EmptyState(
+                  icon: Icons.event_available_outlined,
+                  message: _selectedDate == null
+                      ? strings.text('noUpcomingClasses')
+                      : strings.text('noClassesOnSelectedDate'),
+                )
+              else
+                ...classes.map(
+                  (scheduledClass) => Padding(
+                    padding: const EdgeInsets.only(bottom: 14),
+                    child: _ClassCard(scheduledClass: scheduledClass),
+                  ),
+                ),
+              const SizedBox(height: 10),
+              Text(
+                strings.text('classChangesLater'),
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 12, color: AppTheme.sage),
               ),
-            const SizedBox(height: 10),
-            Text(
-              strings.text('classChangesLater'),
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 12, color: AppTheme.sage),
-            ),
-          ],
+            ],
           );
         },
       ),

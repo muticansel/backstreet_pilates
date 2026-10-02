@@ -29,7 +29,8 @@ class SupabaseAuthGateway implements AuthGateway {
 
   @override
   Future<SignupResult> signUp({
-    required String displayName,
+    required String firstName,
+    required String lastName,
     required String email,
     required String password,
   }) async {
@@ -38,7 +39,11 @@ class SupabaseAuthGateway implements AuthGateway {
         email: email,
         password: password,
         emailRedirectTo: _confirmationRedirect,
-        data: {'display_name': displayName},
+        data: {
+          'first_name': firstName,
+          'last_name': lastName,
+          'display_name': '$firstName $lastName',
+        },
       );
       return response.session == null
           ? SignupResult.confirmationRequired

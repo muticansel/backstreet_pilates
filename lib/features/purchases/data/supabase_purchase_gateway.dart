@@ -19,7 +19,8 @@ class SupabasePurchaseGateway implements PurchaseGateway, AdminPurchaseGateway {
           .eq('is_active', true)
           // A series remains purchasable on its first-class day, but must not
           // be shown once that date has passed.
-          .gte('class_series.starts_on', today.toIso8601String().split('T').first)
+          .gte('class_series.starts_on',
+              today.toIso8601String().split('T').first)
           .order('starts_on', referencedTable: 'class_series');
       return rows.map((row) {
         final branch = row['branches'] as Map<String, dynamic>;

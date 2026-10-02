@@ -74,6 +74,19 @@ to user review before it is marked approved.
 - Verification: `dart format` completed and all 9 widget tests pass. `flutter
   analyze` reports only the existing four `RadioListTile` deprecation infos.
 
+## Required member names — 2026-10-02
+
+- Signup now requires separate first-name and last-name fields and stores them
+  in Supabase Auth metadata. The profile page reads, validates and lets members
+  edit both values; it maintains the legacy `display_name` as their combined
+  name for existing admin and operational lists.
+- Prepared `20261002000400_required_profile_names.sql`. It backfills the two
+  existing name fields from each profile's display name, requires both database
+  columns to be nonblank, and updates the new-user profile trigger. Apply it in
+  Supabase SQL Editor before releasing the client change.
+- Verification: all 9 widget tests pass. `flutter analyze` reports only the
+  existing four `RadioListTile` deprecation infos.
+
 ## Admin attendance query correction — 2026-10-02
 
 - Corrected the admin attendance lookup after production-like data verified a

@@ -34,15 +34,26 @@ class SupabaseBookingGateway implements BookingGateway, AdminBookingGateway {
 
   @override
   Future<List<DateTime>> loadCompletedClassDates() async {
-    final rows = await _client
+    // Fetch in two steps instead of using an embedded PostgREST relation.
+    // The attendance row can be readable while an embedded `!inner` session
+    // relation is omitted by the API, which incorrectly made progress empty.
+    final bookingRows = await _client
         .from('bookings')
-        .select('class_sessions!inner(starts_at)')
-        .eq('status', 'attended')
-        .order('starts_at', referencedTable: 'class_sessions');
-    return (rows as List<dynamic>).map((row) {
-      final session = row['class_sessions'] as Map<String, dynamic>;
-      return DateTime.parse(session['starts_at'] as String).toLocal();
-    }).toList();
+        .select('class_session_id')
+        .eq('status', 'attended');
+    final sessionIds = (bookingRows as List<dynamic>)
+        .map((row) => row['class_session_id'] as String)
+        .toList();
+    if (sessionIds.isEmpty) return const [];
+
+    final sessionRows = await _client
+        .from('class_sessions')
+        .select('starts_at')
+        .inFilter('id', sessionIds)
+        .order('starts_at');
+    return (sessionRows as List<dynamic>)
+        .map((row) => DateTime.parse(row['starts_at'] as String).toLocal())
+        .toList();
   }
 
   @override

@@ -33,7 +33,8 @@ class SignupPage extends StatefulWidget {
 
 class _SignupPageState extends State<SignupPage> {
   final _formKey = GlobalKey<FormState>();
-  final _name = TextEditingController();
+  final _firstName = TextEditingController();
+  final _lastName = TextEditingController();
   final _email = TextEditingController();
   final _password = TextEditingController();
   final _confirmation = TextEditingController();
@@ -42,7 +43,8 @@ class _SignupPageState extends State<SignupPage> {
 
   @override
   void dispose() {
-    _name.dispose();
+    _firstName.dispose();
+    _lastName.dispose();
     _email.dispose();
     _password.dispose();
     _confirmation.dispose();
@@ -58,7 +60,8 @@ class _SignupPageState extends State<SignupPage> {
     });
     try {
       final result = await widget.auth.signUp(
-        displayName: _name.text.trim(),
+        firstName: _firstName.text.trim(),
+        lastName: _lastName.text.trim(),
         email: _email.text.trim(),
         password: _password.text,
       );
@@ -123,13 +126,23 @@ class _SignupPageState extends State<SignupPage> {
                 const SizedBox(height: 18),
               ],
               TextFormField(
-                controller: _name,
+                controller: _firstName,
                 validator: AuthValidators.name,
                 textCapitalization: TextCapitalization.words,
                 textInputAction: TextInputAction.next,
-                autofillHints: const [AutofillHints.name],
+                autofillHints: const [AutofillHints.givenName],
                 decoration:
-                    InputDecoration(labelText: strings.text('yourName')),
+                    InputDecoration(labelText: strings.text('firstName')),
+              ),
+              const SizedBox(height: 18),
+              TextFormField(
+                controller: _lastName,
+                validator: AuthValidators.name,
+                textCapitalization: TextCapitalization.words,
+                textInputAction: TextInputAction.next,
+                autofillHints: const [AutofillHints.familyName],
+                decoration:
+                    InputDecoration(labelText: strings.text('lastName')),
               ),
               const SizedBox(height: 18),
               TextFormField(

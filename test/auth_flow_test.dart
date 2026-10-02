@@ -27,7 +27,8 @@ class FakeAuthGateway implements AuthGateway {
 
   @override
   Future<SignupResult> signUp({
-    required String displayName,
+    required String firstName,
+    required String lastName,
     required String email,
     required String password,
   }) async {
@@ -121,15 +122,16 @@ void main() {
 
     final fields = find.byType(TextFormField);
     await tester.enterText(fields.at(0), 'Alex');
-    await tester.enterText(fields.at(1), 'alex@example.com');
-    await tester.enterText(fields.at(2), 'practice123');
-    await tester.enterText(fields.at(3), 'different');
+    await tester.enterText(fields.at(1), 'Taylor');
+    await tester.enterText(fields.at(2), 'alex@example.com');
+    await tester.enterText(fields.at(3), 'practice123');
+    await tester.enterText(fields.at(4), 'different');
     await tester.ensureVisible(find.text('Create account'));
     await tester.tap(find.text('Create account'));
     await tester.pumpAndSettle();
     expect(find.text('Passwords do not match.'), findsOneWidget);
 
-    await tester.enterText(fields.at(3), 'practice123');
+    await tester.enterText(fields.at(4), 'practice123');
     await tester.ensureVisible(find.text('Create account'));
     await tester.tap(find.text('Create account'));
     await tester.pumpAndSettle();
