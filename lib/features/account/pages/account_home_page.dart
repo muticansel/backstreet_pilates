@@ -7,6 +7,7 @@ import '../../dashboard/dashboard_page.dart';
 import '../../purchases/data/purchase_gateway.dart';
 import '../data/account_role_resolver.dart';
 import '../../../theme/pilates_loading_indicator.dart';
+import '../../../notifications/push_notification_service.dart';
 
 class AccountHomePage extends StatefulWidget {
   const AccountHomePage({
@@ -32,6 +33,14 @@ class AccountHomePage extends StatefulWidget {
 
 class _AccountHomePageState extends State<AccountHomePage> {
   late final Future<AccountRole> _role = widget.roles.currentRole();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      PushNotificationService.instance.activateForSignedInUser();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

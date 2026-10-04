@@ -2,6 +2,13 @@
 
 ## Current state
 
+- Push-notification foundation prepared locally: Firebase Core/Messaging,
+  authenticated device-token registration/refresh/sign-out removal, an RLS
+  migration and a secured FCM-sending Edge Function. The Apple bundle ID and
+  Firebase iOS plist are configured locally but ignored by Git. The SQL
+  migration, Edge Function secrets, database webhook and physical-iPhone test
+  remain explicit deployment steps; see `docs/NOTIFICATIONS.md`.
+
 - User-facing static copy in the member dashboard, authentication layout,
   profile, active-member list, approved-package empty state and selected admin
   summaries now reads from the English/Turkish localization catalog. Dynamic

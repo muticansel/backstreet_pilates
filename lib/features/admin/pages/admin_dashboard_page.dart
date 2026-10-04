@@ -8,6 +8,7 @@ import '../../purchases/data/purchase_gateway.dart';
 import '../data/admin_dashboard_data.dart';
 import '../../../theme/app_theme.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../notifications/push_notification_service.dart';
 import 'cash_purchase_requests_page.dart';
 import 'admin_users_page.dart';
 import 'attendance_page.dart';
@@ -40,6 +41,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
   Future<void> _signOut() async {
     setState(() => _signingOut = true);
     try {
+      await PushNotificationService.instance.unregisterCurrentDevice();
       await widget.auth.signOut();
       if (!mounted) return;
       Navigator.of(context).pushAndRemoveUntil(

@@ -13,6 +13,7 @@ import '../../../theme/app_theme.dart';
 import '../../../theme/app_snack_bars.dart';
 import '../../../theme/pilates_loading_indicator.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../notifications/push_notification_service.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({
@@ -57,6 +58,7 @@ class _DashboardPageState extends State<DashboardPage> {
   Future<void> _signOut() async {
     setState(() => _signingOut = true);
     try {
+      await PushNotificationService.instance.unregisterCurrentDevice();
       await widget.auth.signOut();
       if (!mounted) return;
       Navigator.of(context).pushAndRemoveUntil(

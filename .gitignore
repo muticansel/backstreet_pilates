@@ -10,6 +10,7 @@ coverage/
 android/local.properties
 ios/Flutter/Generated.xcconfig
 ios/Flutter/flutter_export_environment.sh
+ios/Runner/GoogleService-Info.plist
 
 # Local backend configuration
 .env
