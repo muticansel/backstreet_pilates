@@ -70,6 +70,15 @@ Deno.serve(async (request) => {
         }),
       },
     )
+    const responseBody = response.ok ? undefined : await response.text()
+    if (!response.ok) {
+      console.error('FCM delivery rejected', {
+        notificationEventId: event.id,
+        deviceId: device.id,
+        status: response.status,
+        responseBody,
+      })
+    }
     return { id: device.id, ok: response.ok, status: response.status }
   }))
   const invalidDeviceIds = results
