@@ -43,3 +43,6 @@ Backend setup: [SUPABASE_SETUP.md](docs/SUPABASE_SETUP.md). Review the real logi
 
 Push delivery, new-class notifications and the notification-outbox cleanup job:
 [NOTIFICATIONS.md](docs/NOTIFICATIONS.md).
+
+Admin-recorded individual lessons and percentage-based earnings:
+[INDIVIDUAL_LESSONS.md](docs/INDIVIDUAL_LESSONS.md).

@@ -98,6 +98,31 @@ class AdminAttendanceRecord {
       );
 }
 
+class AdminIndividualLessonMember {
+  const AdminIndividualLessonMember({required this.id, required this.name});
+  final String id;
+  final String name;
+}
+
+class AdminIndividualLessonRecord {
+  const AdminIndividualLessonRecord({
+    required this.id,
+    required this.memberId,
+    required this.memberName,
+    required this.lessonDate,
+    required this.lessonPriceMinor,
+    required this.rateBasisPoints,
+    required this.earningMinor,
+  });
+  final String id;
+  final String memberId;
+  final String memberName;
+  final DateTime lessonDate;
+  final int lessonPriceMinor;
+  final int rateBasisPoints;
+  final int earningMinor;
+}
+
 /// The operations snapshot is deliberately assembled by one admin-only RPC so
 /// every card uses the same Istanbul calendar day.
 class AdminTodayOperations {
@@ -201,6 +226,14 @@ abstract interface class AdminBookingGateway {
     required List<TimeOfDayValue> startTimes,
   });
   Future<void> deleteFixedOffer({required String offerId});
+  Future<List<AdminIndividualLessonMember>> loadIndividualLessonMembers();
+  Future<List<AdminIndividualLessonRecord>> loadIndividualLessons();
+  Future<void> recordIndividualLesson({
+    required String memberId,
+    required DateTime lessonDate,
+    required int lessonPriceMinor,
+    required int rateBasisPoints,
+  });
 }
 
 class UnconfiguredBookingGateway extends BookingGateway {
@@ -248,4 +281,17 @@ class UnconfiguredAdminBookingGateway implements AdminBookingGateway {
       '';
   @override
   Future<void> deleteFixedOffer({required String offerId}) async {}
+  @override
+  Future<List<AdminIndividualLessonMember>>
+      loadIndividualLessonMembers() async => const [];
+  @override
+  Future<List<AdminIndividualLessonRecord>> loadIndividualLessons() async =>
+      const [];
+  @override
+  Future<void> recordIndividualLesson({
+    required String memberId,
+    required DateTime lessonDate,
+    required int lessonPriceMinor,
+    required int rateBasisPoints,
+  }) async {}
 }

@@ -12,6 +12,7 @@ import 'cash_purchase_requests_page.dart';
 import 'admin_users_page.dart';
 import 'attendance_page.dart';
 import 'class_schedule_page.dart';
+import 'individual_lessons_page.dart';
 import 'today_operations_page.dart';
 
 class AdminDashboardPage extends StatefulWidget {
@@ -148,8 +149,12 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                         child: _MetricCard(
                           label: strings.text('thisMonth'),
                           value: _formatTry(metrics.monthlySalesMinor),
-                          detail: strings.text('completedSales').replaceAll(
-                              '{count}', '${metrics.completedSales}'),
+                          detail: strings
+                              .text('privateLessonMetric')
+                              .replaceAll(
+                                  '{sales}', '${metrics.completedSales}')
+                              .replaceAll('{lessons}',
+                                  '${metrics.individualLessonCount}'),
                           icon: Icons.payments_outlined,
                         ),
                       ),
@@ -205,6 +210,17 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                 onTap: () => Navigator.of(context).push(MaterialPageRoute<void>(
                     builder: (_) =>
                         AttendancePage(bookings: widget.adminBookings))),
+              ),
+              const SizedBox(height: 14),
+              _AdminActionCard(
+                icon: Icons.person_outline,
+                title: strings.text('privateLessons'),
+                detail: strings.text('privateLessonsSubtitle'),
+                onTap: () => Navigator.of(context).push(MaterialPageRoute<void>(
+                  builder: (_) => IndividualLessonsPage(
+                    bookings: widget.adminBookings,
+                  ),
+                )),
               ),
               const SizedBox(height: 14),
               _AdminActionCard(

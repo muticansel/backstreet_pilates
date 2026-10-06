@@ -243,6 +243,80 @@ class SupabaseBookingGateway implements BookingGateway, AdminBookingGateway {
       });
 
   @override
+  Future<List<AdminIndividualLessonMember>>
+      loadIndividualLessonMembers() async {
+    final results = await Future.wait([
+      _client
+          .from('profiles')
+          .select('id, display_name')
+          .eq('is_active', true)
+          .order('display_name'),
+      _client.from('user_roles').select('user_id').eq('role', 'admin'),
+    ]);
+    final adminIds = (results[1] as List<dynamic>)
+        .map((row) => row['user_id'] as String)
+        .toSet();
+    return (results[0] as List<dynamic>)
+        .where((row) => !adminIds.contains(row['id'] as String))
+        .map((row) => AdminIndividualLessonMember(
+              id: row['id'] as String,
+              name: (row['display_name'] as String).trim().isEmpty
+                  ? 'Member'
+                  : row['display_name'] as String,
+            ))
+        .toList();
+  }
+
+  @override
+  Future<List<AdminIndividualLessonRecord>> loadIndividualLessons() async {
+    final rows = await _client
+        .from('individual_lesson_records')
+        .select(
+            'id, member_id, lesson_date, lesson_price_minor, rate_basis_points, earning_minor')
+        .order('lesson_date', ascending: false);
+    final memberIds = (rows as List<dynamic>)
+        .map((row) => row['member_id'] as String)
+        .toSet()
+        .toList();
+    final profiles = memberIds.isEmpty
+        ? <Map<String, dynamic>>[]
+        : await _client
+            .from('profiles')
+            .select('id, display_name')
+            .inFilter('id', memberIds);
+    final names = {
+      for (final profile in profiles)
+        profile['id'] as String: profile['display_name'] as String,
+    };
+    return rows
+        .map((row) => AdminIndividualLessonRecord(
+              id: row['id'] as String,
+              memberId: row['member_id'] as String,
+              memberName: names[row['member_id'] as String] ?? 'Member',
+              lessonDate: DateTime.parse(row['lesson_date'] as String),
+              lessonPriceMinor: row['lesson_price_minor'] as int,
+              rateBasisPoints: row['rate_basis_points'] as int,
+              earningMinor: row['earning_minor'] as int,
+            ))
+        .toList();
+  }
+
+  @override
+  Future<void> recordIndividualLesson({
+    required String memberId,
+    required DateTime lessonDate,
+    required int lessonPriceMinor,
+    required int rateBasisPoints,
+  }) async {
+    await _client.rpc('admin_record_individual_lesson', params: {
+      'target_member_id': memberId,
+      'target_lesson_date': lessonDate.toIso8601String().split('T').first,
+      'target_lesson_price_minor': lessonPriceMinor,
+      'target_rate_basis_points': rateBasisPoints,
+    });
+  }
+
+  @override
   Future<String> createFixedOffer({
     required String name,
     required String branchId,

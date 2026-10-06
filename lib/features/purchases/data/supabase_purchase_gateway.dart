@@ -146,6 +146,8 @@ class SupabasePurchaseGateway implements PurchaseGateway, AdminPurchaseGateway {
     try {
       final now = DateTime.now();
       final monthStart = DateTime(now.year, now.month).toUtc();
+      final monthStartDate =
+          DateTime(now.year, now.month).toIso8601String().split('T').first;
       final today = DateTime(now.year, now.month, now.day);
       final results = await Future.wait([
         _client
@@ -158,13 +160,23 @@ class SupabasePurchaseGateway implements PurchaseGateway, AdminPurchaseGateway {
             .select('id')
             .eq('status', 'active')
             .gt('end_date_exclusive', today.toIso8601String().split('T').first),
+        _client
+            .from('individual_lesson_records')
+            .select('earning_minor')
+            .gte('lesson_date', monthStartDate),
       ]);
       final sales = results[0] as List<dynamic>;
       final members = results[1] as List<dynamic>;
+      final individualLessons = results[2] as List<dynamic>;
       return AdminDashboardMetrics(
-        monthlySalesMinor:
-            sales.fold<int>(0, (sum, row) => sum + (row['price_minor'] as int)),
+        monthlySalesMinor: sales.fold<int>(
+              0,
+              (sum, row) => sum + (row['price_minor'] as int),
+            ) +
+            individualLessons.fold<int>(
+                0, (sum, row) => sum + (row['earning_minor'] as int)),
         completedSales: sales.length,
+        individualLessonCount: individualLessons.length,
         activeMembers: members.length,
       );
     } on PostgrestException catch (error) {

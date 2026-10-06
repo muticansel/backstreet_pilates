@@ -136,6 +136,21 @@ class AppLocalizations {
       'thisMonth': 'THIS MONTH',
       'activeMembers': 'ACTIVE MEMBERS',
       'completedSales': '{count} completed sales',
+      'privateLessonMetric':
+          '{sales} package sales · {lessons} private lessons',
+      'privateLessons': 'Private lessons',
+      'recordPrivateLesson': 'Record private lesson',
+      'privateLessonsSubtitle':
+          'Record individual lessons and track earnings by member.',
+      'lessonDate': 'Lesson date',
+      'lessonPrice': 'Lesson price (TRY)',
+      'ratePercent': 'Rate (%)',
+      'earnings': 'Earnings',
+      'saveLesson': 'Save lesson',
+      'lessonSaved': 'Private lesson saved.',
+      'noPrivateLessons': 'No private lessons recorded yet.',
+      'invalidPrivateLesson':
+          'Select a member, enter a price and a rate from 10 to 100.',
       'oranAndIncek': 'Oran + İncek',
       'adminDashboardPreviewNote':
           'Reporting and active-member totals are preview data. Cash payment requests are live.',
@@ -452,6 +467,20 @@ class AppLocalizations {
       'thisMonth': 'BU AY',
       'activeMembers': 'AKTİF ÜYELER',
       'completedSales': '{count} tamamlanan satış',
+      'privateLessonMetric': '{sales} paket satışı · {lessons} bireysel ders',
+      'privateLessons': 'Bireysel dersler',
+      'recordPrivateLesson': 'Bireysel ders kaydı',
+      'privateLessonsSubtitle':
+          'Bireysel dersleri kaydet ve üye bazında kazancı takip et.',
+      'lessonDate': 'Ders tarihi',
+      'lessonPrice': 'Ders tutarı (TL)',
+      'ratePercent': 'Oran (%)',
+      'earnings': 'Kazanç',
+      'saveLesson': 'Dersi kaydet',
+      'lessonSaved': 'Bireysel ders kaydedildi.',
+      'noPrivateLessons': 'Henüz bireysel ders kaydı yok.',
+      'invalidPrivateLesson':
+          'Bir üye seç, ders tutarını ve 10-100 arası oranı gir.',
       'oranAndIncek': 'Oran + İncek',
       'adminDashboardPreviewNote':
           'Raporlama ve aktif üye toplamları örnek veridir. Nakit ödeme talepleri canlıdır.',

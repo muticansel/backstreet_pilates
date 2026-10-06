@@ -80,11 +80,13 @@ class AdminDashboardMetrics {
   const AdminDashboardMetrics({
     required this.monthlySalesMinor,
     required this.completedSales,
+    required this.individualLessonCount,
     required this.activeMembers,
   });
 
   final int monthlySalesMinor;
   final int completedSales;
+  final int individualLessonCount;
   final int activeMembers;
 }
 
@@ -127,6 +129,7 @@ class UnconfiguredAdminPurchaseGateway implements AdminPurchaseGateway {
       const AdminDashboardMetrics(
         monthlySalesMinor: 0,
         completedSales: 0,
+        individualLessonCount: 0,
         activeMembers: 0,
       );
 }
