@@ -157,6 +157,10 @@ class _ClassSchedulePageState extends State<ClassSchedulePage> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  // The first field's floating label extends above its outline.
+                  // Keep it inside the scroll viewport when the keyboard moves
+                  // this dialog upward.
+                  const SizedBox(height: 10),
                   TextField(
                     controller: name,
                     textCapitalization: TextCapitalization.words,
@@ -237,15 +241,20 @@ class _ClassSchedulePageState extends State<ClassSchedulePage> {
                     child: Text(strings.text('weeklySchedule')),
                   ),
                   const SizedBox(height: 8),
-                  ...slots.asMap().entries.map((entry) => _SlotEditor(
-                        slot: entry.value,
-                        strings: strings,
-                        canRemove: slots.length > 1,
-                        onChanged: (slot) =>
-                            setDialog(() => slots[entry.key] = slot),
-                        onRemove: () =>
-                            setDialog(() => slots.removeAt(entry.key)),
-                      )),
+                  ...slots.asMap().entries.map(
+                        (entry) => Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: _SlotEditor(
+                            slot: entry.value,
+                            strings: strings,
+                            canRemove: slots.length > 1,
+                            onChanged: (slot) =>
+                                setDialog(() => slots[entry.key] = slot),
+                            onRemove: () =>
+                                setDialog(() => slots.removeAt(entry.key)),
+                          ),
+                        ),
+                      ),
                   Align(
                     alignment: Alignment.centerLeft,
                     child: TextButton.icon(
@@ -365,8 +374,13 @@ class _SlotEditor extends StatelessWidget {
         children: [
           Expanded(
             child: DropdownButtonFormField<int>(
+              isExpanded: true,
               initialValue: slot.weekday,
-              decoration: InputDecoration(labelText: strings.text('day')),
+              decoration: InputDecoration(
+                labelText: strings.text('day'),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
+              ),
               items: List.generate(
                 7,
                 (index) => DropdownMenuItem(
@@ -378,19 +392,30 @@ class _SlotEditor extends StatelessWidget {
                   onChanged(slot.copyWith(weekday: weekday!)),
             ),
           ),
-          const SizedBox(width: 8),
-          TextButton(
-            onPressed: () async {
-              final time = await showTimePicker(
-                  context: context, initialTime: slot.time);
-              if (time != null) onChanged(slot.copyWith(time: time));
-            },
-            child: Text(slot.time.format(context)),
+          const SizedBox(width: 10),
+          SizedBox(
+            width: 70,
+            child: TextButton(
+              style: TextButton.styleFrom(
+                padding: EdgeInsets.zero,
+                minimumSize: const Size(70, 48),
+              ),
+              onPressed: () async {
+                final time = await showTimePicker(
+                    context: context, initialTime: slot.time);
+                if (time != null) onChanged(slot.copyWith(time: time));
+              },
+              child: Text(slot.time.format(context)),
+            ),
           ),
-          IconButton(
-            tooltip: strings.text('removeWeeklyClass'),
-            onPressed: canRemove ? onRemove : null,
-            icon: const Icon(Icons.remove_circle_outline),
+          const SizedBox(width: 2),
+          SizedBox(
+            width: 48,
+            child: IconButton(
+              tooltip: strings.text('removeWeeklyClass'),
+              onPressed: canRemove ? onRemove : null,
+              icon: const Icon(Icons.remove_circle_outline),
+            ),
           ),
         ],
       );
