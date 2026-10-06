@@ -3,10 +3,15 @@ import { createClient } from 'npm:@supabase/supabase-js@2'
 
 type NotificationEvent = {
   id: string
-  event_type: 'cash_request_created' | 'cash_request_confirmed'
+  event_type: 'cash_request_created' | 'cash_request_confirmed' | 'class_created'
   recipient_user_id: string
-  request_id: string
-  payload: { action: 'cash_request' | 'package_confirmed'; request_id: string }
+  request_id?: string
+  class_series_id?: string
+  payload: {
+    action: 'cash_request' | 'package_confirmed' | 'class_created'
+    request_id?: string
+    class_series_id?: string
+  }
 }
 
 const json = { 'Content-Type': 'application/json' }
@@ -19,9 +24,14 @@ Deno.serve(async (request) => {
 
   const body = await request.json()
   const event = (body.record ?? body) as NotificationEvent
-  if (!event?.id || !event.recipient_user_id || !event.payload?.action || !event.request_id) {
+  if (!event?.id || !event.recipient_user_id || !event.payload?.action) {
     return Response.json({ error: 'Invalid notification event' }, { status: 400, headers: json })
   }
+  const validEvent =
+    (event.event_type === 'cash_request_created' && event.request_id && event.payload.action === 'cash_request') ||
+    (event.event_type === 'cash_request_confirmed' && event.request_id && event.payload.action === 'package_confirmed') ||
+    (event.event_type === 'class_created' && event.class_series_id && event.payload.action === 'class_created')
+  if (!validEvent) return Response.json({ error: 'Invalid notification event' }, { status: 400, headers: json })
 
   const serviceRole = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
   const serviceAccountRaw = Deno.env.get('FIREBASE_SERVICE_ACCOUNT_JSON')
@@ -53,7 +63,9 @@ Deno.serve(async (request) => {
 
   const copy = event.event_type === 'cash_request_created'
     ? { title: 'Backstreet Pilates', body: 'Yeni bir ödeme talebi var.' }
-    : { title: 'Backstreet Pilates', body: 'Paketin onaylandı.' }
+    : event.event_type === 'cash_request_confirmed'
+      ? { title: 'Backstreet Pilates', body: 'Paketin onaylandı.' }
+      : { title: 'Backstreet Pilates', body: 'Yeni bir ders satışa açıldı.' }
   const results = await Promise.all(devices.map(async (device) => {
     const response = await fetch(
       `https://fcm.googleapis.com/v1/projects/${serviceAccount.project_id}/messages:send`,
