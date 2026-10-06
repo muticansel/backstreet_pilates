@@ -248,23 +248,59 @@ class _OperationCard extends StatelessWidget {
             color: Colors.white,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(color: const Color(0xFFD8DED5))),
-        child: Row(children: [
-          Icon(icon, color: AppTheme.sage),
-          const SizedBox(width: 12),
-          Expanded(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 3),
+              child: Icon(icon, color: AppTheme.sage),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
               child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                Text(title,
-                    style: const TextStyle(fontWeight: FontWeight.w700)),
-                const SizedBox(height: 3),
-                Text(detail, style: const TextStyle(fontSize: 12)),
-              ])),
-          if (trailing != null)
-            Text(trailing!,
-                style: const TextStyle(
-                    color: AppTheme.sage, fontWeight: FontWeight.w700)),
-        ]),
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(fontWeight: FontWeight.w700),
+                        ),
+                      ),
+                      if (trailing != null) ...[
+                        const SizedBox(width: 10),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 9, vertical: 5),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFE1E9DB),
+                            borderRadius: BorderRadius.circular(999),
+                          ),
+                          child: Text(
+                            trailing!,
+                            style: const TextStyle(
+                              color: AppTheme.sage,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                  const SizedBox(height: 5),
+                  Text(
+                    detail,
+                    style: const TextStyle(fontSize: 13, height: 1.4),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       );
 }
 
