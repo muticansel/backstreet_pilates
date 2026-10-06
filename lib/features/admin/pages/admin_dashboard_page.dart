@@ -5,7 +5,6 @@ import '../../auth/data/auth_gateway.dart';
 import '../../auth/pages/login_page.dart';
 import '../../bookings/data/booking_gateway.dart';
 import '../../purchases/data/purchase_gateway.dart';
-import '../data/admin_dashboard_data.dart';
 import '../../../theme/app_theme.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../notifications/push_notification_service.dart';
@@ -36,7 +35,13 @@ class AdminDashboardPage extends StatefulWidget {
 
 class _AdminDashboardPageState extends State<AdminDashboardPage> {
   bool _signingOut = false;
-  final _data = AdminDashboardData.preview;
+  late Future<AdminDashboardMetrics> _metrics;
+
+  @override
+  void initState() {
+    super.initState();
+    _metrics = widget.adminPurchases.loadDashboardMetrics();
+  }
 
   Future<void> _signOut() async {
     setState(() => _signingOut = true);
@@ -118,6 +123,50 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                 style: Theme.of(context).textTheme.bodyLarge,
               ),
               const SizedBox(height: 28),
+              FutureBuilder<AdminDashboardMetrics>(
+                future: _metrics,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState != ConnectionState.done) {
+                    return const SizedBox(
+                      height: 154,
+                      child: Center(child: CircularProgressIndicator()),
+                    );
+                  }
+                  if (snapshot.hasError) {
+                    return TextButton.icon(
+                      onPressed: () => setState(() => _metrics =
+                          widget.adminPurchases.loadDashboardMetrics()),
+                      icon: const Icon(Icons.refresh),
+                      label:
+                          const Text('Dashboard metrics could not be loaded.'),
+                    );
+                  }
+                  final metrics = snapshot.data!;
+                  return Row(
+                    children: [
+                      Expanded(
+                        child: _MetricCard(
+                          label: strings.text('thisMonth'),
+                          value: _formatTry(metrics.monthlySalesMinor),
+                          detail: strings.text('completedSales').replaceAll(
+                              '{count}', '${metrics.completedSales}'),
+                          icon: Icons.payments_outlined,
+                        ),
+                      ),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: _MetricCard(
+                          label: strings.text('activeMembers'),
+                          value: '${metrics.activeMembers}',
+                          detail: strings.text('oranAndIncek'),
+                          icon: Icons.people_outline,
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
+              const SizedBox(height: 14),
               _AdminActionCard(
                 icon: Icons.today_outlined,
                 title: strings.text('todayOperations'),
@@ -128,30 +177,6 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                     purchases: widget.adminPurchases,
                   ),
                 )),
-              ),
-              const SizedBox(height: 14),
-              Row(
-                children: [
-                  Expanded(
-                    child: _MetricCard(
-                      label: strings.text('thisMonth'),
-                      value: _formatTry(_data.monthlySalesMinor),
-                      detail: strings
-                          .text('completedSales')
-                          .replaceAll('{count}', '${_data.completedSales}'),
-                      icon: Icons.payments_outlined,
-                    ),
-                  ),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: _MetricCard(
-                      label: strings.text('activeMembers'),
-                      value: '${_data.activeMembers}',
-                      detail: strings.text('oranAndIncek'),
-                      icon: Icons.people_outline,
-                    ),
-                  ),
-                ],
               ),
               const SizedBox(height: 30),
               _AdminActionCard(
@@ -198,11 +223,6 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
               const Align(
                   alignment: Alignment.centerRight,
                   child: LanguageMenuButton()),
-              Text(
-                strings.text('adminDashboardPreviewNote'),
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 12, color: AppTheme.sage),
-              ),
             ],
           ),
         ),

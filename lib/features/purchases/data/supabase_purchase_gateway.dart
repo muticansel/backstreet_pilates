@@ -142,6 +142,40 @@ class SupabasePurchaseGateway implements PurchaseGateway, AdminPurchaseGateway {
   }
 
   @override
+  Future<AdminDashboardMetrics> loadDashboardMetrics() async {
+    try {
+      final now = DateTime.now();
+      final monthStart = DateTime(now.year, now.month).toUtc();
+      final today = DateTime(now.year, now.month, now.day);
+      final results = await Future.wait([
+        _client
+            .from('membership_purchase_requests')
+            .select('price_minor')
+            .eq('status', 'cash_payment_confirmed')
+            .gte('confirmed_at', monthStart.toIso8601String()),
+        _client
+            .from('user_memberships')
+            .select('id')
+            .eq('status', 'active')
+            .gt('end_date_exclusive', today.toIso8601String().split('T').first),
+      ]);
+      final sales = results[0] as List<dynamic>;
+      final members = results[1] as List<dynamic>;
+      return AdminDashboardMetrics(
+        monthlySalesMinor:
+            sales.fold<int>(0, (sum, row) => sum + (row['price_minor'] as int)),
+        completedSales: sales.length,
+        activeMembers: members.length,
+      );
+    } on PostgrestException catch (error) {
+      throw PurchaseFailure(error.message);
+    } catch (_) {
+      throw const PurchaseFailure(
+          'Dashboard metrics could not be loaded. Try again.');
+    }
+  }
+
+  @override
   Future<void> confirmCashPurchase(String requestId) async {
     try {
       await _client.rpc('confirm_cash_membership_purchase',

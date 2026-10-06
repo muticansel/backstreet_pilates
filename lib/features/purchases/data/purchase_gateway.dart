@@ -76,8 +76,21 @@ class PendingCashPurchase {
   final DateTime createdAt;
 }
 
+class AdminDashboardMetrics {
+  const AdminDashboardMetrics({
+    required this.monthlySalesMinor,
+    required this.completedSales,
+    required this.activeMembers,
+  });
+
+  final int monthlySalesMinor;
+  final int completedSales;
+  final int activeMembers;
+}
+
 abstract interface class AdminPurchaseGateway {
   Future<List<PendingCashPurchase>> loadPendingCashPurchases();
+  Future<AdminDashboardMetrics> loadDashboardMetrics();
   Future<void> confirmCashPurchase(String requestId);
 }
 
@@ -108,6 +121,14 @@ class UnconfiguredAdminPurchaseGateway implements AdminPurchaseGateway {
   @override
   Future<List<PendingCashPurchase>> loadPendingCashPurchases() async =>
       const [];
+
+  @override
+  Future<AdminDashboardMetrics> loadDashboardMetrics() async =>
+      const AdminDashboardMetrics(
+        monthlySalesMinor: 0,
+        completedSales: 0,
+        activeMembers: 0,
+      );
 }
 
 class PurchaseFailure implements Exception {

@@ -22,14 +22,12 @@ class DashboardPage extends StatefulWidget {
     required this.roles,
     required this.purchases,
     required this.bookings,
-    this.dashboard,
   });
 
   final AuthGateway auth;
   final AccountRoleResolver roles;
   final PurchaseGateway purchases;
   final BookingGateway bookings;
-  final DashboardData? dashboard;
 
   @override
   State<DashboardPage> createState() => _DashboardPageState();
@@ -39,20 +37,28 @@ class _DashboardPageState extends State<DashboardPage> {
   bool _signingOut = false;
   int _selectedIndex = 0;
   late Future<List<DateTime>> _completedClassDates;
-
-  DashboardData get _dashboard => widget.dashboard ?? DashboardData.preview;
+  late Future<List<ApprovedPackage>> _approvedPackages;
+  late Future<List<FeedbackClass>> _recentPractice;
 
   @override
   void initState() {
     super.initState();
     _completedClassDates = widget.bookings.loadCompletedClassDates();
+    _approvedPackages = widget.purchases.loadApprovedPackages();
+    _recentPractice = widget.bookings.loadFeedbackClasses();
   }
 
   Future<void> _refreshDashboard() async {
     setState(() {
       _completedClassDates = widget.bookings.loadCompletedClassDates();
+      _approvedPackages = widget.purchases.loadApprovedPackages();
+      _recentPractice = widget.bookings.loadFeedbackClasses();
     });
-    await _completedClassDates;
+    await Future.wait([
+      _completedClassDates,
+      _approvedPackages,
+      _recentPractice,
+    ]);
   }
 
   Future<void> _signOut() async {
@@ -76,28 +82,7 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   void _showPurchasePreview() {
-    showModalBottomSheet<void>(
-      context: context,
-      showDragHandle: true,
-      builder: (context) => Padding(
-        padding: const EdgeInsets.fromLTRB(24, 0, 24, 36),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(AppLocalizations.of(context).text('packages'),
-                style: Theme.of(context).textTheme.headlineSmall),
-            const SizedBox(height: 10),
-            Text(AppLocalizations.of(context).text('packagePreviewDetail')),
-            const SizedBox(height: 22),
-            FilledButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text(AppLocalizations.of(context).text('gotIt')),
-            ),
-          ],
-        ),
-      ),
-    );
+    setState(() => _selectedIndex = 1);
   }
 
   NavigationBar _navigationBar() {
@@ -155,7 +140,6 @@ class _DashboardPageState extends State<DashboardPage> {
       );
     }
 
-    final dashboard = _dashboard;
     return Scaffold(
       body: SafeArea(
         child: RefreshIndicator(
@@ -228,7 +212,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 const SizedBox(height: 30),
                 const _SectionLabel(titleKey: 'currentPackage'),
                 const SizedBox(height: 10),
-                _MembershipCard(membership: dashboard.membership),
+                _CurrentPackageSection(packages: _approvedPackages),
                 const SizedBox(height: 30),
                 const _SectionLabel(titleKey: 'yourProgress'),
                 const SizedBox(height: 10),
@@ -241,13 +225,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 const SizedBox(height: 30),
                 const _SectionLabel(titleKey: 'recentPractice'),
                 const SizedBox(height: 10),
-                _HistoryCard(activities: dashboard.recentActivities),
-                const SizedBox(height: 20),
-                Text(
-                  AppLocalizations.of(context).text('dashboardPreviewNote'),
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 12, color: AppTheme.sage),
-                ),
+                _RecentPracticeSection(classes: _recentPractice),
               ],
             ),
           ),
@@ -256,58 +234,6 @@ class _DashboardPageState extends State<DashboardPage> {
       bottomNavigationBar: _navigationBar(),
     );
   }
-}
-
-class DashboardData {
-  const DashboardData({
-    required this.membership,
-    required this.recentActivities,
-  });
-
-  final MembershipSummary membership;
-  final List<PracticeActivity> recentActivities;
-
-  static const preview = DashboardData(
-    membership: MembershipSummary(
-      packageName: '8 class package',
-      branchName: 'Oran studio',
-      totalCredits: 8,
-      remainingCredits: 4,
-      validUntil: '24 October',
-    ),
-    recentActivities: [
-      PracticeActivity(title: 'Mat Pilates', detail: 'Tuesday, 08 October'),
-      PracticeActivity(
-        title: 'Reformer Pilates',
-        detail: 'Saturday, 05 October',
-      ),
-    ],
-  );
-}
-
-class MembershipSummary {
-  const MembershipSummary({
-    required this.packageName,
-    required this.branchName,
-    required this.totalCredits,
-    required this.remainingCredits,
-    required this.validUntil,
-  });
-
-  final String packageName;
-  final String branchName;
-  final int totalCredits;
-  final int remainingCredits;
-  final String validUntil;
-
-  double get progress => (totalCredits - remainingCredits) / totalCredits;
-}
-
-class PracticeActivity {
-  const PracticeActivity({required this.title, required this.detail});
-
-  final String title;
-  final String detail;
 }
 
 class _SectionLabel extends StatelessWidget {
@@ -409,10 +335,51 @@ class _StudioMomentCard extends StatelessWidget {
   }
 }
 
-class _MembershipCard extends StatelessWidget {
-  const _MembershipCard({required this.membership});
+class _CurrentPackageSection extends StatelessWidget {
+  const _CurrentPackageSection({required this.packages});
 
-  final MembershipSummary membership;
+  final Future<List<ApprovedPackage>> packages;
+
+  @override
+  Widget build(BuildContext context) => FutureBuilder<List<ApprovedPackage>>(
+        future: packages,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState != ConnectionState.done) {
+            return const SizedBox(
+              height: 180,
+              child: Center(child: PilatesLoadingIndicator(size: 38)),
+            );
+          }
+          if (snapshot.hasError) {
+            return const _PackageMessageCard(
+              icon: Icons.cloud_off_outlined,
+              titleKey: 'currentPackageLoadError',
+              detailKey: 'currentPackageLoadErrorDetail',
+            );
+          }
+          final today = DateUtils.dateOnly(DateTime.now());
+          final active = snapshot.data!
+              .where((package) =>
+                  package.status == 'active' &&
+                  package.endDateExclusive.isAfter(today))
+              .toList()
+            ..sort((a, b) => a.endDateExclusive.compareTo(b.endDateExclusive));
+          if (active.isEmpty) {
+            return const _PackageMessageCard(
+              icon: Icons.style_outlined,
+              titleKey: 'noCurrentPackage',
+              detailKey: 'noCurrentPackageDetail',
+            );
+          }
+          return _MembershipCard(package: active.first);
+        },
+      );
+}
+
+class _MembershipCard extends StatelessWidget {
+  const _MembershipCard({required this.package});
+
+  final ApprovedPackage package;
 
   @override
   Widget build(BuildContext context) {
@@ -426,7 +393,7 @@ class _MembershipCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            membership.branchName.toUpperCase(),
+            package.branchName.toUpperCase(),
             style: const TextStyle(
               color: Color(0xFFD6E3CE),
               fontSize: 11,
@@ -436,7 +403,7 @@ class _MembershipCard extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           Text(
-            membership.packageName,
+            package.title,
             style: const TextStyle(
               color: Colors.white,
               fontSize: 25,
@@ -447,7 +414,7 @@ class _MembershipCard extends StatelessWidget {
           Row(
             children: [
               Text(
-                '${membership.remainingCredits}',
+                '${package.remainingCredits}',
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 48,
@@ -471,7 +438,9 @@ class _MembershipCard extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(99),
             child: LinearProgressIndicator(
-              value: membership.progress,
+              value: ((package.totalCredits - package.remainingCredits) /
+                      package.totalCredits)
+                  .clamp(0.0, 1.0),
               minHeight: 7,
               color: const Color(0xFFE0C89B),
               backgroundColor: const Color(0xFF668273),
@@ -482,15 +451,39 @@ class _MembershipCard extends StatelessWidget {
             AppLocalizations.of(context)
                 .text('membershipProgressDetail')
                 .replaceAll('{completed}',
-                    '${membership.totalCredits - membership.remainingCredits}')
-                .replaceAll('{total}', '${membership.totalCredits}')
-                .replaceAll('{date}', membership.validUntil),
+                    '${package.totalCredits - package.remainingCredits}')
+                .replaceAll('{total}', '${package.totalCredits}')
+                .replaceAll(
+                    '{date}',
+                    MaterialLocalizations.of(context).formatMediumDate(
+                      package.endDateExclusive
+                          .subtract(const Duration(days: 1)),
+                    )),
             style: const TextStyle(color: Color(0xFFD6E3CE), fontSize: 12),
           ),
         ],
       ),
     );
   }
+}
+
+class _PackageMessageCard extends StatelessWidget {
+  const _PackageMessageCard({
+    required this.icon,
+    required this.titleKey,
+    required this.detailKey,
+  });
+
+  final IconData icon;
+  final String titleKey;
+  final String detailKey;
+
+  @override
+  Widget build(BuildContext context) => _ProgressMessageCard(
+        icon: icon,
+        titleKey: titleKey,
+        detailKey: detailKey,
+      );
 }
 
 class _PracticeProgressSection extends StatelessWidget {
@@ -862,10 +855,44 @@ class _ExplorePackagesCard extends StatelessWidget {
   }
 }
 
-class _HistoryCard extends StatelessWidget {
-  const _HistoryCard({required this.activities});
+class _RecentPracticeSection extends StatelessWidget {
+  const _RecentPracticeSection({required this.classes});
 
-  final List<PracticeActivity> activities;
+  final Future<List<FeedbackClass>> classes;
+
+  @override
+  Widget build(BuildContext context) => FutureBuilder<List<FeedbackClass>>(
+        future: classes,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState != ConnectionState.done) {
+            return const SizedBox(
+              height: 140,
+              child: Center(child: PilatesLoadingIndicator(size: 38)),
+            );
+          }
+          if (snapshot.hasError) {
+            return const _ProgressMessageCard(
+              icon: Icons.cloud_off_outlined,
+              titleKey: 'recentPracticeLoadError',
+              detailKey: 'recentPracticeLoadErrorDetail',
+            );
+          }
+          if (snapshot.data!.isEmpty) {
+            return const _ProgressMessageCard(
+              icon: Icons.self_improvement_outlined,
+              titleKey: 'noRecentPractice',
+              detailKey: 'noRecentPracticeDetail',
+            );
+          }
+          return _HistoryCard(classes: snapshot.data!.take(3).toList());
+        },
+      );
+}
+
+class _HistoryCard extends StatelessWidget {
+  const _HistoryCard({required this.classes});
+
+  final List<FeedbackClass> classes;
 
   @override
   Widget build(BuildContext context) {
@@ -877,21 +904,24 @@ class _HistoryCard extends StatelessWidget {
       ),
       child: Column(
         children: [
-          for (var index = 0; index < activities.length; index++) ...[
+          for (var index = 0; index < classes.length; index++) ...[
             ListTile(
               leading: const CircleAvatar(
                 backgroundColor: Color(0xFFF0F3EB),
                 foregroundColor: AppTheme.sage,
                 child: Icon(Icons.check),
               ),
-              title: Text(activities[index].title),
-              subtitle: Text(activities[index].detail),
+              title: Text(classes[index].title),
+              subtitle: Text(
+                MaterialLocalizations.of(context)
+                    .formatMediumDate(classes[index].startsAt),
+              ),
               trailing: Text(
                 AppLocalizations.of(context).text('completed'),
                 style: TextStyle(fontSize: 12, color: AppTheme.sage),
               ),
             ),
-            if (index < activities.length - 1)
+            if (index < classes.length - 1)
               const Divider(height: 1, indent: 72, endIndent: 20),
           ],
         ],

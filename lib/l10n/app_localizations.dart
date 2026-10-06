@@ -198,11 +198,21 @@ class AppLocalizations {
       'classesRemainingCompact': 'classes\nremaining',
       'membershipProgressDetail':
           '{completed} of {total} classes completed · valid through {date}',
+      'noCurrentPackage': 'No active package yet',
+      'noCurrentPackageDetail':
+          'Your current package will appear here after payment approval.',
+      'currentPackageLoadError': 'Your package could not be loaded',
+      'currentPackageLoadErrorDetail': 'Please try again a little later.',
       'completed': 'Completed',
       'packagesIntro': 'Find a rhythm that fits your week.',
       'currentPackage': 'YOUR CURRENT PACKAGE',
       'nextRhythm': 'FIND YOUR NEXT RHYTHM',
       'recentPractice': 'YOUR RECENT PRACTICE',
+      'noRecentPractice': 'Your practice history will appear here',
+      'noRecentPracticeDetail':
+          'Completed classes will be added after attendance is recorded.',
+      'recentPracticeLoadError': 'Your recent practice could not be loaded',
+      'recentPracticeLoadErrorDetail': 'Please try again a little later.',
       'yourProgress': 'YOUR PROGRESS',
       'monthlyAttendance': 'Monthly attendance',
       'monthlyAttendanceSubtitle':
@@ -502,11 +512,21 @@ class AppLocalizations {
       'classesRemainingCompact': 'ders\nkaldı',
       'membershipProgressDetail':
           '{total} dersin {completed} tanesi tamamlandı · geçerlilik: {date}',
+      'noCurrentPackage': 'Henüz aktif paketin yok',
+      'noCurrentPackageDetail':
+          'Ödeme onayından sonra mevcut paketin burada görünür.',
+      'currentPackageLoadError': 'Paketin yüklenemedi',
+      'currentPackageLoadErrorDetail': 'Lütfen biraz sonra tekrar dene.',
       'completed': 'Tamamlandı',
       'packagesIntro': 'Haftana uygun bir ritim bul.',
       'currentPackage': 'MEVCUT PAKETİN',
       'nextRhythm': 'SIRADAKİ RİTMİN',
       'recentPractice': 'SON PRATİKLERİN',
+      'noRecentPractice': 'Pratik geçmişin burada görünecek',
+      'noRecentPracticeDetail':
+          'Katılımın kaydedildiğinde tamamlanan derslerin burada listelenir.',
+      'recentPracticeLoadError': 'Son pratiklerin yüklenemedi',
+      'recentPracticeLoadErrorDetail': 'Lütfen biraz sonra tekrar dene.',
       'yourProgress': 'İLERLEMEN',
       'monthlyAttendance': 'Aylık katılım',
       'monthlyAttendanceSubtitle': 'Son altı aydaki tamamlanan derslerin.',
