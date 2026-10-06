@@ -120,7 +120,7 @@ class _DashboardPageState extends State<DashboardPage> {
         NavigationDestination(
           icon: const Icon(Icons.style_outlined),
           selectedIcon: const Icon(Icons.style),
-          label: strings.text('packages'),
+          label: strings.text('navExplore'),
         ),
         NavigationDestination(
           icon: const Icon(Icons.calendar_month_outlined),
@@ -130,7 +130,7 @@ class _DashboardPageState extends State<DashboardPage> {
         NavigationDestination(
           icon: const Icon(Icons.verified_outlined),
           selectedIcon: const Icon(Icons.verified),
-          label: strings.text('myPackages'),
+          label: strings.text('navMyPlan'),
         ),
       ],
     );

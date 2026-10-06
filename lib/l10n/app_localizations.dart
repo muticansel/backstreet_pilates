@@ -187,6 +187,7 @@ class AppLocalizations {
       'enterEightCharacters': 'Use at least 8 characters.',
       'passwordsDoNotMatch': 'Passwords do not match.',
       'packages': 'Packages',
+      'navExplore': 'Explore',
       'gotIt': 'Got it',
       'explorePackages': 'Explore packages',
       'explorePackagesTitle': 'More time for you',
@@ -241,6 +242,7 @@ class AppLocalizations {
       'classesRemaining': '{count} classes remaining',
       'until': 'Until {date}',
       'myPackages': 'My packages',
+      'navMyPlan': 'My plan',
       'noApprovedPackages': 'No approved packages yet',
       'approvedPackagesCount': '{count} approved packages',
       'noApprovedPackagesDetail':
@@ -501,6 +503,7 @@ class AppLocalizations {
       'enterEightCharacters': 'En az 8 karakter kullan.',
       'passwordsDoNotMatch': 'Şifreler eşleşmiyor.',
       'packages': 'Paketler',
+      'navExplore': 'Keşfet',
       'gotIt': 'Anladım',
       'explorePackages': 'Paketleri keşfet',
       'explorePackagesTitle': 'Kendine daha çok zaman ayır',
@@ -554,6 +557,7 @@ class AppLocalizations {
       'classesRemaining': '{count} ders kaldı',
       'until': '{date} tarihine kadar',
       'myPackages': 'Paketlerim',
+      'navMyPlan': 'Planım',
       'noApprovedPackages': 'Henüz onaylanmış paketin yok',
       'approvedPackagesCount': '{count} onaylanmış paket',
       'noApprovedPackagesDetail':
