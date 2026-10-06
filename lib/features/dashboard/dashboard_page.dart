@@ -85,6 +85,27 @@ class _DashboardPageState extends State<DashboardPage> {
     setState(() => _selectedIndex = 1);
   }
 
+  void _handleHeaderMenu(_DashboardMenuAction action) {
+    switch (action) {
+      case _DashboardMenuAction.profile:
+        Navigator.of(context).push(
+          MaterialPageRoute<void>(builder: (_) => const ProfilePage()),
+        );
+      case _DashboardMenuAction.feedback:
+        Navigator.of(context).push(
+          MaterialPageRoute<void>(
+            builder: (_) => ClassFeedbackPage(bookings: widget.bookings),
+          ),
+        );
+      case _DashboardMenuAction.english:
+        AppLanguageScope.of(context).change(const Locale('en'));
+      case _DashboardMenuAction.turkish:
+        AppLanguageScope.of(context).change(const Locale('tr'));
+      case _DashboardMenuAction.signOut:
+        if (!_signingOut) _signOut();
+    }
+  }
+
   NavigationBar _navigationBar() {
     final strings = AppLocalizations.of(context);
     return NavigationBar(
@@ -165,36 +186,10 @@ class _DashboardPageState extends State<DashboardPage> {
                         ),
                       ),
                     ),
-                    IconButton(
-                      tooltip: 'Sign out',
-                      onPressed: _signingOut ? null : _signOut,
-                      icon: const Icon(Icons.logout_outlined),
+                    _DashboardProfileMenu(
+                      signingOut: _signingOut,
+                      onSelected: _handleHeaderMenu,
                     ),
-                    IconButton(
-                      tooltip: AppLocalizations.of(context).text('editProfile'),
-                      onPressed: () => Navigator.of(context).push(
-                        MaterialPageRoute<void>(
-                            builder: (_) => const ProfilePage()),
-                      ),
-                      icon: const CircleAvatar(
-                        radius: 15,
-                        backgroundColor: AppTheme.sage,
-                        foregroundColor: Colors.white,
-                        child: Icon(Icons.person, size: 18),
-                      ),
-                    ),
-                    IconButton(
-                      tooltip:
-                          AppLocalizations.of(context).text('classFeedback'),
-                      onPressed: () => Navigator.of(context).push(
-                        MaterialPageRoute<void>(
-                          builder: (_) =>
-                              ClassFeedbackPage(bookings: widget.bookings),
-                        ),
-                      ),
-                      icon: const Icon(Icons.rate_review_outlined),
-                    ),
-                    const LanguageMenuButton(),
                   ],
                 ),
                 const SizedBox(height: 34),
@@ -234,6 +229,89 @@ class _DashboardPageState extends State<DashboardPage> {
       bottomNavigationBar: _navigationBar(),
     );
   }
+}
+
+enum _DashboardMenuAction { profile, feedback, english, turkish, signOut }
+
+class _DashboardProfileMenu extends StatelessWidget {
+  const _DashboardProfileMenu({
+    required this.signingOut,
+    required this.onSelected,
+  });
+
+  final bool signingOut;
+  final ValueChanged<_DashboardMenuAction> onSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    final strings = AppLocalizations.of(context);
+    final language = AppLanguageScope.of(context);
+    return PopupMenuButton<_DashboardMenuAction>(
+      tooltip: strings.text('profile'),
+      enabled: !signingOut,
+      onSelected: onSelected,
+      offset: const Offset(0, 46),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      icon: const CircleAvatar(
+        radius: 20,
+        backgroundColor: AppTheme.sage,
+        foregroundColor: Colors.white,
+        child: Icon(Icons.person, size: 22),
+      ),
+      itemBuilder: (context) => [
+        PopupMenuItem(
+          value: _DashboardMenuAction.profile,
+          child: _HeaderMenuItem(
+            icon: Icons.person_outline,
+            label: strings.text('editProfile'),
+          ),
+        ),
+        PopupMenuItem(
+          value: _DashboardMenuAction.feedback,
+          child: _HeaderMenuItem(
+            icon: Icons.rate_review_outlined,
+            label: strings.text('classFeedback'),
+          ),
+        ),
+        const PopupMenuDivider(),
+        PopupMenuItem(
+          value: language.locale.languageCode == 'en'
+              ? _DashboardMenuAction.turkish
+              : _DashboardMenuAction.english,
+          child: _HeaderMenuItem(
+            icon: Icons.language_outlined,
+            label: language.locale.languageCode == 'en'
+                ? strings.text('turkish')
+                : strings.text('english'),
+          ),
+        ),
+        const PopupMenuDivider(),
+        PopupMenuItem(
+          value: _DashboardMenuAction.signOut,
+          child: _HeaderMenuItem(
+            icon: Icons.logout_outlined,
+            label: strings.text('signOut'),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _HeaderMenuItem extends StatelessWidget {
+  const _HeaderMenuItem({required this.icon, required this.label});
+
+  final IconData icon;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) => Row(
+        children: [
+          Icon(icon, size: 20, color: AppTheme.sage),
+          const SizedBox(width: 12),
+          Text(label),
+        ],
+      );
 }
 
 class _SectionLabel extends StatelessWidget {
