@@ -86,6 +86,16 @@ class AdminAttendanceRecord {
   final String branchName;
   final DateTime startsAt;
   final String status;
+
+  AdminAttendanceRecord copyWith({String? status}) => AdminAttendanceRecord(
+        bookingId: bookingId,
+        memberId: memberId,
+        memberName: memberName,
+        title: title,
+        branchName: branchName,
+        startsAt: startsAt,
+        status: status ?? this.status,
+      );
 }
 
 /// The operations snapshot is deliberately assembled by one admin-only RPC so

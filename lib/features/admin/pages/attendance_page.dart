@@ -51,16 +51,18 @@ class _AttendancePageState extends State<AttendancePage> {
     }
 
     if (!mounted) return;
+    final currentAttendance = _attendance;
+    setState(() {
+      _attendance = currentAttendance.then(
+        (records) => records
+            .map((item) => item.bookingId == record.bookingId
+                ? item.copyWith(status: attended ? 'attended' : 'no_show')
+                : item)
+            .toList(),
+      );
+    });
     AppNotifications.success(
         AppLocalizations.of(context).text('attendanceSaved'));
-    try {
-      await _refresh();
-    } catch (_) {
-      if (mounted) {
-        AppNotifications.error(
-            AppLocalizations.of(context).text('attendanceLoadError'));
-      }
-    }
   }
 
   @override
@@ -131,8 +133,12 @@ class _AttendancePageState extends State<AttendancePage> {
                         child: _AttendanceCard(
                           record: record,
                           saving: _savingBookingIds.contains(record.bookingId),
-                          onAttended: () => _record(record, true),
-                          onNoShow: () => _record(record, false),
+                          onAttended: record.status == 'attended'
+                              ? null
+                              : () => _record(record, true),
+                          onNoShow: record.status == 'no_show'
+                              ? null
+                              : () => _record(record, false),
                         ),
                       )),
               ],
@@ -154,8 +160,8 @@ class _AttendanceCard extends StatelessWidget {
 
   final AdminAttendanceRecord record;
   final bool saving;
-  final VoidCallback onAttended;
-  final VoidCallback onNoShow;
+  final VoidCallback? onAttended;
+  final VoidCallback? onNoShow;
 
   @override
   Widget build(BuildContext context) {
