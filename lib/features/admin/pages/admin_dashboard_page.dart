@@ -71,175 +71,191 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
     }
   }
 
+  Future<void> _refreshMetrics() async {
+    final metrics = widget.adminPurchases.loadDashboardMetrics();
+    setState(() {
+      _metrics = metrics;
+    });
+    await metrics;
+  }
+
   @override
   Widget build(BuildContext context) {
     final strings = AppLocalizations.of(context);
     return Scaffold(
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(24, 20, 24, 36),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Row(
-                children: [
-                  const Icon(Icons.spa_outlined,
-                      color: AppTheme.sage, size: 28),
-                  const SizedBox(width: 10),
-                  const Expanded(
-                    child: Text(
-                      'Backstreet Pilates',
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 1.5,
+        child: RefreshIndicator(
+          onRefresh: _refreshMetrics,
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: const EdgeInsets.fromLTRB(24, 20, 24, 36),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  children: [
+                    const Icon(Icons.spa_outlined,
+                        color: AppTheme.sage, size: 28),
+                    const SizedBox(width: 10),
+                    const Expanded(
+                      child: Text(
+                        'Backstreet Pilates',
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 1.5,
+                        ),
                       ),
                     ),
-                  ),
-                  IconButton(
-                    tooltip: strings.text('signOut'),
-                    onPressed: _signingOut ? null : _signOut,
-                    icon: const Icon(Icons.logout_outlined),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 34),
-              Text(
-                strings.text('adminOverview'),
-                style: TextStyle(
-                  color: AppTheme.sage,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 1.8,
+                    IconButton(
+                      tooltip: strings.text('signOut'),
+                      onPressed: _signingOut ? null : _signOut,
+                      icon: const Icon(Icons.logout_outlined),
+                    ),
+                  ],
                 ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                strings.text('studioAtGlance'),
-                style: Theme.of(context).textTheme.headlineLarge,
-              ),
-              const SizedBox(height: 10),
-              Text(
-                strings.text('adminSubtitle'),
-                style: Theme.of(context).textTheme.bodyLarge,
-              ),
-              const SizedBox(height: 28),
-              FutureBuilder<AdminDashboardMetrics>(
-                future: _metrics,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState != ConnectionState.done) {
-                    return const SizedBox(
-                      height: 154,
-                      child: Center(child: CircularProgressIndicator()),
-                    );
-                  }
-                  if (snapshot.hasError) {
-                    return TextButton.icon(
-                      onPressed: () => setState(() => _metrics =
-                          widget.adminPurchases.loadDashboardMetrics()),
-                      icon: const Icon(Icons.refresh),
-                      label:
-                          const Text('Dashboard metrics could not be loaded.'),
-                    );
-                  }
-                  final metrics = snapshot.data!;
-                  return Row(
-                    children: [
-                      Expanded(
-                        child: _MetricCard(
-                          label: strings.text('thisMonth'),
-                          value: _formatTry(metrics.monthlySalesMinor),
-                          detail: strings
-                              .text('privateLessonMetric')
-                              .replaceAll(
-                                  '{sales}', '${metrics.completedSales}')
-                              .replaceAll('{lessons}',
-                                  '${metrics.individualLessonCount}'),
-                          icon: Icons.payments_outlined,
-                        ),
-                      ),
-                      const SizedBox(width: 14),
-                      Expanded(
-                        child: _MetricCard(
-                          label: strings.text('activeMembers'),
-                          value: '${metrics.activeMembers}',
-                          detail: strings.text('oranAndIncek'),
-                          icon: Icons.people_outline,
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              ),
-              const SizedBox(height: 14),
-              _AdminActionCard(
-                icon: Icons.today_outlined,
-                title: strings.text('todayOperations'),
-                detail: strings.text('todayOperationsDashboardDetail'),
-                onTap: () => Navigator.of(context).push(MaterialPageRoute<void>(
-                  builder: (_) => TodayOperationsPage(
-                    bookings: widget.adminBookings,
-                    purchases: widget.adminPurchases,
+                const SizedBox(height: 34),
+                Text(
+                  strings.text('adminOverview'),
+                  style: TextStyle(
+                    color: AppTheme.sage,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 1.8,
                   ),
-                )),
-              ),
-              const SizedBox(height: 30),
-              _AdminActionCard(
-                  icon: Icons.people_outline,
-                  title: strings.text('users'),
-                  detail: strings.text('manageUsers'),
-                  onTap: () => Navigator.of(context).push(
-                      MaterialPageRoute<void>(
-                          builder: (_) => const AdminUsersPage()))),
-              const SizedBox(height: 14),
-              _SectionLabel(title: strings.text('membershipManagement')),
-              const SizedBox(height: 10),
-              _AdminActionCard(
-                icon: Icons.calendar_month_outlined,
-                title: strings.text('classSchedule'),
-                detail: strings.text('manageClassSchedule'),
-                onTap: () => Navigator.of(context).push(MaterialPageRoute<void>(
-                    builder: (_) =>
-                        ClassSchedulePage(bookings: widget.adminBookings))),
-              ),
-              const SizedBox(height: 14),
-              _AdminActionCard(
-                icon: Icons.fact_check_outlined,
-                title: strings.text('attendance'),
-                detail: strings.text('manageAttendance'),
-                onTap: () => Navigator.of(context).push(MaterialPageRoute<void>(
-                    builder: (_) =>
-                        AttendancePage(bookings: widget.adminBookings))),
-              ),
-              const SizedBox(height: 14),
-              _AdminActionCard(
-                icon: Icons.person_outline,
-                title: strings.text('privateLessons'),
-                detail: strings.text('privateLessonsSubtitle'),
-                onTap: () => Navigator.of(context).push(MaterialPageRoute<void>(
-                  builder: (_) => IndividualLessonsPage(
-                    bookings: widget.adminBookings,
-                  ),
-                )),
-              ),
-              const SizedBox(height: 14),
-              _AdminActionCard(
-                icon: Icons.pending_actions_outlined,
-                title: strings.text('paymentsAwaitingApproval'),
-                detail: strings.text('reviewCashPayments'),
-                onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute<void>(
-                    builder: (_) => CashPurchaseRequestsPage(
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  strings.text('studioAtGlance'),
+                  style: Theme.of(context).textTheme.headlineLarge,
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  strings.text('adminSubtitle'),
+                  style: Theme.of(context).textTheme.bodyLarge,
+                ),
+                const SizedBox(height: 28),
+                FutureBuilder<AdminDashboardMetrics>(
+                  future: _metrics,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState != ConnectionState.done) {
+                      return const SizedBox(
+                        height: 154,
+                        child: Center(child: CircularProgressIndicator()),
+                      );
+                    }
+                    if (snapshot.hasError) {
+                      return TextButton.icon(
+                        onPressed: () => setState(() => _metrics =
+                            widget.adminPurchases.loadDashboardMetrics()),
+                        icon: const Icon(Icons.refresh),
+                        label: const Text(
+                            'Dashboard metrics could not be loaded.'),
+                      );
+                    }
+                    final metrics = snapshot.data!;
+                    return Row(
+                      children: [
+                        Expanded(
+                          child: _MetricCard(
+                            label: strings.text('thisMonth'),
+                            value: _formatTry(metrics.monthlySalesMinor),
+                            detail: strings
+                                .text('privateLessonMetric')
+                                .replaceAll(
+                                    '{sales}', '${metrics.completedSales}')
+                                .replaceAll('{lessons}',
+                                    '${metrics.individualLessonCount}'),
+                            icon: Icons.payments_outlined,
+                          ),
+                        ),
+                        const SizedBox(width: 14),
+                        Expanded(
+                          child: _MetricCard(
+                            label: strings.text('activeMembers'),
+                            value: '${metrics.activeMembers}',
+                            detail: strings.text('oranAndIncek'),
+                            icon: Icons.people_outline,
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                ),
+                const SizedBox(height: 14),
+                _AdminActionCard(
+                  icon: Icons.today_outlined,
+                  title: strings.text('todayOperations'),
+                  detail: strings.text('todayOperationsDashboardDetail'),
+                  onTap: () =>
+                      Navigator.of(context).push(MaterialPageRoute<void>(
+                    builder: (_) => TodayOperationsPage(
+                      bookings: widget.adminBookings,
                       purchases: widget.adminPurchases,
                     ),
+                  )),
+                ),
+                const SizedBox(height: 30),
+                _AdminActionCard(
+                    icon: Icons.people_outline,
+                    title: strings.text('users'),
+                    detail: strings.text('manageUsers'),
+                    onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                            builder: (_) => const AdminUsersPage()))),
+                const SizedBox(height: 14),
+                _SectionLabel(title: strings.text('membershipManagement')),
+                const SizedBox(height: 10),
+                _AdminActionCard(
+                  icon: Icons.calendar_month_outlined,
+                  title: strings.text('classSchedule'),
+                  detail: strings.text('manageClassSchedule'),
+                  onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                          builder: (_) => ClassSchedulePage(
+                              bookings: widget.adminBookings))),
+                ),
+                const SizedBox(height: 14),
+                _AdminActionCard(
+                  icon: Icons.fact_check_outlined,
+                  title: strings.text('attendance'),
+                  detail: strings.text('manageAttendance'),
+                  onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                          builder: (_) =>
+                              AttendancePage(bookings: widget.adminBookings))),
+                ),
+                const SizedBox(height: 14),
+                _AdminActionCard(
+                  icon: Icons.person_outline,
+                  title: strings.text('privateLessons'),
+                  detail: strings.text('privateLessonsSubtitle'),
+                  onTap: () =>
+                      Navigator.of(context).push(MaterialPageRoute<void>(
+                    builder: (_) => IndividualLessonsPage(
+                      bookings: widget.adminBookings,
+                    ),
+                  )),
+                ),
+                const SizedBox(height: 14),
+                _AdminActionCard(
+                  icon: Icons.pending_actions_outlined,
+                  title: strings.text('paymentsAwaitingApproval'),
+                  detail: strings.text('reviewCashPayments'),
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      builder: (_) => CashPurchaseRequestsPage(
+                        purchases: widget.adminPurchases,
+                      ),
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 24),
-              const Align(
-                  alignment: Alignment.centerRight,
-                  child: LanguageMenuButton()),
-            ],
+                const SizedBox(height: 24),
+                const Align(
+                    alignment: Alignment.centerRight,
+                    child: LanguageMenuButton()),
+              ],
+            ),
           ),
         ),
       ),
