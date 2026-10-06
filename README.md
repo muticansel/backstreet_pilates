@@ -40,3 +40,6 @@ Markdown files provide development context; they are not runtime app content.
 Database design draft: [DATABASE.md](docs/DATABASE.md).
 
 Backend setup: [SUPABASE_SETUP.md](docs/SUPABASE_SETUP.md). Review the real login/signup connection in [03-supabase-auth.md](docs/reviews/03-supabase-auth.md).
+
+Push delivery, new-class notifications and the notification-outbox cleanup job:
+[NOTIFICATIONS.md](docs/NOTIFICATIONS.md).

@@ -10,6 +10,8 @@ still required before deployment.
 2. A notification tap opens the app directly at the cash-payment approval
    screen, with the relevant request selected when appropriate.
 3. Notify the member after an administrator confirms their package.
+4. Notify every active, non-admin member when an administrator publishes a new
+   class series.
 
 ## Proposed architecture
 
@@ -25,9 +27,10 @@ still required before deployment.
   tokens, and sends the FCM payload. Firebase service-account credentials live
   only in Supabase Edge Function secrets, never in Flutter or SQL migrations.
 - Notification payloads contain only an opaque action and request ID, for
-  example `action: cash_request` and `request_id: <uuid>`. The app reloads the
-  RLS-protected request data after it opens; names, prices, and other private
-  details are not placed in the push payload.
+  example `action: cash_request` and `request_id: <uuid>`. New-class events
+  use `action: class_created` and `class_series_id: <uuid>`. The app reloads
+  RLS-protected data after it opens; names, prices, and other private details
+  are not placed in the push payload.
 - Flutter handles foreground messages, background notification taps, and
   terminated-app launches using FCM's message-open APIs. The target screen
   still performs its normal admin/RLS checks.
@@ -59,11 +62,17 @@ still required before deployment.
    opaque action/request ID payload. Invalid device tokens are deleted.
 4. A tap on an admin cash-request notification opens the existing approval
    queue only after the app resolves that user as an admin.
+5. `20261006000100_class_created_notifications.sql` adds a trigger on
+   `class_series`. Each newly created series creates one opaque outbox event
+   for every profile whose `is_active` value is true and whose role is not
+   `admin`. The Edge Function sends these events with the copy: “Yeni bir ders
+   satışa açıldı.”
 
 ## Remaining deployment steps
 
-1. Apply `20261004000100_push_notification_foundation.sql` in Supabase SQL
-   Editor after the existing cash-purchase migration.
+1. Apply `20261004000100_push_notification_foundation.sql`, then
+   `20261006000100_class_created_notifications.sql`, in Supabase SQL Editor
+   after the existing cash-purchase migration.
 2. In Supabase Edge Function secrets, add `FIREBASE_SERVICE_ACCOUNT_JSON` and
    a long random `NOTIFICATION_WEBHOOK_SECRET`. Neither value belongs in Git or
    Flutter.
@@ -72,6 +81,33 @@ still required before deployment.
    function and send the `x-notification-secret` header.
 4. Test on a physical iPhone. The iOS simulator is not sufficient for full APNs
    delivery testing.
+
+## Notification outbox retention
+
+`notification_events` is an outbox, not a permanent notification history. To
+keep it small, delete only events that have a successful delivery timestamp.
+Failed events are intentionally retained for investigation.
+
+Enable the `pg_cron` extension first in **Database → Extensions**. If the Cron
+screen reports `relation "cron.job" does not exist`, the extension is not
+enabled yet.
+
+Create this Supabase Cron job:
+
+- Job name: `purge-delivered-notification-events`
+- Schedule: `15 0 * * *` (03:15 Europe/Istanbul; Supabase Cron uses UTC)
+- SQL:
+
+```sql
+delete from public.notification_events
+where delivered_at is not null
+  and delivered_at < now() - interval '30 days';
+```
+
+This runs daily so successfully delivered rows are retained for roughly 30
+days, rather than potentially almost 60 days with a monthly task. Review the
+job's run log after creation. A separate, longer retention rule for
+`failed_at` rows may be added later if operational review needs it.
 
 ## Original implementation order
 
