@@ -102,6 +102,8 @@ class FakeAdminPurchaseGateway implements AdminPurchaseGateway {
         completedSales: 3,
         individualLessonCount: 0,
         activeMembers: 12,
+        oranActiveMembers: 7,
+        incekActiveMembers: 5,
       );
 
   @override

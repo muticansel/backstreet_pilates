@@ -157,7 +157,7 @@ class SupabasePurchaseGateway implements PurchaseGateway, AdminPurchaseGateway {
             .gte('confirmed_at', monthStart.toIso8601String()),
         _client
             .from('user_memberships')
-            .select('id')
+            .select('user_id, branches!inner(code)')
             .eq('status', 'active')
             .gt('end_date_exclusive', today.toIso8601String().split('T').first),
         _client
@@ -168,6 +168,16 @@ class SupabasePurchaseGateway implements PurchaseGateway, AdminPurchaseGateway {
       final sales = results[0] as List<dynamic>;
       final members = results[1] as List<dynamic>;
       final individualLessons = results[2] as List<dynamic>;
+      final activeUsers = <String>{};
+      final activeUsersByBranch = <String, Set<String>>{};
+      for (final row in members) {
+        final membership = row as Map<String, dynamic>;
+        final userId = membership['user_id'] as String;
+        final branch = membership['branches'] as Map<String, dynamic>;
+        final branchCode = branch['code'] as String;
+        activeUsers.add(userId);
+        activeUsersByBranch.putIfAbsent(branchCode, () => <String>{}).add(userId);
+      }
       return AdminDashboardMetrics(
         monthlySalesMinor: sales.fold<int>(
               0,
@@ -177,7 +187,9 @@ class SupabasePurchaseGateway implements PurchaseGateway, AdminPurchaseGateway {
                 0, (sum, row) => sum + (row['earning_minor'] as int)),
         completedSales: sales.length,
         individualLessonCount: individualLessons.length,
-        activeMembers: members.length,
+        activeMembers: activeUsers.length,
+        oranActiveMembers: activeUsersByBranch['oran']?.length ?? 0,
+        incekActiveMembers: activeUsersByBranch['incek']?.length ?? 0,
       );
     } on PostgrestException catch (error) {
       throw PurchaseFailure(error.message);

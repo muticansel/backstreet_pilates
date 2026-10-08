@@ -20,3 +20,6 @@ ios/Runner/GoogleService-Info.plist
 config/*.local.json
 supabase/.temp/
 supabase/.branches/
+
+# Local-only, destructive Supabase maintenance scripts.
+supabase/private/

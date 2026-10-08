@@ -82,12 +82,16 @@ class AdminDashboardMetrics {
     required this.completedSales,
     required this.individualLessonCount,
     required this.activeMembers,
+    required this.oranActiveMembers,
+    required this.incekActiveMembers,
   });
 
   final int monthlySalesMinor;
   final int completedSales;
   final int individualLessonCount;
   final int activeMembers;
+  final int oranActiveMembers;
+  final int incekActiveMembers;
 }
 
 abstract interface class AdminPurchaseGateway {
@@ -131,6 +135,8 @@ class UnconfiguredAdminPurchaseGateway implements AdminPurchaseGateway {
         completedSales: 0,
         individualLessonCount: 0,
         activeMembers: 0,
+        oranActiveMembers: 0,
+        incekActiveMembers: 0,
       );
 }
 

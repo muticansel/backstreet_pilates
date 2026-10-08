@@ -174,7 +174,10 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                           child: _MetricCard(
                             label: strings.text('activeMembers'),
                             value: '${metrics.activeMembers}',
-                            detail: strings.text('oranAndIncek'),
+                            detail: strings
+                                .text('activeMembersByBranch')
+                                .replaceAll('{oran}', '${metrics.oranActiveMembers}')
+                                .replaceAll('{incek}', '${metrics.incekActiveMembers}'),
                             icon: Icons.people_outline,
                           ),
                         ),

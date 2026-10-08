@@ -144,6 +144,7 @@ class AppLocalizations {
       'adminSubtitle': 'Keep track of the month and support your members.',
       'thisMonth': 'THIS MONTH',
       'activeMembers': 'ACTIVE MEMBERS',
+      'activeMembersByBranch': 'Oran: {oran} · İncek: {incek}',
       'completedSales': '{count} completed sales',
       'privateLessonMetric':
           '{sales} package sales · {lessons} private lessons',
@@ -488,6 +489,7 @@ class AppLocalizations {
       'adminSubtitle': 'Ayı takip et ve üyelerini destekle.',
       'thisMonth': 'BU AY',
       'activeMembers': 'AKTİF ÜYELER',
+      'activeMembersByBranch': 'Oran: {oran} · İncek: {incek}',
       'completedSales': '{count} tamamlanan satış',
       'privateLessonMetric': '{sales} paket satışı · {lessons} bireysel ders',
       'privateLessons': 'Bireysel dersler',
