@@ -2,6 +2,26 @@
 
 ## Current state
 
+- Added the email-confirmation then administrator-approval registration flow.
+  A new profile starts as `awaiting_email_confirmation`; an Auth trigger moves
+  it to `pending_admin_approval` only after the email link is used. The existing
+  admin **Users** page displays that status and offers **Approve**. Approved
+  members retain the normal app; unapproved or deactivated members see only a
+  status home screen and sign-out option.
+- Prepared `20261008000100_member_admin_approval.sql`. It preserves access for
+  existing active members, adds the profile approval audit fields, blocks key
+  member reads and the cash-purchase RPC for unapproved accounts, and updates
+  the profile/Auth triggers. The SQL migration and the updated
+  `admin-user-management` Edge Function must be deployed together. Supabase
+  Auth email confirmation must remain enabled. See
+  `docs/reviews/13-member-registration-approval.md`.
+
+- Replaced the deprecated `RadioListTile.groupValue` and `onChanged` usage in
+  the package payment chooser with a `RadioGroup` ancestor. Verification:
+  `flutter analyze` now reports no issues. Updated stale dashboard/navigation
+  test fixtures and navigation labels to match the current gateways and UI;
+  all widget tests pass.
+
 - Push-notification foundation prepared locally: Firebase Core/Messaging,
   authenticated device-token registration/refresh/sign-out removal, an RLS
   migration and a secured FCM-sending Edge Function. The Apple bundle ID and

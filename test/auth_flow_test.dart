@@ -4,6 +4,7 @@ import 'package:backstreet_pilates/app.dart';
 import 'package:backstreet_pilates/features/account/data/account_role_resolver.dart';
 import 'package:backstreet_pilates/features/auth/data/auth_gateway.dart';
 import 'package:backstreet_pilates/features/bookings/data/booking_gateway.dart';
+import 'package:backstreet_pilates/features/purchases/data/purchase_gateway.dart';
 
 class FakeAuthGateway implements AuthGateway {
   FakeAuthGateway({
@@ -61,6 +62,53 @@ class FakeRoleResolver implements AccountRoleResolver {
   Future<AccountRole> currentRole() async => role;
 }
 
+class FakePurchaseGateway implements PurchaseGateway {
+  const FakePurchaseGateway();
+
+  @override
+  Future<List<PackageOffer>> loadActiveOffers() async => const [];
+
+  @override
+  Future<List<ApprovedPackage>> loadApprovedPackages() async => [
+        ApprovedPackage(
+          id: 'package-1',
+          title: '8 class package',
+          branchName: 'Oran',
+          status: 'active',
+          totalCredits: 8,
+          remainingCredits: 8,
+          startDate: DateTime(2026, 10, 1),
+          endDateExclusive: DateTime(2026, 11, 1),
+        ),
+      ];
+
+  @override
+  Future<void> requestCashPurchase({
+    required String offerId,
+    required DateTime requestedStartDate,
+  }) async {}
+}
+
+class FakeAdminPurchaseGateway implements AdminPurchaseGateway {
+  const FakeAdminPurchaseGateway();
+
+  @override
+  Future<void> confirmCashPurchase(String requestId) async {}
+
+  @override
+  Future<AdminDashboardMetrics> loadDashboardMetrics() async =>
+      const AdminDashboardMetrics(
+        monthlySalesMinor: 6840000,
+        completedSales: 3,
+        individualLessonCount: 0,
+        activeMembers: 12,
+      );
+
+  @override
+  Future<List<PendingCashPurchase>> loadPendingCashPurchases() async =>
+      const [];
+}
+
 void main() {
   testWidgets('language menu changes the login screen to Turkish',
       (tester) async {
@@ -83,6 +131,7 @@ void main() {
         DateTime.now(),
         DateTime.now().subtract(const Duration(days: 7)),
       ]),
+      purchases: const FakePurchaseGateway(),
     ));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Log in'));
@@ -181,7 +230,7 @@ void main() {
     await tester.tap(find.text('Log in'));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Packages'));
+    await tester.tap(find.text('Explore'));
     await tester.pumpAndSettle();
     expect(find.text('Find a rhythm that fits your week.'), findsOneWidget);
 
@@ -189,7 +238,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('You have no upcoming classes yet.'), findsOneWidget);
 
-    await tester.tap(find.text('My packages'));
+    await tester.tap(find.text('My plan'));
     await tester.pumpAndSettle();
     expect(find.text('No approved packages yet'), findsOneWidget);
 
@@ -203,6 +252,7 @@ void main() {
     await tester.pumpWidget(PilatesApp(
       auth: FakeAuthGateway(),
       roles: const FakeRoleResolver(AccountRole.admin),
+      adminPurchases: const FakeAdminPurchaseGateway(),
     ));
     await tester.pumpAndSettle();
     await tester.enterText(

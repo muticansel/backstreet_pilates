@@ -48,15 +48,23 @@ class _AdminUsersPageState extends State<AdminUsersPage> {
                   itemBuilder: (context, index) {
                     final user = snapshot.data![index] as Map<String, dynamic>;
                     final active = user['isActive'] as bool;
+                    final approvalStatus = user['approvalStatus'] as String;
+                    final isPendingApproval =
+                        approvalStatus == 'pending_admin_approval';
                     return ListTile(
                         title: Text((user['displayName'] as String).isEmpty
                             ? user['email'] as String
                             : user['displayName'] as String),
                         subtitle: Text(
-                            '${user['email']} · ${strings.text(active ? 'active' : 'inactive')}'),
+                            '${user['email']} · ${strings.text(active ? 'active' : 'inactive')} · ${strings.text(_approvalStatusKey(approvalStatus))}'),
                         trailing: PopupMenuButton<String>(
                             onSelected: (action) => _action(user, action),
                             itemBuilder: (_) => [
+                                  if (isPendingApproval)
+                                    PopupMenuItem(
+                                      value: 'approve',
+                                      child: Text(strings.text('approve')),
+                                    ),
                                   PopupMenuItem(
                                       value: active ? 'deactivate' : 'activate',
                                       child: Text(strings.text(
@@ -69,4 +77,10 @@ class _AdminUsersPageState extends State<AdminUsersPage> {
                   });
             }));
   }
+
+  String _approvalStatusKey(String status) => switch (status) {
+        'approved' => 'approved',
+        'pending_admin_approval' => 'pendingAdminApproval',
+        _ => 'awaitingEmailConfirmation',
+      };
 }

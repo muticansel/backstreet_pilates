@@ -74,7 +74,16 @@ class AppLocalizations {
       'backToLogin': 'Back to log in',
       'checkYourEmail': 'Check your email',
       'emailConfirmation':
-          'We sent a confirmation link to your email address. Confirm it, then return here to log in.',
+          'We sent a confirmation link to your email address. After you confirm it, an administrator will review your registration.',
+      'confirmEmailTitle': 'Confirm your email',
+      'confirmEmailDetail':
+          'Open the confirmation link we sent to your email address. Your registration will then be sent to the studio for approval.',
+      'approvalPendingTitle': 'Your registration is being reviewed',
+      'approvalPendingDetail':
+          'The studio has received your confirmed registration. You will be able to use classes and packages once an administrator approves it.',
+      'accountInactiveTitle': 'Your account is unavailable',
+      'accountInactiveDetail':
+          'Please contact the studio if you think this is a mistake.',
       'signOut': 'Sign out',
       'home': 'Home',
       'classes': 'Classes',
@@ -350,6 +359,10 @@ class AppLocalizations {
       'passwordResetSent': 'Password reset link sent.',
       'userStatusUpdated': 'User status updated.',
       'userActionFailed': 'The user action could not be completed. Try again.',
+      'approve': 'Approve',
+      'approved': 'Approved',
+      'pendingAdminApproval': 'Awaiting approval',
+      'awaitingEmailConfirmation': 'Email not confirmed',
       'today': 'Today',
       'todayOperations': 'Today',
       'todayOperationsDashboardDetail':
@@ -404,7 +417,16 @@ class AppLocalizations {
       'backToLogin': 'Girişe dön',
       'checkYourEmail': 'E-postanı kontrol et',
       'emailConfirmation':
-          'E-posta adresine bir onay bağlantısı gönderdik. Onayladıktan sonra buraya dönüp giriş yap.',
+          'E-posta adresine bir onay bağlantısı gönderdik. Onaydan sonra kaydın yönetici incelemesine gönderilir.',
+      'confirmEmailTitle': 'E-postanı onayla',
+      'confirmEmailDetail':
+          'E-posta adresine gönderdiğimiz onay bağlantısını aç. Ardından kaydın stüdyo onayına gönderilir.',
+      'approvalPendingTitle': 'Kaydın inceleniyor',
+      'approvalPendingDetail':
+          'Stüdyo onaylanmış kaydını aldı. Yönetici onayından sonra ders ve paket işlemlerini kullanabilirsin.',
+      'accountInactiveTitle': 'Hesabın kullanılamıyor',
+      'accountInactiveDetail':
+          'Bunun bir hata olduğunu düşünüyorsan lütfen stüdyoyla iletişime geç.',
       'signOut': 'Çıkış yap',
       'home': 'Ana sayfa',
       'classes': 'Derslerim',
@@ -678,6 +700,10 @@ class AppLocalizations {
       'passwordResetSent': 'Şifre sıfırlama bağlantısı gönderildi.',
       'userStatusUpdated': 'Kullanıcı durumu güncellendi.',
       'userActionFailed': 'Kullanıcı işlemi tamamlanamadı. Tekrar dene.',
+      'approve': 'Onayla',
+      'approved': 'Onaylandı',
+      'pendingAdminApproval': 'Onay bekliyor',
+      'awaitingEmailConfirmation': 'E-posta onayı bekliyor',
       'today': 'Bugün',
       'todayOperations': 'Bugün',
       'todayOperationsDashboardDetail':

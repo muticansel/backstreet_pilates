@@ -1099,16 +1099,23 @@ class _PackagesPlaceholderState extends State<_PackagesPlaceholder> {
                           '${offer.startsOn.year}',
                     ),
               ),
-              RadioListTile<bool>(
-                  value: true,
-                  groupValue: cash,
-                  onChanged: (value) => setDialog(() => cash = value!),
-                  title: Text(AppLocalizations.of(context).text('cash'))),
-              RadioListTile<bool>(
-                  value: false,
-                  groupValue: cash,
-                  onChanged: (value) => setDialog(() => cash = value!),
-                  title: Text(AppLocalizations.of(context).text('creditCard'))),
+              RadioGroup<bool>(
+                groupValue: cash,
+                onChanged: (value) => setDialog(() => cash = value!),
+                child: Column(
+                  children: [
+                    RadioListTile<bool>(
+                      value: true,
+                      title: Text(AppLocalizations.of(context).text('cash')),
+                    ),
+                    RadioListTile<bool>(
+                      value: false,
+                      title:
+                          Text(AppLocalizations.of(context).text('creditCard')),
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
           actions: [

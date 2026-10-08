@@ -3,7 +3,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'account_role_resolver.dart';
 
-class SupabaseAccountRoleResolver implements AccountRoleResolver {
+class SupabaseAccountRoleResolver
+    implements AccountRoleResolver, AccountApprovalResolver {
   SupabaseAccountRoleResolver(this._client);
 
   final SupabaseClient _client;
@@ -26,6 +27,34 @@ class SupabaseAccountRoleResolver implements AccountRoleResolver {
       // A failed role lookup must never promote a member to administrator.
       debugPrint('Account role lookup failed: $error');
       return AccountRole.member;
+    }
+  }
+
+  @override
+  Future<AccountApprovalStatus> currentApprovalStatus() async {
+    final userId = _client.auth.currentUser?.id;
+    if (userId == null) return AccountApprovalStatus.awaitingEmailConfirmation;
+    try {
+      final profile = await _client
+          .from('profiles')
+          .select('approval_status, is_active')
+          .eq('id', userId)
+          .maybeSingle();
+      if (profile == null || profile['is_active'] != true) {
+        return AccountApprovalStatus.inactive;
+      }
+      switch (profile['approval_status']) {
+        case 'approved':
+          return AccountApprovalStatus.approved;
+        case 'pending_admin_approval':
+          return AccountApprovalStatus.pendingAdminApproval;
+        default:
+          return AccountApprovalStatus.awaitingEmailConfirmation;
+      }
+    } catch (error) {
+      // Fail closed: an unavailable approval lookup must not unlock the app.
+      debugPrint('Account approval lookup failed: $error');
+      return AccountApprovalStatus.pendingAdminApproval;
     }
   }
 }
