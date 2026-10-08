@@ -12,6 +12,8 @@ still required before deployment.
 3. Notify the member after an administrator confirms their package.
 4. Notify every active, non-admin member when an administrator publishes a new
    class series.
+5. Notify every active administrator when an email-confirmed account enters the
+   registration-approval queue.
 
 ## Proposed architecture
 
@@ -31,6 +33,8 @@ still required before deployment.
   use `action: class_created` and `class_series_id: <uuid>`. The app reloads
   RLS-protected data after it opens; names, prices, and other private details
   are not placed in the push payload.
+- Registration-approval events use `action: registration_pending` and an
+  opaque profile ID; a notification tap opens the administrator's user queue.
 - Flutter handles foreground messages, background notification taps, and
   terminated-app launches using FCM's message-open APIs. The target screen
   still performs its normal admin/RLS checks.
@@ -67,12 +71,18 @@ still required before deployment.
    for every profile whose `is_active` value is true and whose role is not
    `admin`. The Edge Function sends these events with the copy: “Yeni bir ders
    satışa açıldı.”
+6. `20261008000200_admin_registration_notifications.sql` creates one opaque
+   outbox event for every active administrator whenever a profile first enters
+   `pending_admin_approval` after email confirmation. The trigger is attached
+   to the profile status transition, so it also supports email providers that
+   create a confirmed account directly. A tap opens the admin user queue.
 
 ## Remaining deployment steps
 
 1. Apply `20261004000100_push_notification_foundation.sql`, then
-   `20261006000100_class_created_notifications.sql`, in Supabase SQL Editor
-   after the existing cash-purchase migration.
+   `20261006000100_class_created_notifications.sql`, then
+   `20261008000200_admin_registration_notifications.sql`, in Supabase SQL
+   Editor after the existing cash-purchase and registration-approval migrations.
 2. In Supabase Edge Function secrets, add `FIREBASE_SERVICE_ACCOUNT_JSON` and
    a long random `NOTIFICATION_WEBHOOK_SECRET`. Neither value belongs in Git or
    Flutter.

@@ -390,6 +390,15 @@ are implemented.
 - Implementation is deferred until the Apple Developer account, APNs setup, and
   Firebase iOS configuration are ready. See `docs/NOTIFICATIONS.md`.
 
+## Registration approval notification
+
+- Added an outbox trigger for the transition to `pending_admin_approval`.
+  Every active administrator receives an opaque FCM event after a new account
+  has confirmed its email; tapping it opens the existing admin user queue.
+- Apply `20261008000200_admin_registration_notifications.sql` after the push
+  foundation, class-created notification and registration-approval migrations,
+  then redeploy `send-push-notification`. See `docs/NOTIFICATIONS.md`.
+
 ## Video library foundation
 
 - Prepared a separate catalogue, ordered-video, access-grant and watch-progress model for paid video series.

@@ -8,6 +8,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../features/account/data/account_role_resolver.dart';
 import '../features/account/data/supabase_account_role_resolver.dart';
+import '../features/admin/pages/admin_users_page.dart';
 import '../features/admin/pages/cash_purchase_requests_page.dart';
 import '../features/purchases/data/supabase_purchase_gateway.dart';
 import '../theme/app_snack_bars.dart';
@@ -87,18 +88,22 @@ class PushNotificationService {
   }
 
   Future<void> _openFromMessage(RemoteMessage message) async {
-    if (message.data['action'] != 'cash_request') return;
+    final action = message.data['action'];
+    if (action != 'cash_request' && action != 'registration_pending') return;
     final client = _client;
     if (client == null) return;
     final role = await SupabaseAccountRoleResolver(client).currentRole();
     if (role != AccountRole.admin) return;
     final context = AppNotifications.navigatorKey.currentContext;
     if (context == null || !context.mounted) return;
-    await Navigator.of(context).push(MaterialPageRoute<void>(
-      builder: (_) => CashPurchaseRequestsPage(
-        purchases: SupabasePurchaseGateway(client),
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => action == 'cash_request'
+            ? CashPurchaseRequestsPage(
+                purchases: SupabasePurchaseGateway(client))
+            : const AdminUsersPage(),
       ),
-    ));
+    );
   }
 
   Future<void> dispose() async {

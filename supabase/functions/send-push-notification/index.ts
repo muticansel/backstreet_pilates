@@ -3,14 +3,16 @@ import { createClient } from 'npm:@supabase/supabase-js@2'
 
 type NotificationEvent = {
   id: string
-  event_type: 'cash_request_created' | 'cash_request_confirmed' | 'class_created'
+  event_type: 'cash_request_created' | 'cash_request_confirmed' | 'class_created' | 'registration_approval_requested'
   recipient_user_id: string
   request_id?: string
   class_series_id?: string
+  registration_profile_id?: string
   payload: {
-    action: 'cash_request' | 'package_confirmed' | 'class_created'
+    action: 'cash_request' | 'package_confirmed' | 'class_created' | 'registration_pending'
     request_id?: string
     class_series_id?: string
+    registration_profile_id?: string
   }
 }
 
@@ -30,7 +32,10 @@ Deno.serve(async (request) => {
   const validEvent =
     (event.event_type === 'cash_request_created' && event.request_id && event.payload.action === 'cash_request') ||
     (event.event_type === 'cash_request_confirmed' && event.request_id && event.payload.action === 'package_confirmed') ||
-    (event.event_type === 'class_created' && event.class_series_id && event.payload.action === 'class_created')
+    (event.event_type === 'class_created' && event.class_series_id && event.payload.action === 'class_created') ||
+    (event.event_type === 'registration_approval_requested' &&
+      event.registration_profile_id &&
+      event.payload.action === 'registration_pending')
   if (!validEvent) return Response.json({ error: 'Invalid notification event' }, { status: 400, headers: json })
 
   const serviceRole = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
@@ -65,7 +70,9 @@ Deno.serve(async (request) => {
     ? { title: 'Backstreet Pilates', body: 'Yeni bir ödeme talebi var.' }
     : event.event_type === 'cash_request_confirmed'
       ? { title: 'Backstreet Pilates', body: 'Paketin onaylandı.' }
-      : { title: 'Backstreet Pilates', body: 'Yeni bir ders satışa açıldı.' }
+      : event.event_type === 'class_created'
+        ? { title: 'Backstreet Pilates', body: 'Yeni bir ders satışa açıldı.' }
+        : { title: 'Backstreet Pilates', body: 'E-posta onayını tamamlayan yeni bir kayıt bekliyor.' }
   const results = await Promise.all(devices.map(async (device) => {
     const response = await fetch(
       `https://fcm.googleapis.com/v1/projects/${serviceAccount.project_id}/messages:send`,
