@@ -390,6 +390,14 @@ are implemented.
 - Implementation is deferred until the Apple Developer account, APNs setup, and
   Firebase iOS configuration are ready. See `docs/NOTIFICATIONS.md`.
 
+## Auth redirect configuration
+
+- Android now registers the same `backstreetpilates://login-callback/` deep
+  link as iOS, so it can receive Supabase email-confirmation redirects.
+- The Supabase Dashboard still needs that exact value in Authentication → URL
+  Configuration → Additional Redirect URLs. This is required for both iOS and
+  Android confirmation testing.
+
 ## Registration approval notification
 
 - Added an outbox trigger for the transition to `pending_admin_approval`.
