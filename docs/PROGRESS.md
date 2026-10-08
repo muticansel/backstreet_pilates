@@ -22,6 +22,12 @@
   test fixtures and navigation labels to match the current gateways and UI;
   all widget tests pass.
 
+- Member dashboard data now reloads whenever the user returns to **Home** (or
+  selects Home again). This prevents attendance and package information
+  recorded elsewhere from remaining stale in the dashboard until an app
+  restart. Verification: `flutter analyze` reports no issues and all 9 widget
+  tests pass.
+
 - Push-notification foundation prepared locally: Firebase Core/Messaging,
   authenticated device-token registration/refresh/sign-out removal, an RLS
   migration and a secured FCM-sending Edge Function. The Apple bundle ID and

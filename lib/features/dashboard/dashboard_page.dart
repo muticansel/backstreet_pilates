@@ -110,7 +110,7 @@ class _DashboardPageState extends State<DashboardPage> {
     final strings = AppLocalizations.of(context);
     return NavigationBar(
       selectedIndex: _selectedIndex,
-      onDestinationSelected: (index) => setState(() => _selectedIndex = index),
+      onDestinationSelected: _selectDestination,
       destinations: [
         NavigationDestination(
           icon: const Icon(Icons.home_outlined),
@@ -134,6 +134,18 @@ class _DashboardPageState extends State<DashboardPage> {
         ),
       ],
     );
+  }
+
+  void _selectDestination(int index) {
+    if (index == _selectedIndex) {
+      if (index == 0) _refreshDashboard();
+      return;
+    }
+    setState(() => _selectedIndex = index);
+    // Attendance is recorded by an administrator outside this screen. Reload
+    // the member snapshot whenever they return home so completed classes and
+    // package changes do not remain stale until a full app restart.
+    if (index == 0) _refreshDashboard();
   }
 
   Widget _placeholderScaffold(Widget child) {
