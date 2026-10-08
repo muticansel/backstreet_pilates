@@ -28,6 +28,12 @@
   restart. Verification: `flutter analyze` reports no issues and all 9 widget
   tests pass.
 
+- Corrected the Android launch crash: the application ID had been renamed to
+  `com.muticansel.backstreetpilates`, while `MainActivity` still used Flutter's
+  old `com.example.backstreet_pilates` Kotlin package. Android therefore could
+  not instantiate the launcher activity. The Kotlin source path and package
+  now match the manifest/application ID.
+
 - Push-notification foundation prepared locally: Firebase Core/Messaging,
   authenticated device-token registration/refresh/sign-out removal, an RLS
   migration and a secured FCM-sending Edge Function. The Apple bundle ID and

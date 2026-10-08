@@ -1,4 +1,4 @@
-package com.example.backstreet_pilates
+package com.muticansel.backstreetpilates
 
 import io.flutter.embedding.android.FlutterActivity
 
