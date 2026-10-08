@@ -46,3 +46,6 @@ Push delivery, new-class notifications and the notification-outbox cleanup job:
 
 Admin-recorded individual lessons and percentage-based earnings:
 [INDIVIDUAL_LESSONS.md](docs/INDIVIDUAL_LESSONS.md).
+
+Real Android device testing with Firebase App Distribution:
+[FIREBASE_ANDROID_DISTRIBUTION.md](docs/FIREBASE_ANDROID_DISTRIBUTION.md).
