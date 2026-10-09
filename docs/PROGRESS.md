@@ -11,6 +11,14 @@
   member push-outbox event. The migration and matching Edge Function source
   are prepared only and have **not** been applied/deployed to Supabase. Review
   `docs/reviews/15-private-lesson-calendar.md` before release.
+- Added a member-facing **My private lessons / Özel derslerim** page from the
+  Classes tab. It reads only the signed-in member's
+  `private_lesson_requests` through existing RLS and displays date, time and
+  status for pending, approved, rejected and cancelled requests.
+- Prepared `20261010000100_member_private_lesson_request_read.sql` to
+  idempotently restore the authenticated member's read policy for private
+  lesson requests on incrementally configured Supabase projects. It awaits
+  manual application to Supabase.
 - Blocked private-lesson ranges can now be deleted from the admin calendar;
   `20261009000200_private_lesson_block_removal.sql` adds the corresponding
   admin-only server RPC. It is prepared only and has not been applied.

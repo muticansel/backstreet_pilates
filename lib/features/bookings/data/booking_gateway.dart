@@ -44,6 +44,20 @@ class PrivateLessonSlot {
   final bool isDefaultClosed;
 }
 
+class MemberPrivateLesson {
+  const MemberPrivateLesson({
+    required this.id,
+    required this.startsAt,
+    required this.endsAt,
+    required this.status,
+  });
+
+  final String id;
+  final DateTime startsAt;
+  final DateTime endsAt;
+  final String status;
+}
+
 class AdminPrivateLessonEntry {
   const AdminPrivateLessonEntry({
     required this.id,
@@ -76,6 +90,7 @@ abstract class BookingGateway {
   Future<List<PrivateLessonSlot>> loadPrivateLessonSlots(DateTime date) async =>
       const [];
   Future<void> requestPrivateLesson(DateTime startsAt) async {}
+  Future<List<MemberPrivateLesson>> loadMyPrivateLessons() async => const [];
 }
 
 class StudioBranch {
@@ -294,6 +309,8 @@ class UnconfiguredBookingGateway extends BookingGateway {
 
   @override
   Future<void> requestPrivateLesson(DateTime startsAt) async {}
+  @override
+  Future<List<MemberPrivateLesson>> loadMyPrivateLessons() async => const [];
 }
 
 class UnconfiguredAdminBookingGateway implements AdminBookingGateway {

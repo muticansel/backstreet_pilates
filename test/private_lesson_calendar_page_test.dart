@@ -1,6 +1,7 @@
 import 'package:backstreet_pilates/features/admin/pages/private_lesson_calendar_page.dart';
 import 'package:backstreet_pilates/features/bookings/data/booking_gateway.dart';
 import 'package:backstreet_pilates/features/bookings/pages/private_lesson_booking_page.dart';
+import 'package:backstreet_pilates/features/bookings/pages/my_private_lessons_page.dart';
 import 'package:backstreet_pilates/l10n/app_localizations.dart';
 import 'package:backstreet_pilates/theme/app_theme.dart';
 import 'package:flutter/material.dart';
@@ -49,6 +50,22 @@ class _PrivateLessonGateway extends UnconfiguredBookingGateway {
           isDefaultClosed: false,
         ),
       ];
+
+  @override
+  Future<List<MemberPrivateLesson>> loadMyPrivateLessons() async => [
+        MemberPrivateLesson(
+          id: 'approved-lesson',
+          startsAt: DateTime(2026, 10, 10, 6),
+          endsAt: DateTime(2026, 10, 10, 7),
+          status: 'approved',
+        ),
+        MemberPrivateLesson(
+          id: 'pending-lesson',
+          startsAt: DateTime(2026, 10, 11, 9),
+          endsAt: DateTime(2026, 10, 11, 10),
+          status: 'pending',
+        ),
+      ];
 }
 
 Widget _testApp(Widget home) => AppLanguageScope(
@@ -77,5 +94,16 @@ void main() {
 
     expect(find.text('06:00 – 07:00'), findsOneWidget);
     expect(find.text('07:00 – 08:00'), findsOneWidget);
+  });
+
+  testWidgets('renders the member private lesson history', (tester) async {
+    await tester.pumpWidget(_testApp(
+        const MyPrivateLessonsPage(bookings: _PrivateLessonGateway())));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Approved'), findsOneWidget);
+    expect(find.text('Awaiting approval'), findsOneWidget);
+    expect(find.text('06:00 – 07:00'), findsOneWidget);
+    expect(find.text('09:00 – 10:00'), findsOneWidget);
   });
 }

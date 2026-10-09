@@ -384,6 +384,13 @@ class AppLocalizations {
       'noPendingPayments': 'There are no payments awaiting approval.',
       'viewAll': 'View all',
       'bookPrivateLesson': 'Book a private lesson',
+      'myPrivateLessons': 'My private lessons',
+      'myPrivateLessonsSubtitle':
+          'Your private lesson requests and confirmed lessons in one place.',
+      'privateLesson': 'Private lesson',
+      'noMyPrivateLessons': 'You do not have any private lesson requests yet.',
+      'myPrivateLessonsLoadError':
+          'Private lessons could not be loaded. Pull to try again.',
       'privateLessonBookingTitle': 'Choose a private lesson time',
       'privateLessonBookingDetail':
           'Available one-hour times are shown in green. Your request is sent to the studio for approval.',
@@ -429,6 +436,7 @@ class AppLocalizations {
       'pending': 'Awaiting approval',
       'decline': 'Decline',
       'declined': 'Declined',
+      'cancelled': 'Cancelled',
     },
     'tr': {
       'language': 'Dil',
@@ -772,6 +780,13 @@ class AppLocalizations {
       'noPendingPayments': 'Onay bekleyen ödeme bulunmuyor.',
       'viewAll': 'Tümünü gör',
       'bookPrivateLesson': 'Özel ders talep et',
+      'myPrivateLessons': 'Özel derslerim',
+      'myPrivateLessonsSubtitle':
+          'Özel ders taleplerin ve onaylanan derslerin tek yerde.',
+      'privateLesson': 'Özel ders',
+      'noMyPrivateLessons': 'Henüz özel ders talebin bulunmuyor.',
+      'myPrivateLessonsLoadError':
+          'Özel derslerin yüklenemedi. Tekrar denemek için aşağı çek.',
       'privateLessonBookingTitle': 'Özel ders saati seç',
       'privateLessonBookingDetail':
           'Yeşil renkteki bir saatlik zamanlar açıktır. Talebin onay için stüdyoya iletilir.',
@@ -813,6 +828,7 @@ class AppLocalizations {
       'pending': 'Onay bekliyor',
       'decline': 'Reddet',
       'declined': 'Reddedildi',
+      'cancelled': 'İptal edildi',
     },
   };
 }

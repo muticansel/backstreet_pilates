@@ -3,6 +3,11 @@
 ## Member flow
 
 - **Classes** now includes **Book a private lesson**.
+- **My private lessons** lets a member review only their own requests and
+  confirmed lessons. Each record shows its local date, time and current status
+  (awaiting approval, approved, declined or cancelled). The existing RLS
+  policy remains the access boundary; the client does not receive another
+  member's lesson details.
 - A member picks a date within the next 60 days and sees one-hour slots from
   07:00 to 22:00 Istanbul time. Green slots are requestable; unavailable slots
   remain visible without exposing another member's identity or booking detail.
@@ -34,6 +39,11 @@ types.
 follow-up for installations where the calendar was applied incrementally. It
 ensures every `pending → approved` transition inserts a
 `private_lesson_request_approved` outbox event for the requesting member.
+
+`20261010000100_member_private_lesson_request_read.sql` restores the member
+read policy for `private_lesson_requests`. The member page also explicitly
+filters by the current authenticated user's ID, while RLS remains the
+authoritative access control.
 
 After applying the notification migration, deploy the matching local
 `send-push-notification` Edge Function and keep the existing database webhook

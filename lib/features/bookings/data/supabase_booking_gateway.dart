@@ -120,6 +120,26 @@ class SupabaseBookingGateway implements BookingGateway, AdminBookingGateway {
       });
 
   @override
+  Future<List<MemberPrivateLesson>> loadMyPrivateLessons() async {
+    final memberId = _client.auth.currentUser?.id;
+    if (memberId == null) return const [];
+    final rows = await _client
+        .from('private_lesson_requests')
+        .select('id, starts_at, ends_at, status')
+        .eq('member_user_id', memberId)
+        .order('starts_at');
+    return (rows as List<dynamic>)
+        .map((row) => row as Map<String, dynamic>)
+        .map((row) => MemberPrivateLesson(
+              id: row['id'] as String,
+              startsAt: DateTime.parse(row['starts_at'] as String).toLocal(),
+              endsAt: DateTime.parse(row['ends_at'] as String).toLocal(),
+              status: row['status'] as String,
+            ))
+        .toList();
+  }
+
+  @override
   Future<List<StudioBranch>> loadBranches() async {
     final rows =
         await _client.from('branches').select('id, name').eq('is_active', true);

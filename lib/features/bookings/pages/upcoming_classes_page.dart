@@ -5,6 +5,7 @@ import '../../../theme/app_theme.dart';
 import '../../../theme/pilates_loading_indicator.dart';
 import '../data/booking_gateway.dart';
 import 'private_lesson_booking_page.dart';
+import 'my_private_lessons_page.dart';
 
 class UpcomingClassesPage extends StatefulWidget {
   const UpcomingClassesPage({super.key, required this.bookings});
@@ -81,6 +82,17 @@ class _UpcomingClassesPageState extends State<UpcomingClassesPage> {
                 ),
                 icon: const Icon(Icons.person_outline),
                 label: Text(strings.text('bookPrivateLesson')),
+              ),
+              const SizedBox(height: 10),
+              OutlinedButton.icon(
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) =>
+                        MyPrivateLessonsPage(bookings: widget.bookings),
+                  ),
+                ),
+                icon: const Icon(Icons.event_note_outlined),
+                label: Text(strings.text('myPrivateLessons')),
               ),
               const SizedBox(height: 28),
               OutlinedButton.icon(
