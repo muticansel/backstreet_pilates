@@ -99,6 +99,27 @@ class SupabaseBookingGateway implements BookingGateway, AdminBookingGateway {
       }, onConflict: 'booking_id');
 
   @override
+  Future<List<PrivateLessonSlot>> loadPrivateLessonSlots(DateTime date) async {
+    final rows = await _client.rpc('member_private_lesson_slots', params: {
+      'target_date': _dateValue(date),
+    });
+    return (rows as List<dynamic>)
+        .map((row) => row as Map<String, dynamic>)
+        .map((row) => PrivateLessonSlot(
+              startsAt: DateTime.parse(row['starts_at'] as String).toLocal(),
+              isAvailable: row['status'] == 'available',
+              isDefaultClosed: row['status'] == 'default_closed',
+            ))
+        .toList();
+  }
+
+  @override
+  Future<void> requestPrivateLesson(DateTime startsAt) =>
+      _client.rpc('request_private_lesson', params: {
+        'target_starts_at': startsAt.toUtc().toIso8601String(),
+      });
+
+  @override
   Future<List<StudioBranch>> loadBranches() async {
     final rows =
         await _client.from('branches').select('id, name').eq('is_active', true);
@@ -317,6 +338,51 @@ class SupabaseBookingGateway implements BookingGateway, AdminBookingGateway {
   }
 
   @override
+  Future<List<AdminPrivateLessonEntry>> loadPrivateLessonCalendar(
+      DateTime weekStart) async {
+    final rows = await _client.rpc('admin_private_lesson_calendar', params: {
+      'target_week_start': _dateValue(weekStart),
+    });
+    return (rows as List<dynamic>)
+        .map((row) => row as Map<String, dynamic>)
+        .map((row) => AdminPrivateLessonEntry(
+              id: row['id'] as String,
+              isBlock: row['entry_type'] == 'block',
+              startsAt: DateTime.parse(row['starts_at'] as String).toLocal(),
+              endsAt: DateTime.parse(row['ends_at'] as String).toLocal(),
+              status: row['status'] as String,
+              memberName: row['member_name'] as String?,
+            ))
+        .toList();
+  }
+
+  @override
+  Future<void> blockPrivateLessonTime({
+    required DateTime startsAt,
+    required DateTime endsAt,
+  }) =>
+      _client.rpc('admin_block_private_lesson_time', params: {
+        'target_starts_at': startsAt.toUtc().toIso8601String(),
+        'target_ends_at': endsAt.toUtc().toIso8601String(),
+      });
+
+  @override
+  Future<void> deletePrivateLessonBlock({required String blockId}) =>
+      _client.rpc('admin_delete_private_lesson_block', params: {
+        'target_block_id': blockId,
+      });
+
+  @override
+  Future<void> resolvePrivateLessonRequest({
+    required String requestId,
+    required bool approve,
+  }) =>
+      _client.rpc('admin_resolve_private_lesson_request', params: {
+        'target_request_id': requestId,
+        'approve': approve,
+      });
+
+  @override
   Future<String> createFixedOffer({
     required String name,
     required String branchId,
@@ -348,4 +414,7 @@ class SupabaseBookingGateway implements BookingGateway, AdminBookingGateway {
       'target_offer_id': offerId,
     });
   }
+
+  String _dateValue(DateTime value) =>
+      '${value.year.toString().padLeft(4, '0')}-${value.month.toString().padLeft(2, '0')}-${value.day.toString().padLeft(2, '0')}';
 }

@@ -383,6 +383,51 @@ class AppLocalizations {
       'classesLeft': '{count} classes left',
       'noPendingPayments': 'There are no payments awaiting approval.',
       'viewAll': 'View all',
+      'bookPrivateLesson': 'Book a private lesson',
+      'privateLessonBookingTitle': 'Choose a private lesson time',
+      'privateLessonBookingDetail':
+          'Available one-hour times are shown in green. Your request is sent to the studio for approval.',
+      'available': 'Available',
+      'unavailable': 'Unavailable',
+      'privateLessonRequestSent':
+          'Your private lesson request was sent for approval.',
+      'privateLessonRequestError':
+          'This time is no longer available. Please choose another time.',
+      'privateLessonSlotsLoadError':
+          'Private lesson times could not be loaded. Pull to try again.',
+      'privateLessonCalendar': 'Private lesson calendar',
+      'privateLessonCalendarDetail':
+          'Review requests, confirmed lessons and blocked time in one weekly view.',
+      'blockTime': 'Block time',
+      'blockedTime': 'Blocked time',
+      'noPrivateLessonCalendarEntries':
+          'There are no private lesson entries in this week.',
+      'privateLessonCalendarLoadError':
+          'The private lesson calendar could not be loaded.',
+      'privateLessonApproved':
+          'Private lesson approved. The member will be notified.',
+      'privateLessonDeclined': 'Private lesson request declined.',
+      'privateLessonResolveError':
+          'The private lesson request could not be updated.',
+      'privateLessonTimeBlocked': 'This time has been blocked.',
+      'privateLessonBlockError':
+          'This time could not be blocked. It may contain an approved lesson.',
+      'privateLessonEndsAt': 'Ends {date} at {time}',
+      'privateLessonDefaultClosed': 'Reservations closed',
+      'privateLessonDefaultClosedMessage':
+          'Private lesson reservations are closed between 22:00 and 05:00.',
+      'privateLessonUnavailableMessage':
+          'This time is unavailable for a private lesson.',
+      'deleteBlockedTime': 'Delete blocked time',
+      'deleteBlockedTimeDetail':
+          'This will reopen the time for private lesson requests.',
+      'blockedTimeDeleted': 'Blocked time deleted.',
+      'deleteBlockedTimeError': 'Blocked time could not be deleted.',
+      'startTime': 'Start time',
+      'endTime': 'End time',
+      'endDate': 'End date',
+      'pending': 'Awaiting approval',
+      'decline': 'Decline',
     },
     'tr': {
       'language': 'Dil',
@@ -725,6 +770,47 @@ class AppLocalizations {
       'classesLeft': '{count} ders kaldı',
       'noPendingPayments': 'Onay bekleyen ödeme bulunmuyor.',
       'viewAll': 'Tümünü gör',
+      'bookPrivateLesson': 'Özel ders talep et',
+      'privateLessonBookingTitle': 'Özel ders saati seç',
+      'privateLessonBookingDetail':
+          'Yeşil renkteki bir saatlik zamanlar açıktır. Talebin onay için stüdyoya iletilir.',
+      'available': 'Açık',
+      'unavailable': 'Uygun değil',
+      'privateLessonRequestSent': 'Özel ders talebin onay için gönderildi.',
+      'privateLessonRequestError':
+          'Bu saat artık uygun değil. Lütfen başka bir saat seç.',
+      'privateLessonSlotsLoadError':
+          'Özel ders saatleri yüklenemedi. Tekrar denemek için aşağı çek.',
+      'privateLessonCalendar': 'Özel ders takvimi',
+      'privateLessonCalendarDetail':
+          'Talepleri, onaylı dersleri ve kapalı saatleri haftalık görünümde yönet.',
+      'blockTime': 'Saati kapat',
+      'blockedTime': 'Kapalı saat',
+      'noPrivateLessonCalendarEntries':
+          'Bu hafta için özel ders kaydı bulunmuyor.',
+      'privateLessonCalendarLoadError': 'Özel ders takvimi yüklenemedi.',
+      'privateLessonApproved':
+          'Özel ders onaylandı. Kullanıcıya bildirim gönderilecek.',
+      'privateLessonDeclined': 'Özel ders talebi reddedildi.',
+      'privateLessonResolveError': 'Özel ders talebi güncellenemedi.',
+      'privateLessonTimeBlocked': 'Bu saat aralığı kapatıldı.',
+      'privateLessonBlockError':
+          'Bu saat aralığı kapatılamadı. Onaylanmış bir ders içerebilir.',
+      'privateLessonEndsAt': 'Bitiş: {date}, {time}',
+      'privateLessonDefaultClosed': 'Rezervasyona kapalı',
+      'privateLessonDefaultClosedMessage':
+          'Özel ders rezervasyonları 22:00 ile 05:00 arasında kapalıdır.',
+      'privateLessonUnavailableMessage': 'Bu saat özel ders için uygun değil.',
+      'deleteBlockedTime': 'Kapalı saati sil',
+      'deleteBlockedTimeDetail':
+          'Bu işlem zaman aralığını özel ders taleplerine yeniden açar.',
+      'blockedTimeDeleted': 'Kapalı saat silindi.',
+      'deleteBlockedTimeError': 'Kapalı saat silinemedi.',
+      'startTime': 'Başlangıç saati',
+      'endTime': 'Bitiş saati',
+      'endDate': 'Bitiş tarihi',
+      'pending': 'Onay bekliyor',
+      'decline': 'Reddet',
     },
   };
 }

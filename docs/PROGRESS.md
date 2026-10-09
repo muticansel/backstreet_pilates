@@ -2,6 +2,19 @@
 
 ## Current state
 
+- Added a private-lesson calendar feature locally. Members can see the next
+  60 days of 07:00–22:00 one-hour slots, including unavailable time, and send
+  an approval request for an open slot. Admins have a weekly calendar for
+  pending/approved requests and can block a whole-hour range, including across
+  midnight. The proposed migration uses server-side instructor locking to
+  prevent overlapping approvals or concurrent requests, and approval creates a
+  member push-outbox event. The migration and matching Edge Function source
+  are prepared only and have **not** been applied/deployed to Supabase. Review
+  `docs/reviews/15-private-lesson-calendar.md` before release.
+- Blocked private-lesson ranges can now be deleted from the admin calendar;
+  `20261009000200_private_lesson_block_removal.sql` adds the corresponding
+  admin-only server RPC. It is prepared only and has not been applied.
+
 - Added the email-confirmation then administrator-approval registration flow.
   A new profile starts as `awaiting_email_confirmation`; an Auth trigger moves
   it to `pending_admin_approval` only after the email link is used. The existing

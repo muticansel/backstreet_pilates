@@ -13,6 +13,7 @@ import 'admin_users_page.dart';
 import 'attendance_page.dart';
 import 'class_schedule_page.dart';
 import 'individual_lessons_page.dart';
+import 'private_lesson_calendar_page.dart';
 import 'today_operations_page.dart';
 
 class AdminDashboardPage extends StatefulWidget {
@@ -176,8 +177,10 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                             value: '${metrics.activeMembers}',
                             detail: strings
                                 .text('activeMembersByBranch')
-                                .replaceAll('{oran}', '${metrics.oranActiveMembers}')
-                                .replaceAll('{incek}', '${metrics.incekActiveMembers}'),
+                                .replaceAll(
+                                    '{oran}', '${metrics.oranActiveMembers}')
+                                .replaceAll(
+                                    '{incek}', '${metrics.incekActiveMembers}'),
                             icon: Icons.people_outline,
                           ),
                         ),
@@ -239,6 +242,19 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                       bookings: widget.adminBookings,
                     ),
                   )),
+                ),
+                const SizedBox(height: 14),
+                _AdminActionCard(
+                  icon: Icons.calendar_view_week_outlined,
+                  title: strings.text('privateLessonCalendar'),
+                  detail: strings.text('privateLessonCalendarDetail'),
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      builder: (_) => PrivateLessonCalendarPage(
+                        bookings: widget.adminBookings,
+                      ),
+                    ),
+                  ),
                 ),
                 const SizedBox(height: 14),
                 _AdminActionCard(

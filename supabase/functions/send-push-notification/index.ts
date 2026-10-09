@@ -3,16 +3,18 @@ import { createClient } from 'npm:@supabase/supabase-js@2'
 
 type NotificationEvent = {
   id: string
-  event_type: 'cash_request_created' | 'cash_request_confirmed' | 'class_created' | 'registration_approval_requested'
+  event_type: 'cash_request_created' | 'cash_request_confirmed' | 'class_created' | 'registration_approval_requested' | 'private_lesson_request_approved'
   recipient_user_id: string
   request_id?: string
   class_series_id?: string
   registration_profile_id?: string
+  private_lesson_request_id?: string
   payload: {
-    action: 'cash_request' | 'package_confirmed' | 'class_created' | 'registration_pending'
+    action: 'cash_request' | 'package_confirmed' | 'class_created' | 'registration_pending' | 'private_lesson_approved'
     request_id?: string
     class_series_id?: string
     registration_profile_id?: string
+    private_lesson_request_id?: string
   }
 }
 
@@ -35,7 +37,10 @@ Deno.serve(async (request) => {
     (event.event_type === 'class_created' && event.class_series_id && event.payload.action === 'class_created') ||
     (event.event_type === 'registration_approval_requested' &&
       event.registration_profile_id &&
-      event.payload.action === 'registration_pending')
+      event.payload.action === 'registration_pending') ||
+    (event.event_type === 'private_lesson_request_approved' &&
+      event.private_lesson_request_id &&
+      event.payload.action === 'private_lesson_approved')
   if (!validEvent) return Response.json({ error: 'Invalid notification event' }, { status: 400, headers: json })
 
   const serviceRole = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
@@ -72,7 +77,9 @@ Deno.serve(async (request) => {
       ? { title: 'Backstreet Pilates', body: 'Paketin onaylandı.' }
       : event.event_type === 'class_created'
         ? { title: 'Backstreet Pilates', body: 'Yeni bir ders satışa açıldı.' }
-        : { title: 'Backstreet Pilates', body: 'E-posta onayını tamamlayan yeni bir kayıt bekliyor.' }
+        : event.event_type === 'registration_approval_requested'
+          ? { title: 'Backstreet Pilates', body: 'E-posta onayını tamamlayan yeni bir kayıt bekliyor.' }
+          : { title: 'Backstreet Pilates', body: 'Özel ders talebin onaylandı.' }
   const results = await Promise.all(devices.map(async (device) => {
     const response = await fetch(
       `https://fcm.googleapis.com/v1/projects/${serviceAccount.project_id}/messages:send`,

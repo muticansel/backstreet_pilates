@@ -176,7 +176,9 @@ class SupabasePurchaseGateway implements PurchaseGateway, AdminPurchaseGateway {
         final branch = membership['branches'] as Map<String, dynamic>;
         final branchCode = branch['code'] as String;
         activeUsers.add(userId);
-        activeUsersByBranch.putIfAbsent(branchCode, () => <String>{}).add(userId);
+        activeUsersByBranch
+            .putIfAbsent(branchCode, () => <String>{})
+            .add(userId);
       }
       return AdminDashboardMetrics(
         monthlySalesMinor: sales.fold<int>(

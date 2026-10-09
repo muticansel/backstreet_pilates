@@ -32,6 +32,36 @@ class FeedbackClass {
   bool get hasFeedback => enjoyment != null && difficulty != null;
 }
 
+class PrivateLessonSlot {
+  const PrivateLessonSlot({
+    required this.startsAt,
+    required this.isAvailable,
+    required this.isDefaultClosed,
+  });
+
+  final DateTime startsAt;
+  final bool isAvailable;
+  final bool isDefaultClosed;
+}
+
+class AdminPrivateLessonEntry {
+  const AdminPrivateLessonEntry({
+    required this.id,
+    required this.isBlock,
+    required this.startsAt,
+    required this.endsAt,
+    required this.status,
+    this.memberName,
+  });
+
+  final String id;
+  final bool isBlock;
+  final DateTime startsAt;
+  final DateTime endsAt;
+  final String status;
+  final String? memberName;
+}
+
 abstract class BookingGateway {
   const BookingGateway();
 
@@ -43,6 +73,9 @@ abstract class BookingGateway {
     required int enjoyment,
     required int difficulty,
   }) async {}
+  Future<List<PrivateLessonSlot>> loadPrivateLessonSlots(DateTime date) async =>
+      const [];
+  Future<void> requestPrivateLesson(DateTime startsAt) async {}
 }
 
 class StudioBranch {
@@ -234,6 +267,17 @@ abstract interface class AdminBookingGateway {
     required int lessonPriceMinor,
     required int rateBasisPoints,
   });
+  Future<List<AdminPrivateLessonEntry>> loadPrivateLessonCalendar(
+      DateTime weekStart);
+  Future<void> blockPrivateLessonTime({
+    required DateTime startsAt,
+    required DateTime endsAt,
+  });
+  Future<void> deletePrivateLessonBlock({required String blockId});
+  Future<void> resolvePrivateLessonRequest({
+    required String requestId,
+    required bool approve,
+  });
 }
 
 class UnconfiguredBookingGateway extends BookingGateway {
@@ -243,6 +287,13 @@ class UnconfiguredBookingGateway extends BookingGateway {
 
   @override
   Future<List<DateTime>> loadCompletedClassDates() async => const [];
+
+  @override
+  Future<List<PrivateLessonSlot>> loadPrivateLessonSlots(DateTime date) async =>
+      const [];
+
+  @override
+  Future<void> requestPrivateLesson(DateTime startsAt) async {}
 }
 
 class UnconfiguredAdminBookingGateway implements AdminBookingGateway {
@@ -293,5 +344,21 @@ class UnconfiguredAdminBookingGateway implements AdminBookingGateway {
     required DateTime lessonDate,
     required int lessonPriceMinor,
     required int rateBasisPoints,
+  }) async {}
+  @override
+  Future<List<AdminPrivateLessonEntry>> loadPrivateLessonCalendar(
+          DateTime weekStart) async =>
+      const [];
+  @override
+  Future<void> blockPrivateLessonTime({
+    required DateTime startsAt,
+    required DateTime endsAt,
+  }) async {}
+  @override
+  Future<void> deletePrivateLessonBlock({required String blockId}) async {}
+  @override
+  Future<void> resolvePrivateLessonRequest({
+    required String requestId,
+    required bool approve,
   }) async {}
 }
