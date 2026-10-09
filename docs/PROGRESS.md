@@ -364,6 +364,10 @@ are implemented.
 - Renamed the manually entered earnings history to **Individual lesson earnings** / **Bireysel ders kazançları**.
 - Renamed the member-request workflow to **Private lesson requests** / **Özel ders talepleri**. The two labels now make clear that they read different data models.
 
+## Admin income breakdown
+
+- The monthly total now shows its existing two sources separately: confirmed group-class package income and recorded individual-lesson earnings. No new backend query or schema change was required.
+
 ## Cash package purchase foundation
 
 - Prepared a member cash-payment request model and an admin-only confirmation RPC.

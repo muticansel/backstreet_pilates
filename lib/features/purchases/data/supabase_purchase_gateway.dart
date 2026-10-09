@@ -180,13 +180,19 @@ class SupabasePurchaseGateway implements PurchaseGateway, AdminPurchaseGateway {
             .putIfAbsent(branchCode, () => <String>{})
             .add(userId);
       }
+      final groupClassIncomeMinor = sales.fold<int>(
+        0,
+        (sum, row) => sum + (row['price_minor'] as int),
+      );
+      final individualLessonEarningsMinor = individualLessons.fold<int>(
+        0,
+        (sum, row) => sum + (row['earning_minor'] as int),
+      );
       return AdminDashboardMetrics(
-        monthlySalesMinor: sales.fold<int>(
-              0,
-              (sum, row) => sum + (row['price_minor'] as int),
-            ) +
-            individualLessons.fold<int>(
-                0, (sum, row) => sum + (row['earning_minor'] as int)),
+        monthlySalesMinor:
+            groupClassIncomeMinor + individualLessonEarningsMinor,
+        groupClassIncomeMinor: groupClassIncomeMinor,
+        individualLessonEarningsMinor: individualLessonEarningsMinor,
         completedSales: sales.length,
         individualLessonCount: individualLessons.length,
         activeMembers: activeUsers.length,

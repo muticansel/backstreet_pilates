@@ -79,6 +79,8 @@ class PendingCashPurchase {
 class AdminDashboardMetrics {
   const AdminDashboardMetrics({
     required this.monthlySalesMinor,
+    required this.groupClassIncomeMinor,
+    required this.individualLessonEarningsMinor,
     required this.completedSales,
     required this.individualLessonCount,
     required this.activeMembers,
@@ -87,6 +89,8 @@ class AdminDashboardMetrics {
   });
 
   final int monthlySalesMinor;
+  final int groupClassIncomeMinor;
+  final int individualLessonEarningsMinor;
   final int completedSales;
   final int individualLessonCount;
   final int activeMembers;
@@ -132,6 +136,8 @@ class UnconfiguredAdminPurchaseGateway implements AdminPurchaseGateway {
   Future<AdminDashboardMetrics> loadDashboardMetrics() async =>
       const AdminDashboardMetrics(
         monthlySalesMinor: 0,
+        groupClassIncomeMinor: 0,
+        individualLessonEarningsMinor: 0,
         completedSales: 0,
         individualLessonCount: 0,
         activeMembers: 0,

@@ -351,11 +351,10 @@ class _ManagementTab extends StatelessWidget {
                 child: _MetricCard(
                   label: strings.text('thisMonth'),
                   value: _formatTry(value.monthlySalesMinor),
-                  detail: strings
-                      .text('privateLessonMetric')
-                      .replaceAll('{sales}', '${value.completedSales}')
-                      .replaceAll(
-                          '{lessons}', '${value.individualLessonCount}'),
+                  detail: '${strings.text('groupClassEarnings')}: '
+                      '${_formatTry(value.groupClassIncomeMinor)}\n'
+                      '${strings.text('individualLessonEarnings')}: '
+                      '${_formatTry(value.individualLessonEarningsMinor)}',
                   icon: Icons.payments_outlined,
                 ),
               ),

@@ -32,9 +32,10 @@ The admin home is an operational four-tab dashboard:
    badge shows the number of today's started bookings still awaiting attendance.
 3. **Individual** contains individual-lesson recording and the private-lesson
    calendar.
-4. **Management** contains users, cash-payment approval, monthly sales and
-   active-member metrics. A terracotta badge marks pending payments because
-   they affect membership activation.
+4. **Management** contains users, cash-payment approval, active-member metrics
+   and a monthly total split into group-class package income and individual
+   lesson earnings. A terracotta badge marks pending payments because they
+   affect membership activation.
 
 Badges are indicators only; the Today tab remains the place to inspect open
 work and follow its direct links. All existing target pages, access controls

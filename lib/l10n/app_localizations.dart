@@ -157,6 +157,8 @@ class AppLocalizations {
       'completedSales': '{count} completed sales',
       'privateLessonMetric':
           '{sales} package sales · {lessons} private lessons',
+      'groupClassEarnings': 'Group classes',
+      'individualLessonEarnings': 'Individual lessons',
       'privateLessons': 'Individual lesson earnings',
       'recordPrivateLesson': 'Add individual lesson record',
       'privateLessonsSubtitle':
@@ -564,6 +566,8 @@ class AppLocalizations {
       'activeMembersByBranch': 'Oran: {oran} · İncek: {incek}',
       'completedSales': '{count} tamamlanan satış',
       'privateLessonMetric': '{sales} paket satışı · {lessons} bireysel ders',
+      'groupClassEarnings': 'Grup dersleri',
+      'individualLessonEarnings': 'Bireysel dersler',
       'privateLessons': 'Bireysel ders kazançları',
       'recordPrivateLesson': 'Bireysel ders kaydı ekle',
       'privateLessonsSubtitle':

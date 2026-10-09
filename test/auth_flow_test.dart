@@ -99,6 +99,8 @@ class FakeAdminPurchaseGateway implements AdminPurchaseGateway {
   Future<AdminDashboardMetrics> loadDashboardMetrics() async =>
       const AdminDashboardMetrics(
         monthlySalesMinor: 6840000,
+        groupClassIncomeMinor: 6800000,
+        individualLessonEarningsMinor: 40000,
         completedSales: 3,
         individualLessonCount: 0,
         activeMembers: 12,
@@ -321,6 +323,8 @@ void main() {
     await tester.tap(find.text('Management'));
     await tester.pumpAndSettle();
     expect(find.text('₺68.400'), findsOneWidget);
+    expect(find.text('Group classes: ₺68.000\nIndividual lessons: ₺400'),
+        findsOneWidget);
 
     final cashPayment = find.text('Payments awaiting approval');
     await tester.drag(find.byType(Scrollable), const Offset(0, -300));
