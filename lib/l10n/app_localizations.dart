@@ -381,9 +381,9 @@ class AppLocalizations {
           'Run the studio from one up-to-date operational view.',
       'todayOperationsLoadError':
           'Today’s operations could not be loaded. Pull to try again.',
-      'todayClasses': 'Today’s classes',
+      'todayClasses': 'Today’s group classes',
       'occupancy': 'Occupancy',
-      'noClassesToday': 'There are no scheduled classes today.',
+      'noClassesToday': 'There are no scheduled group classes today.',
       'noShowList': 'No-show list',
       'noNoShowsToday': 'No no-shows have been recorded today.',
       'upcomingPackageEndings': 'Upcoming package endings',
@@ -786,9 +786,9 @@ class AppLocalizations {
           'Stüdyoyu güncel operasyon görünümünden yönetin.',
       'todayOperationsLoadError':
           'Bugünün operasyonları yüklenemedi. Tekrar denemek için aşağı çek.',
-      'todayClasses': 'Bugünkü dersler',
+      'todayClasses': 'Bugünkü grup dersleri',
       'occupancy': 'Doluluk',
-      'noClassesToday': 'Bugün planlanmış ders bulunmuyor.',
+      'noClassesToday': 'Bugün planlanmış grup dersi bulunmuyor.',
       'noShowList': 'No-show listesi',
       'noNoShowsToday': 'Bugün kaydedilmiş no-show yok.',
       'upcomingPackageEndings': 'Yaklaşan paket bitişleri',

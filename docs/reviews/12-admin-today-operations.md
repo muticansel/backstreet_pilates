@@ -6,7 +6,7 @@ Status: awaiting user review.
 
 The **Today / Bugün** page is an operational snapshot for admins:
 
-1. Today's scheduled sessions with each session's occupied seats and capacity.
+1. Today's scheduled group sessions with each session's occupied seats and capacity.
 2. The total occupancy percentage across today's sessions.
 3. Members recorded as no-show for sessions occurring today.
 4. Active packages whose final valid day falls in the next seven calendar days.
