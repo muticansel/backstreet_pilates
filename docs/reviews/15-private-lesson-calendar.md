@@ -17,7 +17,7 @@
 
 ## Admin flow
 
-- **Private lesson calendar** on the admin dashboard presents the selected
+- **Private lesson requests** on the admin dashboard presents the selected
   week's pending requests, confirmed private lessons and blocked time.
 - A pending request can be approved or declined. Approval makes it a confirmed
   calendar event and creates an opaque push-outbox event for that member.

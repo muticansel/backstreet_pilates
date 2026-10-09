@@ -140,6 +140,15 @@ class AppLocalizations {
       'month11': 'NOV',
       'month12': 'DEC',
       'adminOverview': 'ADMIN OVERVIEW',
+      'adminClasses': 'Classes',
+      'adminClassesSubtitle':
+          'Create class series and record attendance for completed sessions.',
+      'adminIndividual': 'Individual',
+      'adminIndividualSubtitle':
+          'Record one-to-one lessons and manage private lesson requests.',
+      'management': 'Management',
+      'managementSubtitle':
+          'Manage members, payment approvals and studio reporting.',
       'studioAtGlance': 'Your studio, at a glance.',
       'adminSubtitle': 'Keep track of the month and support your members.',
       'thisMonth': 'THIS MONTH',
@@ -148,10 +157,10 @@ class AppLocalizations {
       'completedSales': '{count} completed sales',
       'privateLessonMetric':
           '{sales} package sales · {lessons} private lessons',
-      'privateLessons': 'Private lessons',
-      'recordPrivateLesson': 'Record private lesson',
+      'privateLessons': 'Individual lesson earnings',
+      'recordPrivateLesson': 'Add individual lesson record',
       'privateLessonsSubtitle':
-          'Record individual lessons and track earnings by member.',
+          'Manually record completed individual lessons and track earnings by member.',
       'lessonDate': 'Lesson date',
       'lessonPrice': 'Lesson price (TRY)',
       'ratePercent': 'Rate (%)',
@@ -402,9 +411,9 @@ class AppLocalizations {
           'This time is no longer available. Please choose another time.',
       'privateLessonSlotsLoadError':
           'Private lesson times could not be loaded. Pull to try again.',
-      'privateLessonCalendar': 'Private lesson calendar',
+      'privateLessonCalendar': 'Private lesson requests',
       'privateLessonCalendarDetail':
-          'Review requests, confirmed lessons and blocked time in one weekly view.',
+          'Manage member requests, confirmed lessons and blocked times in a weekly calendar.',
       'blockTime': 'Block time',
       'blockedTime': 'Blocked time',
       'noPrivateLessonCalendarEntries':
@@ -539,6 +548,15 @@ class AppLocalizations {
       'month11': 'KAS',
       'month12': 'ARA',
       'adminOverview': 'YÖNETİCİ GENEL BAKIŞ',
+      'adminClasses': 'Dersler',
+      'adminClassesSubtitle':
+          'Ders serilerini oluştur ve tamamlanan derslerin yoklamasını gir.',
+      'adminIndividual': 'Bireysel',
+      'adminIndividualSubtitle':
+          'Bire bir dersleri kaydet ve özel ders taleplerini yönet.',
+      'management': 'Yönetim',
+      'managementSubtitle':
+          'Üyeleri, ödeme onaylarını ve stüdyo raporlamasını yönet.',
       'studioAtGlance': 'Stüdyon, bir bakışta.',
       'adminSubtitle': 'Ayı takip et ve üyelerini destekle.',
       'thisMonth': 'BU AY',
@@ -546,10 +564,10 @@ class AppLocalizations {
       'activeMembersByBranch': 'Oran: {oran} · İncek: {incek}',
       'completedSales': '{count} tamamlanan satış',
       'privateLessonMetric': '{sales} paket satışı · {lessons} bireysel ders',
-      'privateLessons': 'Bireysel dersler',
-      'recordPrivateLesson': 'Bireysel ders kaydı',
+      'privateLessons': 'Bireysel ders kazançları',
+      'recordPrivateLesson': 'Bireysel ders kaydı ekle',
       'privateLessonsSubtitle':
-          'Bireysel dersleri kaydet ve üye bazında kazancı takip et.',
+          'Tamamlanan bireysel dersleri elle kaydet ve üye bazında kazancı takip et.',
       'lessonDate': 'Ders tarihi',
       'lessonPrice': 'Ders tutarı (TL)',
       'ratePercent': 'Oran (%)',
@@ -797,9 +815,9 @@ class AppLocalizations {
           'Bu saat artık uygun değil. Lütfen başka bir saat seç.',
       'privateLessonSlotsLoadError':
           'Özel ders saatleri yüklenemedi. Tekrar denemek için aşağı çek.',
-      'privateLessonCalendar': 'Özel ders takvimi',
+      'privateLessonCalendar': 'Özel ders talepleri',
       'privateLessonCalendarDetail':
-          'Talepleri, onaylı dersleri ve kapalı saatleri haftalık görünümde yönet.',
+          'Üye taleplerini, onaylı dersleri ve kapalı saatleri haftalık takvimde yönet.',
       'blockTime': 'Saati kapat',
       'blockedTime': 'Kapalı saat',
       'noPrivateLessonCalendarEntries':

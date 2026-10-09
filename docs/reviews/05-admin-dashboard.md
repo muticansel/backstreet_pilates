@@ -24,12 +24,21 @@ access and writes.
 
 ## What the page contains
 
-1. Current-month sales total and completed sale count.
-2. Total active member count across Oran and İncek.
-3. An active-member package list entry point.
-4. A cash-payment form entry point that will grant a package after server-side
-   validation is implemented.
-5. Sign out.
+The admin home is an operational four-tab dashboard:
+
+1. **Today** is the default tab and shows today's sessions, occupancy,
+   no-shows, upcoming package endings and pending payments.
+2. **Classes** contains class-series scheduling and attendance entry. A sage
+   badge shows the number of today's started bookings still awaiting attendance.
+3. **Individual** contains individual-lesson recording and the private-lesson
+   calendar.
+4. **Management** contains users, cash-payment approval, monthly sales and
+   active-member metrics. A terracotta badge marks pending payments because
+   they affect membership activation.
+
+Badges are indicators only; the Today tab remains the place to inspect open
+work and follow its direct links. All existing target pages, access controls
+and server-side writes are unchanged.
 
 All reporting, member and payment values currently use `AdminDashboardData.preview`.
 The form validates basic input but never records a payment or grants a package.
@@ -53,10 +62,9 @@ the final admin-management process will be server-side and audited.
 
 ## Behavior to review
 
-- Admin users see a substantially different landing page from members.
-- The sales and active-member summary is easy to scan.
-- The member list and cash-payment form are reached through clear actions.
-- The preview-data label prevents treating mock values as real reporting.
+- Admin users land on Today rather than a long menu of equal-weight cards.
+- Badge totals refresh after pull-to-refresh or returning from an action page.
+- Classes, Individual and Management expose all prior admin actions.
 - A non-admin user cannot reach this page by normal app navigation.
 
 ## Review notes

@@ -351,6 +351,19 @@ are implemented.
 - Review notes and development-only role setup: `docs/reviews/05-admin-dashboard.md`.
 - Verification: Flutter analyze clean, all 6 widget tests passed, and iOS Simulator build artifact regenerated successfully.
 
+## Admin dashboard navigation
+
+- Reworked the admin landing page into Today, Classes, Individual and Management bottom-navigation tabs.
+- Today is the default operational snapshot. Classes shows a sage count for started bookings awaiting attendance; Management shows a terracotta count for cash payments awaiting approval.
+- Scheduling, attendance, individual lessons, private lesson calendar, users, payment approval and monthly metrics retain their existing pages and data sources; no database migration or RPC was added.
+- The Today snapshot is reused inside the dashboard and refreshes after pull-to-refresh or returning from an admin action.
+- Review notes: `docs/reviews/05-admin-dashboard.md`.
+
+## Private lesson naming
+
+- Renamed the manually entered earnings history to **Individual lesson earnings** / **Bireysel ders kazançları**.
+- Renamed the member-request workflow to **Private lesson requests** / **Özel ders talepleri**. The two labels now make clear that they read different data models.
+
 ## Cash package purchase foundation
 
 - Prepared a member cash-payment request model and an admin-only confirmation RPC.

@@ -61,107 +61,126 @@ class _TodayOperationsPageState extends State<TodayOperationsPage> {
                 _Message(message: strings.text('todayOperationsLoadError')),
               ]);
             }
-            final data = snapshot.data!;
-            final totalCapacity = data.classes
-                .fold<int>(0, (total, session) => total + session.capacity);
-            final totalBooked = data.classes
-                .fold<int>(0, (total, session) => total + session.bookedCount);
-            final occupancy = totalCapacity == 0
-                ? 0
-                : (totalBooked * 100 / totalCapacity).round();
-            return ListView(
-              padding: const EdgeInsets.fromLTRB(24, 24, 24, 36),
-              children: [
-                Text(strings.text('today'),
-                    style: Theme.of(context).textTheme.headlineLarge),
-                const SizedBox(height: 8),
-                Text(strings.text('todayOperationsSubtitle'),
-                    style: Theme.of(context).textTheme.bodyLarge),
-                const SizedBox(height: 24),
-                Row(children: [
-                  Expanded(
-                    child: _Metric(
-                      label: strings.text('todayClasses'),
-                      value: '${data.classes.length}',
-                      icon: Icons.calendar_today_outlined,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: _Metric(
-                      label: strings.text('occupancy'),
-                      value: '$occupancy%',
-                      icon: Icons.pie_chart_outline,
-                    ),
-                  ),
-                ]),
-                const SizedBox(height: 28),
-                _Section(
-                  title: strings.text('todayClasses'),
-                  empty: strings.text('noClassesToday'),
-                  children: data.classes
-                      .map((session) => _OperationCard(
-                            icon: Icons.schedule_outlined,
-                            title: session.title,
-                            detail:
-                                '${session.branchName} · ${TimeOfDay.fromDateTime(session.startsAt).format(context)}',
-                            trailing:
-                                '${session.bookedCount}/${session.capacity}',
-                          ))
-                      .toList(),
-                ),
-                _Section(
-                  title: strings.text('noShowList'),
-                  empty: strings.text('noNoShowsToday'),
-                  action: () =>
-                      Navigator.of(context).push(MaterialPageRoute<void>(
-                    builder: (_) => AttendancePage(bookings: widget.bookings),
-                  )),
-                  children: data.noShows
-                      .map((record) => _OperationCard(
-                            icon: Icons.person_off_outlined,
-                            title: record.memberName,
-                            detail:
-                                '${record.title} · ${record.branchName} · ${TimeOfDay.fromDateTime(record.startsAt).format(context)}',
-                          ))
-                      .toList(),
-                ),
-                _Section(
-                  title: strings.text('upcomingPackageEndings'),
-                  empty: strings.text('noUpcomingPackageEndings'),
-                  children: data.endingPackages
-                      .map((membership) => _OperationCard(
-                            icon: Icons.timelapse_outlined,
-                            title: membership.memberName,
-                            detail:
-                                '${membership.packageName} · ${strings.text('endsOn').replaceAll('{date}', MaterialLocalizations.of(context).formatMediumDate(membership.endDate))}',
-                            trailing: strings.text('classesLeft').replaceAll(
-                                '{count}', '${membership.remainingCredits}'),
-                          ))
-                      .toList(),
-                ),
-                _Section(
-                  title: strings.text('paymentsAwaitingApproval'),
-                  empty: strings.text('noPendingPayments'),
-                  action: () =>
-                      Navigator.of(context).push(MaterialPageRoute<void>(
-                    builder: (_) =>
-                        CashPurchaseRequestsPage(purchases: widget.purchases),
-                  )),
-                  children: data.pendingPayments
-                      .map((payment) => _OperationCard(
-                            icon: Icons.payments_outlined,
-                            title: payment.memberName,
-                            detail: payment.packageName,
-                            trailing: _formatTry(payment.priceMinor),
-                          ))
-                      .toList(),
-                ),
-              ],
+            return AdminTodayOperationsContent(
+              data: snapshot.data!,
+              bookings: widget.bookings,
+              purchases: widget.purchases,
             );
           },
         ),
       ),
+    );
+  }
+}
+
+/// Reusable operational snapshot for the admin dashboard's Today tab and the
+/// standalone Today page. Navigation targets remain the same in both places.
+class AdminTodayOperationsContent extends StatelessWidget {
+  const AdminTodayOperationsContent({
+    super.key,
+    required this.data,
+    required this.bookings,
+    required this.purchases,
+  });
+
+  final AdminTodayOperations data;
+  final AdminBookingGateway bookings;
+  final AdminPurchaseGateway purchases;
+
+  @override
+  Widget build(BuildContext context) {
+    final strings = AppLocalizations.of(context);
+    final totalCapacity =
+        data.classes.fold<int>(0, (total, session) => total + session.capacity);
+    final totalBooked = data.classes
+        .fold<int>(0, (total, session) => total + session.bookedCount);
+    final occupancy =
+        totalCapacity == 0 ? 0 : (totalBooked * 100 / totalCapacity).round();
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(24, 24, 24, 36),
+      children: [
+        Text(strings.text('today'),
+            style: Theme.of(context).textTheme.headlineLarge),
+        const SizedBox(height: 8),
+        Text(strings.text('todayOperationsSubtitle'),
+            style: Theme.of(context).textTheme.bodyLarge),
+        const SizedBox(height: 24),
+        Row(children: [
+          Expanded(
+            child: _Metric(
+              label: strings.text('todayClasses'),
+              value: '${data.classes.length}',
+              icon: Icons.calendar_today_outlined,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: _Metric(
+              label: strings.text('occupancy'),
+              value: '$occupancy%',
+              icon: Icons.pie_chart_outline,
+            ),
+          ),
+        ]),
+        const SizedBox(height: 28),
+        _Section(
+          title: strings.text('todayClasses'),
+          empty: strings.text('noClassesToday'),
+          children: data.classes
+              .map((session) => _OperationCard(
+                    icon: Icons.schedule_outlined,
+                    title: session.title,
+                    detail:
+                        '${session.branchName} · ${TimeOfDay.fromDateTime(session.startsAt).format(context)}',
+                    trailing: '${session.bookedCount}/${session.capacity}',
+                  ))
+              .toList(),
+        ),
+        _Section(
+          title: strings.text('noShowList'),
+          empty: strings.text('noNoShowsToday'),
+          action: () => Navigator.of(context).push(MaterialPageRoute<void>(
+            builder: (_) => AttendancePage(bookings: bookings),
+          )),
+          children: data.noShows
+              .map((record) => _OperationCard(
+                    icon: Icons.person_off_outlined,
+                    title: record.memberName,
+                    detail:
+                        '${record.title} · ${record.branchName} · ${TimeOfDay.fromDateTime(record.startsAt).format(context)}',
+                  ))
+              .toList(),
+        ),
+        _Section(
+          title: strings.text('upcomingPackageEndings'),
+          empty: strings.text('noUpcomingPackageEndings'),
+          children: data.endingPackages
+              .map((membership) => _OperationCard(
+                    icon: Icons.timelapse_outlined,
+                    title: membership.memberName,
+                    detail:
+                        '${membership.packageName} · ${strings.text('endsOn').replaceAll('{date}', MaterialLocalizations.of(context).formatMediumDate(membership.endDate))}',
+                    trailing: strings.text('classesLeft').replaceAll(
+                        '{count}', '${membership.remainingCredits}'),
+                  ))
+              .toList(),
+        ),
+        _Section(
+          title: strings.text('paymentsAwaitingApproval'),
+          empty: strings.text('noPendingPayments'),
+          action: () => Navigator.of(context).push(MaterialPageRoute<void>(
+            builder: (_) => CashPurchaseRequestsPage(purchases: purchases),
+          )),
+          children: data.pendingPayments
+              .map((payment) => _OperationCard(
+                    icon: Icons.payments_outlined,
+                    title: payment.memberName,
+                    detail: payment.packageName,
+                    trailing: _formatTry(payment.priceMinor),
+                  ))
+              .toList(),
+        ),
+      ],
     );
   }
 }

@@ -111,6 +111,46 @@ class FakeAdminPurchaseGateway implements AdminPurchaseGateway {
       const [];
 }
 
+class FakeAdminBookingGateway extends UnconfiguredAdminBookingGateway {
+  const FakeAdminBookingGateway();
+
+  @override
+  Future<AdminTodayOperations> loadTodayOperations() async =>
+      AdminTodayOperations(
+        classes: [
+          AdminTodayClass(
+            title: 'Morning Pilates',
+            branchName: 'Oran',
+            startsAt: DateTime.now().subtract(const Duration(hours: 1)),
+            capacity: 3,
+            bookedCount: 2,
+          ),
+        ],
+        noShows: const [],
+        endingPackages: const [],
+        pendingPayments: const [
+          AdminPendingPayment(
+            memberName: 'Alex Taylor',
+            packageName: '8 class package',
+            priceMinor: 500000,
+          ),
+        ],
+      );
+
+  @override
+  Future<List<AdminAttendanceRecord>> loadPastAttendance() async => [
+        AdminAttendanceRecord(
+          bookingId: 'booking-1',
+          memberId: 'member-1',
+          memberName: 'Alex Taylor',
+          title: 'Morning Pilates',
+          branchName: 'Oran',
+          startsAt: DateTime.now().subtract(const Duration(hours: 1)),
+          status: 'booked',
+        ),
+      ];
+}
+
 void main() {
   testWidgets('language menu changes the login screen to Turkish',
       (tester) async {
@@ -249,12 +289,13 @@ void main() {
     expect(find.text('YOUR CURRENT PACKAGE'), findsOneWidget);
   });
 
-  testWidgets('admin sees the studio dashboard and management entry points',
+  testWidgets('admin starts on Today and reaches all simplified sections',
       (tester) async {
     await tester.pumpWidget(PilatesApp(
       auth: FakeAuthGateway(),
       roles: const FakeRoleResolver(AccountRole.admin),
       adminPurchases: const FakeAdminPurchaseGateway(),
+      adminBookings: const FakeAdminBookingGateway(),
     ));
     await tester.pumpAndSettle();
     await tester.enterText(
@@ -263,11 +304,27 @@ void main() {
     await tester.tap(find.text('Log in'));
     await tester.pumpAndSettle();
 
-    expect(find.text('ADMIN OVERVIEW'), findsOneWidget);
+    expect(find.text('Today'), findsNWidgets(2));
+    expect(find.text('Morning Pilates'), findsOneWidget);
+    expect(find.byType(Badge), findsNWidgets(2));
+
+    await tester.tap(find.text('Classes'));
+    await tester.pumpAndSettle();
+    expect(find.text('Class schedule'), findsOneWidget);
+    expect(find.text('Attendance'), findsOneWidget);
+
+    await tester.tap(find.text('Individual'));
+    await tester.pumpAndSettle();
+    expect(find.text('Individual lesson earnings'), findsOneWidget);
+    expect(find.text('Private lesson requests'), findsOneWidget);
+
+    await tester.tap(find.text('Management'));
+    await tester.pumpAndSettle();
     expect(find.text('₺68.400'), findsOneWidget);
 
     final cashPayment = find.text('Payments awaiting approval');
-    await tester.ensureVisible(cashPayment);
+    await tester.drag(find.byType(Scrollable), const Offset(0, -300));
+    await tester.pumpAndSettle();
     await tester.tap(cashPayment);
     await tester.pumpAndSettle();
     expect(find.text('No cash payments are waiting.'), findsOneWidget);
