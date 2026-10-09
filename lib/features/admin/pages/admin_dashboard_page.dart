@@ -351,10 +351,16 @@ class _ManagementTab extends StatelessWidget {
                 child: _MetricCard(
                   label: strings.text('thisMonth'),
                   value: _formatTry(value.monthlySalesMinor),
-                  detail: '${strings.text('groupClassEarnings')}: '
-                      '${_formatTry(value.groupClassIncomeMinor)}\n'
-                      '${strings.text('individualLessonEarnings')}: '
-                      '${_formatTry(value.individualLessonEarningsMinor)}',
+                  details: [
+                    _MetricDetail(
+                      label: strings.text('groupClassEarnings'),
+                      value: _formatTry(value.groupClassIncomeMinor),
+                    ),
+                    _MetricDetail(
+                      label: strings.text('individualLessonEarnings'),
+                      value: _formatTry(value.individualLessonEarningsMinor),
+                    ),
+                  ],
                   icon: Icons.payments_outlined,
                 ),
               ),
@@ -363,14 +369,20 @@ class _ManagementTab extends StatelessWidget {
                 child: _MetricCard(
                   label: strings.text('activeMembers'),
                   value: '${value.activeMembers}',
-                  detail: strings
+                  details: [
+                    _MetricDetail(
+                      label: strings.text('groupMembers'),
+                      value: strings
                           .text('activeMembersByBranch')
                           .replaceAll('{oran}', '${value.oranActiveMembers}')
-                          .replaceAll(
-                              '{incek}', '${value.incekActiveMembers}') +
-                      '\n' +
-                      strings.text('monthlyIndividualLessonCount').replaceAll(
+                          .replaceAll('{incek}', '${value.incekActiveMembers}'),
+                    ),
+                    _MetricDetail(
+                      label: strings.text('individualLessonEarnings'),
+                      value: strings.text('monthlyCount').replaceAll(
                           '{count}', '${value.individualLessonCount}'),
+                    ),
+                  ],
                   icon: Icons.people_outline,
                 ),
               ),
@@ -429,11 +441,11 @@ class _MetricCard extends StatelessWidget {
   const _MetricCard(
       {required this.label,
       required this.value,
-      required this.detail,
+      required this.details,
       required this.icon});
   final String label;
   final String value;
-  final String detail;
+  final List<_MetricDetail> details;
   final IconData icon;
   @override
   Widget build(BuildContext context) => Container(
@@ -456,10 +468,35 @@ class _MetricCard extends StatelessWidget {
           Text(value,
               style:
                   const TextStyle(fontSize: 24, fontWeight: FontWeight.w700)),
-          const SizedBox(height: 4),
-          Text(detail, style: const TextStyle(fontSize: 12)),
+          const SizedBox(height: 14),
+          const Divider(height: 1, color: Color(0xFFD8DED5)),
+          const SizedBox(height: 12),
+          ...details.map((detail) => Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(detail.label,
+                        style: const TextStyle(
+                            color: AppTheme.sage,
+                            fontSize: 9,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 0.8)),
+                    const SizedBox(height: 3),
+                    Text(detail.value,
+                        style: const TextStyle(
+                            fontSize: 13, fontWeight: FontWeight.w600)),
+                  ],
+                ),
+              )),
         ]),
       );
+}
+
+class _MetricDetail {
+  const _MetricDetail({required this.label, required this.value});
+  final String label;
+  final String value;
 }
 
 class _AdminActionCard extends StatelessWidget {

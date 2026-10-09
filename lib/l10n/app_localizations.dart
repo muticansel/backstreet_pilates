@@ -155,6 +155,8 @@ class AppLocalizations {
       'activeMembers': 'ACTIVE MEMBERS',
       'activeMembersByBranch': 'Oran: {oran} · İncek: {incek}',
       'monthlyIndividualLessonCount': 'This month: {count} individual lessons',
+      'groupMembers': 'Group members',
+      'monthlyCount': '{count} this month',
       'completedSales': '{count} completed sales',
       'privateLessonMetric':
           '{sales} package sales · {lessons} private lessons',
@@ -566,6 +568,8 @@ class AppLocalizations {
       'activeMembers': 'AKTİF ÜYELER',
       'activeMembersByBranch': 'Oran: {oran} · İncek: {incek}',
       'monthlyIndividualLessonCount': 'Bu ay: {count} bireysel ders',
+      'groupMembers': 'Grup üyeleri',
+      'monthlyCount': 'Bu ay: {count}',
       'completedSales': '{count} tamamlanan satış',
       'privateLessonMetric': '{sales} paket satışı · {lessons} bireysel ders',
       'groupClassEarnings': 'Grup dersleri',

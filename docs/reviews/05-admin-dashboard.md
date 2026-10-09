@@ -38,6 +38,8 @@ The admin home is an operational four-tab dashboard:
    affect membership activation.
    The active-member metric keeps its group-membership definition and displays
    this month's individual lesson count as separate context.
+   Both cards use labeled, divided detail rows rather than mixed explanatory
+   sentences, so income and participation measures are visually distinct.
 
 Badges are indicators only; the Today tab remains the place to inspect open
 work and follow its direct links. All existing target pages, access controls
