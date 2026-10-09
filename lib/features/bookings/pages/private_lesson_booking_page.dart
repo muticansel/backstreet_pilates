@@ -174,33 +174,36 @@ class _SlotTile extends StatelessWidget {
     final start = slot.startsAt;
     final end = start.add(const Duration(hours: 1));
     final time = '${_clock(start)} – ${_clock(end)}';
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      decoration: BoxDecoration(
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Material(
         color: slot.isAvailable
             ? const Color(0xFFEAF1E7)
             : const Color(0xFFF0F0EC),
         borderRadius: BorderRadius.circular(16),
-      ),
-      child: ListTile(
-        leading: Icon(slot.isAvailable ? Icons.schedule : Icons.block_outlined,
-            color: slot.isAvailable ? AppTheme.sage : Colors.black45),
-        title: Text(time, style: const TextStyle(fontWeight: FontWeight.w700)),
-        subtitle: Text(slot.isAvailable
-            ? strings.text('available')
-            : slot.isDefaultClosed
-                ? strings.text('privateLessonDefaultClosed')
-                : strings.text('unavailable')),
-        trailing: slot.isAvailable
-            ? requesting
-                ? const SizedBox(
-                    width: 22,
-                    height: 22,
-                    child: CircularProgressIndicator(strokeWidth: 2))
-                : const Icon(Icons.arrow_forward)
-            : const Icon(Icons.lock_outline, size: 18),
-        enabled: !requesting,
-        onTap: requesting ? null : (onTap ?? onUnavailable),
+        clipBehavior: Clip.antiAlias,
+        child: ListTile(
+          leading: Icon(
+              slot.isAvailable ? Icons.schedule : Icons.block_outlined,
+              color: slot.isAvailable ? AppTheme.sage : Colors.black45),
+          title:
+              Text(time, style: const TextStyle(fontWeight: FontWeight.w700)),
+          subtitle: Text(slot.isAvailable
+              ? strings.text('available')
+              : slot.isDefaultClosed
+                  ? strings.text('privateLessonDefaultClosed')
+                  : strings.text('unavailable')),
+          trailing: slot.isAvailable
+              ? requesting
+                  ? const SizedBox(
+                      width: 22,
+                      height: 22,
+                      child: CircularProgressIndicator(strokeWidth: 2))
+                  : const Icon(Icons.arrow_forward)
+              : const Icon(Icons.lock_outline, size: 18),
+          enabled: !requesting,
+          onTap: requesting ? null : (onTap ?? onUnavailable),
+        ),
       ),
     );
   }

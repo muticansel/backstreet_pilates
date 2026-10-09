@@ -428,6 +428,7 @@ class AppLocalizations {
       'endDate': 'End date',
       'pending': 'Awaiting approval',
       'decline': 'Decline',
+      'declined': 'Declined',
     },
     'tr': {
       'language': 'Dil',
@@ -811,6 +812,7 @@ class AppLocalizations {
       'endDate': 'Bitiş tarihi',
       'pending': 'Onay bekliyor',
       'decline': 'Reddet',
+      'declined': 'Reddedildi',
     },
   };
 }

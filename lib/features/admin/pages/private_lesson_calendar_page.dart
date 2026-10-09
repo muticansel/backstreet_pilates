@@ -242,7 +242,18 @@ class _WeekEntries extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final byDay = <DateTime, List<AdminPrivateLessonEntry>>{};
-    for (final entry in entries) {
+    // Never hide records in the operational calendar. In particular, a
+    // declined request and a newer pending request may occupy the same slot
+    // while the admin is troubleshooting or reviewing history.
+    final orderedEntries = entries.toList()
+      ..sort((first, second) {
+        final byTime = first.startsAt.compareTo(second.startsAt);
+        if (byTime != 0) return byTime;
+        final firstPriority = first.status == 'pending' ? 0 : 1;
+        final secondPriority = second.status == 'pending' ? 0 : 1;
+        return firstPriority.compareTo(secondPriority);
+      });
+    for (final entry in orderedEntries) {
       final day = DateTime(
           entry.startsAt.year, entry.startsAt.month, entry.startsAt.day);
       byDay.putIfAbsent(day, () => []).add(entry);
@@ -302,127 +313,111 @@ class _EntryCard extends StatelessWidget {
   final void Function(AdminPrivateLessonEntry, bool) onResolve;
   final ValueChanged<AdminPrivateLessonEntry> onDeleteBlock;
   final AppLocalizations strings;
+
   @override
   Widget build(BuildContext context) {
     final pending = !entry.isBlock && entry.status == 'pending';
-    final color = entry.isBlock
+    final rejected = !entry.isBlock && entry.status == 'rejected';
+    final background = entry.isBlock
         ? const Color(0xFFF2EFEB)
         : pending
             ? const Color(0xFFFFF4E1)
-            : const Color(0xFFE6F0E6);
+            : rejected
+                ? const Color(0xFFF7E9E7)
+                : const Color(0xFFE6F0E6);
     final icon = entry.isBlock
         ? Icons.block_outlined
         : pending
             ? Icons.hourglass_top_outlined
-            : Icons.check_circle_outline;
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        SizedBox(
-          width: 68,
-          child: Text(
-            '${_clock(entry.startsAt)}\n${_clock(entry.endsAt)}',
-            style: const TextStyle(
-              fontWeight: FontWeight.w700,
-              height: 1.5,
-              color: AppTheme.sage,
+            : rejected
+                ? Icons.cancel_outlined
+                : Icons.check_circle_outline;
+    final status = entry.isBlock
+        ? strings.text('unavailable')
+        : strings.text(entry.status == 'approved'
+            ? 'approved'
+            : rejected
+                ? 'declined'
+                : 'pending');
+    // Keep a record as one self-contained, full-width card. The former
+    // timeline row used a nested Expanded in a scrolling list and was being
+    // laid out without its card body on some iOS builds.
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: background,
+        borderRadius: BorderRadius.circular(18),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x12000000),
+            blurRadius: 12,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(children: [
+          Icon(icon,
+              color: rejected ? const Color(0xFFA64840) : AppTheme.sage,
+              size: 21),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              entry.isBlock
+                  ? strings.text('blockedTime')
+                  : entry.memberName ?? strings.text('member'),
+              style: const TextStyle(fontWeight: FontWeight.w700),
             ),
           ),
-        ),
-        Container(
-          width: 2,
-          height: pending ? 126 : 82,
-          margin: const EdgeInsets.only(right: 14, top: 2),
-          color: entry.isBlock ? const Color(0xFFCFC6BF) : AppTheme.sage,
-        ),
-        Expanded(
-          child: Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: color,
-              borderRadius: BorderRadius.circular(18),
-              boxShadow: const [
-                BoxShadow(
-                    color: Color(0x12000000),
-                    blurRadius: 12,
-                    offset: Offset(0, 4))
-              ],
+          if (entry.isBlock)
+            IconButton(
+              onPressed: () => onDeleteBlock(entry),
+              tooltip: strings.text('deleteBlockedTime'),
+              icon: const Icon(Icons.delete_outline, size: 20),
             ),
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Row(children: [
-                Icon(icon, color: AppTheme.sage, size: 20),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    entry.isBlock
-                        ? strings.text('blockedTime')
-                        : entry.memberName ?? strings.text('member'),
-                    style: const TextStyle(fontWeight: FontWeight.w700),
-                  ),
-                ),
-                if (entry.isBlock)
-                  IconButton(
-                    onPressed: () => onDeleteBlock(entry),
-                    tooltip: strings.text('deleteBlockedTime'),
-                    icon: const Icon(Icons.delete_outline, size: 20),
-                  ),
-              ]),
-              const SizedBox(height: 7),
-              Text(entry.isBlock
-                  ? strings.text('unavailable')
-                  : strings.text(
-                      entry.status == 'approved' ? 'approved' : 'pending')),
-              if (!_isSameDay(entry.startsAt, entry.endsAt)) ...[
-                const SizedBox(height: 8),
-                Text(
-                  strings
-                      .text('privateLessonEndsAt')
-                      .replaceAll(
-                          '{date}',
-                          MaterialLocalizations.of(context)
-                              .formatMediumDate(entry.endsAt))
-                      .replaceAll('{time}', _clock(entry.endsAt)),
-                  style: const TextStyle(
-                    color: AppTheme.sage,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ],
-              if (pending) ...[
-                const SizedBox(height: 14),
-                Row(children: [
-                  OutlinedButton(
-                    onPressed: resolving ? null : () => onResolve(entry, false),
-                    child: Text(strings.text('decline')),
-                  ),
-                  const Spacer(),
-                  FilledButton(
-                    onPressed: resolving ? null : () => onResolve(entry, true),
-                    child: resolving
-                        ? const SizedBox(
-                            width: 18,
-                            height: 18,
-                            child: CircularProgressIndicator(strokeWidth: 2))
-                        : Text(strings.text('approve')),
-                  ),
-                ]),
-              ],
-            ]),
+        ]),
+        const SizedBox(height: 12),
+        Text(
+          '${_clock(entry.startsAt)} – ${_clock(entry.endsAt)}',
+          style: const TextStyle(
+            color: AppTheme.sage,
+            fontWeight: FontWeight.w700,
           ),
         ),
+        const SizedBox(height: 5),
+        Text(status),
+        if (pending) ...[
+          const SizedBox(height: 14),
+          Row(children: [
+            OutlinedButton(
+              onPressed: resolving ? null : () => onResolve(entry, false),
+              child: Text(strings.text('decline')),
+            ),
+            const Spacer(),
+            FilledButton(
+              onPressed: resolving ? null : () => onResolve(entry, true),
+              style: FilledButton.styleFrom(
+                minimumSize: const Size(104, 44),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+              ),
+              child: resolving
+                  ? const SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : Text(strings.text('approve')),
+            ),
+          ]),
+        ],
       ]),
     );
   }
 
   String _clock(DateTime value) =>
       '${value.hour.toString().padLeft(2, '0')}:${value.minute.toString().padLeft(2, '0')}';
-
-  bool _isSameDay(DateTime first, DateTime second) =>
-      first.year == second.year &&
-      first.month == second.month &&
-      first.day == second.day;
 }
 
 class _BlockDialog extends StatefulWidget {
