@@ -364,9 +364,13 @@ class _ManagementTab extends StatelessWidget {
                   label: strings.text('activeMembers'),
                   value: '${value.activeMembers}',
                   detail: strings
-                      .text('activeMembersByBranch')
-                      .replaceAll('{oran}', '${value.oranActiveMembers}')
-                      .replaceAll('{incek}', '${value.incekActiveMembers}'),
+                          .text('activeMembersByBranch')
+                          .replaceAll('{oran}', '${value.oranActiveMembers}')
+                          .replaceAll(
+                              '{incek}', '${value.incekActiveMembers}') +
+                      '\n' +
+                      strings.text('monthlyIndividualLessonCount').replaceAll(
+                          '{count}', '${value.individualLessonCount}'),
                   icon: Icons.people_outline,
                 ),
               ),

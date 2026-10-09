@@ -367,6 +367,7 @@ are implemented.
 ## Admin income breakdown
 
 - The monthly total now shows its existing two sources separately: confirmed group-class package income and recorded individual-lesson earnings. No new backend query or schema change was required.
+- The active-members card now lists this month's recorded individual lesson count without treating individual lessons as active group memberships.
 
 ## Cash package purchase foundation
 

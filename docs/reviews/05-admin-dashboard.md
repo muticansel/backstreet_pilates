@@ -36,6 +36,8 @@ The admin home is an operational four-tab dashboard:
    and a monthly total split into group-class package income and individual
    lesson earnings. A terracotta badge marks pending payments because they
    affect membership activation.
+   The active-member metric keeps its group-membership definition and displays
+   this month's individual lesson count as separate context.
 
 Badges are indicators only; the Today tab remains the place to inspect open
 work and follow its direct links. All existing target pages, access controls

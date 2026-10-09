@@ -102,7 +102,7 @@ class FakeAdminPurchaseGateway implements AdminPurchaseGateway {
         groupClassIncomeMinor: 6800000,
         individualLessonEarningsMinor: 40000,
         completedSales: 3,
-        individualLessonCount: 0,
+        individualLessonCount: 1,
         activeMembers: 12,
         oranActiveMembers: 7,
         incekActiveMembers: 5,
@@ -324,6 +324,8 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('₺68.400'), findsOneWidget);
     expect(find.text('Group classes: ₺68.000\nIndividual lessons: ₺400'),
+        findsOneWidget);
+    expect(find.text('Oran: 7 · İncek: 5\nThis month: 1 individual lessons'),
         findsOneWidget);
 
     final cashPayment = find.text('Payments awaiting approval');
