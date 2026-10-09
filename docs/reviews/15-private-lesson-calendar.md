@@ -23,14 +23,19 @@
 
 ## Server rules
 
-`20261009000100_private_lesson_calendar.sql` is prepared only; it has not been
-applied to Supabase. It uses the active admin as the first instructor and
-serializes bookings per instructor in the database, so client refresh timing
-cannot cause a double reservation. It also extends `notification_events` and
-removes the legacy `notification_events_check` constraint that previously
-interrupted new event types.
+`20261009000100_private_lesson_calendar.sql` sets up the calendar feature. It
+uses the active admin as the first instructor and serializes bookings per
+instructor in the database, so client refresh timing cannot cause a double
+reservation. It also extends `notification_events` and removes the legacy
+`notification_events_check` constraint that previously interrupted new event
+types.
 
-After applying the migration, deploy the matching local
+`20261009000400_private_lesson_approval_notification.sql` is an idempotent
+follow-up for installations where the calendar was applied incrementally. It
+ensures every `pending → approved` transition inserts a
+`private_lesson_request_approved` outbox event for the requesting member.
+
+After applying the notification migration, deploy the matching local
 `send-push-notification` Edge Function and keep the existing database webhook
 on `notification_events` INSERT. No secret or client service key is added.
 
