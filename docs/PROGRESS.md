@@ -2,6 +2,20 @@
 
 ## Current state
 
+- Reinstalled and launched the configured Supabase debug build on the iPhone
+  17 simulator on 2026-10-10. The project URL and publishable key were passed
+  only through launch-time defines; neither value was written to the repository.
+
+- Member dashboard design iteration: added a task-first next-class card above
+  the editorial studio image. It presents the earliest upcoming reservation
+  with date, time, branch and a labeled status, or routes an empty/error state
+  to the appropriate next step. Package, progress and recent-practice empty
+  states now offer context-specific actions. Added the shared `AppStatusChip`
+  component and used it for reserved classes on both dashboard and class-list
+  surfaces. Verification: `dart format lib test`, `flutter analyze`, and all
+  12 widget tests pass. User review is still required; see
+  `docs/reviews/04-member-dashboard.md`.
+
 - Added a private-lesson calendar feature locally. Members can see the next
   60 days of 07:00–22:00 one-hour slots, including unavailable time, and send
   an approval request for an open slot. Admins have a weekly calendar for

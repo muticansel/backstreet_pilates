@@ -7,15 +7,18 @@ Source: `lib/features/dashboard/dashboard_page.dart`.
 ## What the screen contains
 
 1. A welcome message and a sign-out control.
-2. A current-package card with branch, package, remaining classes, completion progress and expiry date.
-3. A package-exploration card that establishes the future purchase entry point.
-4. A progress card derived from the member's completed (`attended`) bookings:
+2. A task-first card directly below the welcome message. It shows the next
+   scheduled class and a reserved status, or a clear empty/error state with a
+   route to classes or packages.
+3. A current-package card with branch, package, remaining classes, completion progress and expiry date.
+4. A package-exploration card that establishes the future purchase entry point.
+5. A progress card derived from the member's completed (`attended`) bookings:
    six months of attendance, a current/best weekly consistency series, and
    compact class milestones. It shows a clear empty state before a first
    completed class.
-5. A recent-practice card for completed classes.
-6. Bottom navigation for Home, Packages and Usage.
-7. A branded studio moment: a calm instructor photograph, soft editorial
+6. A recent-practice card for completed classes.
+7. Bottom navigation for Home, Packages and Usage.
+8. A branded studio moment: a calm instructor photograph, soft editorial
    overlay and a small organic form before the member's package summary.
 
 ## Current data state
@@ -58,6 +61,12 @@ the initial selected tab and contains the dashboard overview.
 - The screen does not imply real membership data until the membership and booking model is connected.
 
 ## Review notes
+
+2026-10-10 design iteration: the dashboard now leads with the member's next
+action rather than the studio image. Empty package, progress and practice
+states include one contextual next step. Scheduled-class and class-list
+statuses use a shared icon-and-label chip; this is the first use of the common
+status treatment, not a global approval of all screens.
 
 User feedback: pending.
 Approval: pending.

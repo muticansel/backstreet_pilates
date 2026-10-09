@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../../theme/app_theme.dart';
+import '../../../theme/app_status_chip.dart';
 import '../../../theme/pilates_loading_indicator.dart';
 import '../data/booking_gateway.dart';
 import 'private_lesson_booking_page.dart';
@@ -202,11 +203,10 @@ class _ClassCard extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text('${scheduledClass.branchName} · $time'),
                 const SizedBox(height: 7),
-                Text(strings.text('reserved'),
-                    style: const TextStyle(
-                        color: AppTheme.sage,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700)),
+                AppStatusChip(
+                  label: strings.text('reserved'),
+                  tone: AppStatusTone.success,
+                ),
               ],
             ),
           ),

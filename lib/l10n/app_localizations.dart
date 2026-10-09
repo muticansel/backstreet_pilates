@@ -87,6 +87,13 @@ class AppLocalizations {
       'signOut': 'Sign out',
       'home': 'Home',
       'classes': 'Classes',
+      'viewMyClasses': 'View my classes',
+      'upNext': 'UP NEXT',
+      'nextActionUnavailable': 'Your next class is unavailable',
+      'nextActionUnavailableDetail':
+          'Open your classes to refresh your upcoming schedule.',
+      'noUpcomingClassesActionDetail':
+          'Explore a package to plan your next studio session.',
       'myClasses': 'My classes',
       'myClassesSubtitle': 'Your upcoming studio sessions, all in one place.',
       'noUpcomingClasses': 'You have no upcoming classes yet.',
@@ -499,6 +506,13 @@ class AppLocalizations {
       'signOut': 'Çıkış yap',
       'home': 'Ana sayfa',
       'classes': 'Derslerim',
+      'viewMyClasses': 'Derslerimi görüntüle',
+      'upNext': 'SIRADAKİ DERSİN',
+      'nextActionUnavailable': 'Sıradaki dersin yüklenemedi',
+      'nextActionUnavailableDetail':
+          'Yaklaşan programını yenilemek için derslerine git.',
+      'noUpcomingClassesActionDetail':
+          'Bir sonraki stüdyo dersini planlamak için paketleri incele.',
       'myClasses': 'Derslerim',
       'myClassesSubtitle': 'Yaklaşan stüdyo derslerin tek bir yerde.',
       'noUpcomingClasses': 'Henüz yaklaşan bir dersin yok.',

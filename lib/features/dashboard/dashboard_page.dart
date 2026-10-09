@@ -12,6 +12,7 @@ import '../profile/pages/profile_page.dart';
 import '../../../theme/app_theme.dart';
 import '../../../theme/app_snack_bars.dart';
 import '../../../theme/pilates_loading_indicator.dart';
+import '../../../theme/app_status_chip.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../notifications/push_notification_service.dart';
 
@@ -39,6 +40,7 @@ class _DashboardPageState extends State<DashboardPage> {
   late Future<List<DateTime>> _completedClassDates;
   late Future<List<ApprovedPackage>> _approvedPackages;
   late Future<List<FeedbackClass>> _recentPractice;
+  late Future<List<ScheduledClass>> _upcomingClasses;
 
   @override
   void initState() {
@@ -46,6 +48,7 @@ class _DashboardPageState extends State<DashboardPage> {
     _completedClassDates = widget.bookings.loadCompletedClassDates();
     _approvedPackages = widget.purchases.loadApprovedPackages();
     _recentPractice = widget.bookings.loadFeedbackClasses();
+    _upcomingClasses = widget.bookings.loadUpcomingClasses();
   }
 
   Future<void> _refreshDashboard() async {
@@ -53,11 +56,13 @@ class _DashboardPageState extends State<DashboardPage> {
       _completedClassDates = widget.bookings.loadCompletedClassDates();
       _approvedPackages = widget.purchases.loadApprovedPackages();
       _recentPractice = widget.bookings.loadFeedbackClasses();
+      _upcomingClasses = widget.bookings.loadUpcomingClasses();
     });
     await Future.wait([
       _completedClassDates,
       _approvedPackages,
       _recentPractice,
+      _upcomingClasses,
     ]);
   }
 
@@ -215,16 +220,27 @@ class _DashboardPageState extends State<DashboardPage> {
                   style: Theme.of(context).textTheme.bodyLarge,
                 ),
                 const SizedBox(height: 24),
+                _NextActionSection(
+                  classes: _upcomingClasses,
+                  onViewClasses: () => _selectDestination(2),
+                  onExplorePackages: _showPurchasePreview,
+                ),
+                const SizedBox(height: 30),
                 const _StudioMomentCard(),
                 const SizedBox(height: 30),
                 const _SectionLabel(titleKey: 'currentPackage'),
                 const SizedBox(height: 10),
-                _CurrentPackageSection(packages: _approvedPackages),
+                _CurrentPackageSection(
+                  packages: _approvedPackages,
+                  onExplorePackages: _showPurchasePreview,
+                ),
                 const SizedBox(height: 30),
                 const _SectionLabel(titleKey: 'yourProgress'),
                 const SizedBox(height: 10),
                 _PracticeProgressSection(
-                    completedClassDates: _completedClassDates),
+                  completedClassDates: _completedClassDates,
+                  onViewClasses: () => _selectDestination(2),
+                ),
                 const SizedBox(height: 30),
                 const _SectionLabel(titleKey: 'nextRhythm'),
                 const SizedBox(height: 10),
@@ -232,13 +248,151 @@ class _DashboardPageState extends State<DashboardPage> {
                 const SizedBox(height: 30),
                 const _SectionLabel(titleKey: 'recentPractice'),
                 const SizedBox(height: 10),
-                _RecentPracticeSection(classes: _recentPractice),
+                _RecentPracticeSection(
+                  classes: _recentPractice,
+                  onViewClasses: () => _selectDestination(2),
+                ),
               ],
             ),
           ),
         ),
       ),
       bottomNavigationBar: _navigationBar(),
+    );
+  }
+}
+
+class _NextActionSection extends StatelessWidget {
+  const _NextActionSection({
+    required this.classes,
+    required this.onViewClasses,
+    required this.onExplorePackages,
+  });
+
+  final Future<List<ScheduledClass>> classes;
+  final VoidCallback onViewClasses;
+  final VoidCallback onExplorePackages;
+
+  @override
+  Widget build(BuildContext context) => FutureBuilder<List<ScheduledClass>>(
+        future: classes,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState != ConnectionState.done) {
+            return const SizedBox(
+              height: 132,
+              child: Center(child: PilatesLoadingIndicator(size: 32)),
+            );
+          }
+          if (snapshot.hasError) {
+            return _NextActionCard.empty(
+              icon: Icons.cloud_off_outlined,
+              titleKey: 'nextActionUnavailable',
+              detailKey: 'nextActionUnavailableDetail',
+              actionKey: 'viewMyClasses',
+              onPressed: onViewClasses,
+            );
+          }
+          final classes = [
+            ...snapshot.data!
+          ]..sort((first, second) => first.startsAt.compareTo(second.startsAt));
+          if (classes.isEmpty) {
+            return _NextActionCard.empty(
+              icon: Icons.event_available_outlined,
+              titleKey: 'noUpcomingClasses',
+              detailKey: 'noUpcomingClassesActionDetail',
+              actionKey: 'explorePackages',
+              onPressed: onExplorePackages,
+            );
+          }
+          return _NextActionCard.scheduled(
+            scheduledClass: classes.first,
+            onPressed: onViewClasses,
+          );
+        },
+      );
+}
+
+class _NextActionCard extends StatelessWidget {
+  const _NextActionCard.scheduled({
+    required this.scheduledClass,
+    required this.onPressed,
+  })  : icon = null,
+        titleKey = null,
+        detailKey = null,
+        actionKey = null;
+
+  const _NextActionCard.empty({
+    required this.icon,
+    required this.titleKey,
+    required this.detailKey,
+    required this.actionKey,
+    required this.onPressed,
+  }) : scheduledClass = null;
+
+  final ScheduledClass? scheduledClass;
+  final IconData? icon;
+  final String? titleKey;
+  final String? detailKey;
+  final String? actionKey;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final strings = AppLocalizations.of(context);
+    final scheduledClass = this.scheduledClass;
+    if (scheduledClass == null) {
+      return _ProgressMessageCard(
+        icon: icon!,
+        titleKey: titleKey!,
+        detailKey: detailKey!,
+        actionKey: actionKey,
+        onPressed: onPressed,
+      );
+    }
+    final time = MaterialLocalizations.of(context).formatTimeOfDay(
+      TimeOfDay.fromDateTime(scheduledClass.startsAt),
+    );
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: AppTheme.sage,
+        borderRadius: BorderRadius.circular(24),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(strings.text('upNext'),
+              style: const TextStyle(
+                color: Color(0xFFD6E3CE),
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 1.4,
+              )),
+          const SizedBox(height: 12),
+          Text(scheduledClass.title,
+              style: const TextStyle(color: Colors.white, fontSize: 22)),
+          const SizedBox(height: 6),
+          Text(
+            '${MaterialLocalizations.of(context).formatMediumDate(scheduledClass.startsAt)} · $time · ${scheduledClass.branchName}',
+            style: const TextStyle(color: Color(0xFFD6E3CE)),
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              AppStatusChip(
+                label: strings.text('reserved'),
+                tone: AppStatusTone.success,
+              ),
+              const Spacer(),
+              TextButton(
+                onPressed: onPressed,
+                style: TextButton.styleFrom(foregroundColor: Colors.white),
+                child: Text(strings.text('viewMyClasses')),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
@@ -426,9 +580,13 @@ class _StudioMomentCard extends StatelessWidget {
 }
 
 class _CurrentPackageSection extends StatelessWidget {
-  const _CurrentPackageSection({required this.packages});
+  const _CurrentPackageSection({
+    required this.packages,
+    required this.onExplorePackages,
+  });
 
   final Future<List<ApprovedPackage>> packages;
+  final VoidCallback onExplorePackages;
 
   @override
   Widget build(BuildContext context) => FutureBuilder<List<ApprovedPackage>>(
@@ -455,10 +613,12 @@ class _CurrentPackageSection extends StatelessWidget {
               .toList()
             ..sort((a, b) => a.endDateExclusive.compareTo(b.endDateExclusive));
           if (active.isEmpty) {
-            return const _PackageMessageCard(
+            return _PackageMessageCard(
               icon: Icons.style_outlined,
               titleKey: 'noCurrentPackage',
               detailKey: 'noCurrentPackageDetail',
+              actionKey: 'explorePackages',
+              onPressed: onExplorePackages,
             );
           }
           return _MembershipCard(package: active.first);
@@ -562,24 +722,34 @@ class _PackageMessageCard extends StatelessWidget {
     required this.icon,
     required this.titleKey,
     required this.detailKey,
+    this.actionKey,
+    this.onPressed,
   });
 
   final IconData icon;
   final String titleKey;
   final String detailKey;
+  final String? actionKey;
+  final VoidCallback? onPressed;
 
   @override
   Widget build(BuildContext context) => _ProgressMessageCard(
         icon: icon,
         titleKey: titleKey,
         detailKey: detailKey,
+        actionKey: actionKey,
+        onPressed: onPressed,
       );
 }
 
 class _PracticeProgressSection extends StatelessWidget {
-  const _PracticeProgressSection({required this.completedClassDates});
+  const _PracticeProgressSection({
+    required this.completedClassDates,
+    required this.onViewClasses,
+  });
 
   final Future<List<DateTime>> completedClassDates;
+  final VoidCallback onViewClasses;
 
   @override
   Widget build(BuildContext context) {
@@ -593,7 +763,9 @@ class _PracticeProgressSection extends StatelessWidget {
           );
         }
         if (snapshot.hasError) return const _ProgressLoadError();
-        if (snapshot.data!.isEmpty) return const _NoProgressCard();
+        if (snapshot.data!.isEmpty) {
+          return _NoProgressCard(onViewClasses: onViewClasses);
+        }
         return _ProgressCard(progress: PracticeProgress.from(snapshot.data!));
       },
     );
@@ -823,13 +995,17 @@ class _MilestoneChip extends StatelessWidget {
 }
 
 class _NoProgressCard extends StatelessWidget {
-  const _NoProgressCard();
+  const _NoProgressCard({required this.onViewClasses});
+
+  final VoidCallback onViewClasses;
 
   @override
   Widget build(BuildContext context) => _ProgressMessageCard(
         icon: Icons.insights_outlined,
         titleKey: 'noProgressYet',
         detailKey: 'noProgressYetDetail',
+        actionKey: 'viewMyClasses',
+        onPressed: onViewClasses,
       );
 }
 
@@ -849,11 +1025,15 @@ class _ProgressMessageCard extends StatelessWidget {
     required this.icon,
     required this.titleKey,
     required this.detailKey,
+    this.actionKey,
+    this.onPressed,
   });
 
   final IconData icon;
   final String titleKey;
   final String detailKey;
+  final String? actionKey;
+  final VoidCallback? onPressed;
 
   @override
   Widget build(BuildContext context) => Container(
@@ -887,6 +1067,14 @@ class _ProgressMessageCard extends StatelessWidget {
                       )),
                   const SizedBox(height: 3),
                   Text(AppLocalizations.of(context).text(detailKey)),
+                  if (actionKey != null) ...[
+                    const SizedBox(height: 8),
+                    TextButton(
+                      onPressed: onPressed,
+                      child:
+                          Text(AppLocalizations.of(context).text(actionKey!)),
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -946,9 +1134,13 @@ class _ExplorePackagesCard extends StatelessWidget {
 }
 
 class _RecentPracticeSection extends StatelessWidget {
-  const _RecentPracticeSection({required this.classes});
+  const _RecentPracticeSection({
+    required this.classes,
+    required this.onViewClasses,
+  });
 
   final Future<List<FeedbackClass>> classes;
+  final VoidCallback onViewClasses;
 
   @override
   Widget build(BuildContext context) => FutureBuilder<List<FeedbackClass>>(
@@ -968,10 +1160,12 @@ class _RecentPracticeSection extends StatelessWidget {
             );
           }
           if (snapshot.data!.isEmpty) {
-            return const _ProgressMessageCard(
+            return _ProgressMessageCard(
               icon: Icons.self_improvement_outlined,
               titleKey: 'noRecentPractice',
               detailKey: 'noRecentPracticeDetail',
+              actionKey: 'viewMyClasses',
+              onPressed: onViewClasses,
             );
           }
           return _HistoryCard(classes: snapshot.data!.take(3).toList());
