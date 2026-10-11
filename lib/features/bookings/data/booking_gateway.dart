@@ -107,6 +107,10 @@ class AdminFixedOffer {
     required this.branchName,
     required this.capacity,
     required this.priceMinor,
+    required this.totalClasses,
+    required this.sessionsPerWeek,
+    required this.startsOn,
+    required this.slots,
   });
 
   final String id;
@@ -114,6 +118,16 @@ class AdminFixedOffer {
   final String branchName;
   final int capacity;
   final int priceMinor;
+  final int totalClasses;
+  final int sessionsPerWeek;
+  final DateTime startsOn;
+  final List<FixedSeriesSlot> slots;
+}
+
+class FixedSeriesSlot {
+  const FixedSeriesSlot({required this.weekday, required this.time});
+  final int weekday;
+  final TimeOfDayValue time;
 }
 
 class AdminAttendanceRecord {
@@ -274,6 +288,14 @@ abstract interface class AdminBookingGateway {
     required List<TimeOfDayValue> startTimes,
   });
   Future<void> deleteFixedOffer({required String offerId});
+  Future<void> updateFixedOffer({
+    required String offerId,
+    required String name,
+    required int priceMinor,
+    required int capacity,
+    required List<int> weekdays,
+    required List<TimeOfDayValue> startTimes,
+  });
   Future<List<AdminIndividualLessonMember>> loadIndividualLessonMembers();
   Future<List<AdminIndividualLessonRecord>> loadIndividualLessons();
   Future<void> recordIndividualLesson({
@@ -349,6 +371,14 @@ class UnconfiguredAdminBookingGateway implements AdminBookingGateway {
       '';
   @override
   Future<void> deleteFixedOffer({required String offerId}) async {}
+  @override
+  Future<void> updateFixedOffer(
+      {required String offerId,
+      required String name,
+      required int priceMinor,
+      required int capacity,
+      required List<int> weekdays,
+      required List<TimeOfDayValue> startTimes}) async {}
   @override
   Future<List<AdminIndividualLessonMember>>
       loadIndividualLessonMembers() async => const [];

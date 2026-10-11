@@ -22,7 +22,13 @@ class _ClassSchedulePageState extends State<ClassSchedulePage> {
         offers: await widget.bookings.loadFixedOffers(),
       );
 
-  void _reload() => setState(() => _data = _load());
+  Future<void> _reload() async {
+    final next = _load();
+    setState(() {
+      _data = next;
+    });
+    await next;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +46,7 @@ class _ClassSchedulePageState extends State<ClassSchedulePage> {
           }
           final data = snapshot.data!;
           return RefreshIndicator(
-            onRefresh: () async => _reload(),
+            onRefresh: _reload,
             child: ListView(
               padding: const EdgeInsets.fromLTRB(24, 20, 24, 32),
               children: [
@@ -66,6 +72,7 @@ class _ClassSchedulePageState extends State<ClassSchedulePage> {
                 ...data.offers.map(
                   (offer) => Card(
                     child: ListTile(
+                      onTap: () => _openPackageDetails(offer),
                       title: Text(offer.title),
                       subtitle: Text(
                         '${offer.branchName} · ${_money(offer.priceMinor)} · '
@@ -121,7 +128,7 @@ class _ClassSchedulePageState extends State<ClassSchedulePage> {
       await widget.bookings.deleteFixedOffer(offerId: offer.id);
       if (!mounted) return;
       AppNotifications.success(strings.text('packageDeleted'));
-      _reload();
+      await _reload();
     } catch (error) {
       if (mounted) {
         AppNotifications.error(error.toString());
@@ -349,9 +356,174 @@ class _ClassSchedulePageState extends State<ClassSchedulePage> {
     sessionsPerWeek.dispose();
     if (created == true && mounted) {
       AppNotifications.success(strings.text('packageCreated'));
-      _reload();
+      await _reload();
     }
   }
+
+  Future<void> _openPackageDetails(AdminFixedOffer offer) async {
+    final strings = AppLocalizations.of(context);
+    final name = TextEditingController(text: offer.title);
+    final price = TextEditingController(
+        text: (offer.priceMinor / 100).toStringAsFixed(2));
+    final capacity = TextEditingController(text: '${offer.capacity}');
+    var slots = offer.slots
+        .map((slot) => _SlotInput(
+              weekday: slot.weekday,
+              time: TimeOfDay(hour: slot.time.hour, minute: slot.time.minute),
+            ))
+        .toList();
+    var editing = false;
+    var submitting = false;
+    final updated = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (context, setDialog) => AlertDialog(
+          title: Text(editing
+              ? strings.text('editPackage')
+              : strings.text('packageOverview')),
+          content: SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 420),
+              child: editing
+                  ? Column(mainAxisSize: MainAxisSize.min, children: [
+                      TextField(
+                          controller: name,
+                          decoration: InputDecoration(
+                              labelText: strings.text('packageName'))),
+                      const SizedBox(height: 12),
+                      TextField(
+                          controller: price,
+                          keyboardType: const TextInputType.numberWithOptions(
+                              decimal: true),
+                          decoration: InputDecoration(
+                              labelText: strings.text('priceTry'))),
+                      const SizedBox(height: 12),
+                      TextField(
+                          controller: capacity,
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                              labelText: strings.text('capacity'))),
+                      const Divider(),
+                      Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(strings.text('weeklySchedule'))),
+                      const SizedBox(height: 8),
+                      ...slots.asMap().entries.map((entry) => Padding(
+                            padding: const EdgeInsets.only(bottom: 12),
+                            child: _SlotEditor(
+                              slot: entry.value,
+                              strings: strings,
+                              canRemove: slots.length > 1,
+                              onChanged: (slot) =>
+                                  setDialog(() => slots[entry.key] = slot),
+                              onRemove: () =>
+                                  setDialog(() => slots.removeAt(entry.key)),
+                            ),
+                          )),
+                      Align(
+                          alignment: Alignment.centerLeft,
+                          child: TextButton.icon(
+                            onPressed: slots.length == 7
+                                ? null
+                                : () => setDialog(() => slots.add(
+                                    const _SlotInput(
+                                        weekday: 2,
+                                        time: TimeOfDay(hour: 9, minute: 0)))),
+                            icon: const Icon(Icons.add),
+                            label: Text(strings.text('addWeeklyClass')),
+                          )),
+                      Text(strings.text('scheduleUpdatesFuture'),
+                          style: Theme.of(context).textTheme.bodySmall),
+                    ])
+                  : Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                          _detailRow(strings.text('branch'), offer.branchName),
+                          _detailRow(strings.text('priceTry'),
+                              _money(offer.priceMinor)),
+                          _detailRow(strings.text('totalClasses'),
+                              '${offer.totalClasses}'),
+                          _detailRow(strings.text('sessionsPerWeek'),
+                              '${offer.sessionsPerWeek}'),
+                          _detailRow(
+                              strings.text('capacity'), '${offer.capacity}'),
+                          _detailRow(strings.text('firstClassDate'),
+                              _date(offer.startsOn)),
+                          const SizedBox(height: 12),
+                          Text(strings.text('weeklySchedule')),
+                          ...offer.slots.map((slot) => Padding(
+                                padding: const EdgeInsets.only(top: 6),
+                                child: Text(
+                                    '${strings.text('weekday${slot.weekday}')} · ${slot.time.hour.toString().padLeft(2, '0')}:${slot.time.minute.toString().padLeft(2, '0')}'),
+                              )),
+                        ]),
+            ),
+          ),
+          actions: [
+            TextButton(
+                onPressed: submitting ? null : () => Navigator.pop(context),
+                child: Text(strings.text('cancel'))),
+            if (!editing)
+              FilledButton(
+                  onPressed: () => setDialog(() => editing = true),
+                  child: Text(strings.text('editPackage')))
+            else
+              FilledButton(
+                  onPressed: submitting
+                      ? null
+                      : () async {
+                          final priceMinor = _parsePriceMinor(price.text);
+                          final capacityValue = int.tryParse(capacity.text);
+                          final weekdays =
+                              slots.map((slot) => slot.weekday).toList();
+                          if (name.text.trim().isEmpty ||
+                              priceMinor == null ||
+                              capacityValue == null ||
+                              weekdays.toSet().length != weekdays.length) {
+                            AppNotifications.error(
+                                strings.text('invalidPackageSchedule'));
+                            return;
+                          }
+                          setDialog(() => submitting = true);
+                          try {
+                            await widget.bookings.updateFixedOffer(
+                                offerId: offer.id,
+                                name: name.text.trim(),
+                                priceMinor: priceMinor,
+                                capacity: capacityValue,
+                                weekdays: weekdays,
+                                startTimes: slots
+                                    .map((slot) => TimeOfDayValue(
+                                        hour: slot.time.hour,
+                                        minute: slot.time.minute))
+                                    .toList());
+                            if (context.mounted) Navigator.pop(context, true);
+                          } catch (error) {
+                            if (context.mounted)
+                              AppNotifications.error(error.toString());
+                            setDialog(() => submitting = false);
+                          }
+                        },
+                  child: Text(strings.text('saveChanges'))),
+          ],
+        ),
+      ),
+    );
+    await Future<void>.delayed(const Duration(milliseconds: 250));
+    name.dispose();
+    price.dispose();
+    capacity.dispose();
+    if (updated == true && mounted) {
+      AppNotifications.success(strings.text('packageUpdated'));
+      await _reload();
+    }
+  }
+
+  Widget _detailRow(String label, String value) => Padding(
+        padding: const EdgeInsets.only(bottom: 8),
+        child: Text('$label: $value'),
+      );
 }
 
 class _SlotEditor extends StatelessWidget {

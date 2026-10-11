@@ -368,6 +368,12 @@ class AppLocalizations {
       'deletePackageConfirmation':
           'Remove {name} from Packages? Existing sales and attendance records are preserved.',
       'packageDeleted': 'Package removed from sale.',
+      'packageUpdated': 'Package schedule updated.',
+      'packageOverview': 'PACKAGE DETAILS',
+      'editPackage': 'Edit package',
+      'saveChanges': 'Save changes',
+      'scheduleUpdatesFuture':
+          'Changes apply to future classes and keep existing reservations.',
       'fixedPackageStarts': 'First class: {date}',
       'packageDetails':
           '{branch} · {classes} classes · {weeks} weeks · {price}',
@@ -786,6 +792,12 @@ class AppLocalizations {
       'deletePackageConfirmation':
           '{name} paketini Paketler bölümünden kaldırmak istiyor musun? Mevcut satış ve devam kayıtları korunur.',
       'packageDeleted': 'Paket satıştan kaldırıldı.',
+      'packageUpdated': 'Paket programı güncellendi.',
+      'packageOverview': 'PAKET DETAYLARI',
+      'editPackage': 'Paketi düzenle',
+      'saveChanges': 'Değişiklikleri kaydet',
+      'scheduleUpdatesFuture':
+          'Değişiklikler gelecek derslere uygulanır; mevcut rezervasyonlar korunur.',
       'fixedPackageStarts': 'İlk ders: {date}',
       'packageDetails': '{branch} · {classes} ders · {weeks} hafta · {price}',
       'cashPaymentOnly': 'Bu paket için nakit ödeme kullanılabilir.',

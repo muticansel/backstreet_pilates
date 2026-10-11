@@ -39,9 +39,17 @@ verify, in transactions:
 5. the complete schedule is turned into bookings only after payment
    confirmation.
 
-All package credits are allocated to its fixed future bookings at confirmation,
-so `remaining_credits` becomes zero. A later cancellation policy must use a
-separate audited adjustment; it must not be a client-side update.
+Package progress is derived from its dated bookings: each future `booked`
+session counts as one remaining class and the package expires on the day after
+its last planned session in Istanbul time. This prevents a final upcoming class
+from incorrectly appearing as zero remaining. A later cancellation policy must
+use a separate audited adjustment; it must not be a client-side update.
+
+Admins can open a fixed-series card to review its complete configuration and
+edit its name, price, capacity and future weekly day/time schedule. The update
+RPC preserves historical sessions, migrates future bookings and pending holds
+in chronological order, and rejects a capacity lower than an occupied future
+session. Total class count remains fixed once sold.
 
 ## Required review decision
 

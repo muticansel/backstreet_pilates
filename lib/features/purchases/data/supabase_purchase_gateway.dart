@@ -44,21 +44,12 @@ class SupabasePurchaseGateway implements PurchaseGateway, AdminPurchaseGateway {
   @override
   Future<List<ApprovedPackage>> loadApprovedPackages() async {
     try {
-      final rows = await _client
-          .from('user_memberships')
-          .select(
-              'id, status, total_credits, remaining_credits, effective_start_date, '
-              'end_date_exclusive, '
-              'branches!user_memberships_branch_id_fkey(name), '
-              'membership_plans!user_memberships_plan_id_fkey(name)')
-          .order('effective_start_date', ascending: false);
+      final rows = await _client.rpc('member_approved_packages');
       return rows.map((row) {
-        final branch = row['branches'] as Map<String, dynamic>;
-        final plan = row['membership_plans'] as Map<String, dynamic>;
         return ApprovedPackage(
           id: row['id'] as String,
-          title: plan['name'] as String,
-          branchName: branch['name'] as String,
+          title: row['plan_name'] as String,
+          branchName: row['branch_name'] as String,
           status: row['status'] as String,
           totalCredits: row['total_credits'] as int,
           remainingCredits: row['remaining_credits'] as int,
@@ -155,6 +146,9 @@ class SupabasePurchaseGateway implements PurchaseGateway, AdminPurchaseGateway {
             .select('price_minor')
             .eq('status', 'cash_payment_confirmed')
             .gte('confirmed_at', monthStart.toIso8601String()),
+        _client.rpc('admin_monthly_group_class_income', params: {
+          'target_month': monthStartDate,
+        }),
         _client
             .from('user_memberships')
             .select('user_id, branches!inner(code)')
@@ -166,8 +160,9 @@ class SupabasePurchaseGateway implements PurchaseGateway, AdminPurchaseGateway {
             .gte('lesson_date', monthStartDate),
       ]);
       final sales = results[0] as List<dynamic>;
-      final members = results[1] as List<dynamic>;
-      final individualLessons = results[2] as List<dynamic>;
+      final groupClassIncomeMinor = (results[1] as num).toInt();
+      final members = results[2] as List<dynamic>;
+      final individualLessons = results[3] as List<dynamic>;
       final activeUsers = <String>{};
       final activeUsersByBranch = <String, Set<String>>{};
       for (final row in members) {
@@ -180,10 +175,6 @@ class SupabasePurchaseGateway implements PurchaseGateway, AdminPurchaseGateway {
             .putIfAbsent(branchCode, () => <String>{})
             .add(userId);
       }
-      final groupClassIncomeMinor = sales.fold<int>(
-        0,
-        (sum, row) => sum + (row['price_minor'] as int),
-      );
       final individualLessonEarningsMinor = individualLessons.fold<int>(
         0,
         (sum, row) => sum + (row['earning_minor'] as int),

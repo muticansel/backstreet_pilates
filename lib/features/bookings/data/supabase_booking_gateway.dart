@@ -156,19 +156,34 @@ class SupabaseBookingGateway implements BookingGateway, AdminBookingGateway {
     final rows = await _client
         .from('branch_offers')
         .select(
-            'id, price_minor, membership_plans!inner(name), class_series!inner(capacity, branches!inner(name))')
+            'id, price_minor, membership_plans!inner(name, total_credits, sessions_per_week), class_series!inner(capacity, starts_on, branches!inner(name), class_series_slots(weekday, starts_at))')
         .eq('is_active', true)
         .order('created_at');
     return (rows as List<dynamic>).map((row) {
       final plan = row['membership_plans'] as Map<String, dynamic>;
       final series = row['class_series'] as Map<String, dynamic>;
       final branch = series['branches'] as Map<String, dynamic>;
+      final rawSlots = series['class_series_slots'] as List<dynamic>;
+      final slots = rawSlots.map((slot) {
+        final value = slot as Map<String, dynamic>;
+        final parts = (value['starts_at'] as String).split(':');
+        return FixedSeriesSlot(
+          weekday: value['weekday'] as int,
+          time: TimeOfDayValue(
+              hour: int.parse(parts[0]), minute: int.parse(parts[1])),
+        );
+      }).toList()
+        ..sort((a, b) => a.weekday.compareTo(b.weekday));
       return AdminFixedOffer(
         id: row['id'] as String,
         title: plan['name'] as String,
         branchName: branch['name'] as String,
         capacity: series['capacity'] as int,
         priceMinor: row['price_minor'] as int,
+        totalClasses: plan['total_credits'] as int,
+        sessionsPerWeek: plan['sessions_per_week'] as int,
+        startsOn: DateTime.parse(series['starts_on'] as String),
+        slots: slots,
       );
     }).toList();
   }
@@ -434,6 +449,25 @@ class SupabaseBookingGateway implements BookingGateway, AdminBookingGateway {
       'target_offer_id': offerId,
     });
   }
+
+  @override
+  Future<void> updateFixedOffer({
+    required String offerId,
+    required String name,
+    required int priceMinor,
+    required int capacity,
+    required List<int> weekdays,
+    required List<TimeOfDayValue> startTimes,
+  }) =>
+      _client.rpc('admin_update_fixed_offer', params: {
+        'target_offer_id': offerId,
+        'target_name': name,
+        'target_price_minor': priceMinor,
+        'target_capacity': capacity,
+        'target_weekdays': weekdays,
+        'target_start_times':
+            startTimes.map((time) => time.databaseValue).toList(),
+      });
 
   String _dateValue(DateTime value) =>
       '${value.year.toString().padLeft(4, '0')}-${value.month.toString().padLeft(2, '0')}-${value.day.toString().padLeft(2, '0')}';

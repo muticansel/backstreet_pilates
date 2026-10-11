@@ -383,6 +383,14 @@ are implemented.
 - The monthly total now shows its existing two sources separately: confirmed group-class package income and recorded individual-lesson earnings. No new backend query or schema change was required.
 - The active-members card now lists this month's recorded individual lesson count without treating individual lessons as active group memberships.
 
+## Fixed-series package corrections
+
+- Package remaining lessons and expiry now derive from the member's dated bookings in Istanbul time. This corrects legacy fixed-series memberships that were initialized with zero remaining credits and prevents a final future class from being shown as exhausted.
+- The admin ending-package snapshot and member package reader use the same derived summary. Expiry is the day after the final scheduled class, rather than a duration-week estimate.
+- Monthly group-class income is accrued across scheduled lesson dates; each package price is split evenly by class count and any minor-unit remainder is assigned to the final class.
+- Admin class-series cards now open a translated detail/edit dialog. It shows the complete schedule and safely rebuilds only future sessions while moving reservations and pending holds. Total classes remain fixed after sale.
+- Verification: `dart format lib test`, `flutter analyze`, and `flutter test` passed locally. The new Supabase migration still needs to be applied to the development project before runtime verification.
+
 ## Cash package purchase foundation
 
 - Prepared a member cash-payment request model and an admin-only confirmation RPC.
