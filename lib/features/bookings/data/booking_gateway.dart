@@ -110,6 +110,7 @@ class AdminFixedOffer {
     required this.totalClasses,
     required this.sessionsPerWeek,
     required this.startsOn,
+    required this.firstClassStartsAt,
     required this.slots,
   });
 
@@ -121,7 +122,10 @@ class AdminFixedOffer {
   final int totalClasses;
   final int sessionsPerWeek;
   final DateTime startsOn;
+  final DateTime firstClassStartsAt;
   final List<FixedSeriesSlot> slots;
+
+  bool get canEdit => firstClassStartsAt.isAfter(DateTime.now());
 }
 
 class FixedSeriesSlot {

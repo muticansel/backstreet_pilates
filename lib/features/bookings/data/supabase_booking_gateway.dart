@@ -156,7 +156,7 @@ class SupabaseBookingGateway implements BookingGateway, AdminBookingGateway {
     final rows = await _client
         .from('branch_offers')
         .select(
-            'id, price_minor, membership_plans!inner(name, total_credits, sessions_per_week), class_series!inner(capacity, starts_on, branches!inner(name), class_series_slots(weekday, starts_at))')
+            'id, price_minor, membership_plans!inner(name, total_credits, sessions_per_week), class_series!inner(capacity, starts_on, branches!inner(name), class_series_slots(weekday, starts_at), class_sessions(starts_at))')
         .eq('is_active', true)
         .order('created_at');
     return (rows as List<dynamic>).map((row) {
@@ -164,6 +164,12 @@ class SupabaseBookingGateway implements BookingGateway, AdminBookingGateway {
       final series = row['class_series'] as Map<String, dynamic>;
       final branch = series['branches'] as Map<String, dynamic>;
       final rawSlots = series['class_series_slots'] as List<dynamic>;
+      final rawSessions = series['class_sessions'] as List<dynamic>;
+      final firstClassStartsAt = rawSessions
+          .map((session) => DateTime.parse(
+              (session as Map<String, dynamic>)['starts_at'] as String))
+          .reduce((first, next) => first.isBefore(next) ? first : next)
+          .toLocal();
       final slots = rawSlots.map((slot) {
         final value = slot as Map<String, dynamic>;
         final parts = (value['starts_at'] as String).split(':');
@@ -183,6 +189,7 @@ class SupabaseBookingGateway implements BookingGateway, AdminBookingGateway {
         totalClasses: plan['total_credits'] as int,
         sessionsPerWeek: plan['sessions_per_week'] as int,
         startsOn: DateTime.parse(series['starts_on'] as String),
+        firstClassStartsAt: firstClassStartsAt,
         slots: slots,
       );
     }).toList();

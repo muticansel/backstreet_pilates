@@ -42,6 +42,7 @@ void main() {
       totalClasses: 8,
       sessionsPerWeek: 2,
       startsOn: DateTime(2026, 10, 12),
+      firstClassStartsAt: DateTime.now().add(const Duration(days: 1)),
       slots: const [
         FixedSeriesSlot(weekday: 1, time: TimeOfDayValue(hour: 9, minute: 0)),
         FixedSeriesSlot(weekday: 3, time: TimeOfDayValue(hour: 10, minute: 0)),
@@ -53,6 +54,7 @@ void main() {
     ));
     await tester.pumpAndSettle();
 
+    expect(find.text('Monday 09:00 · Wednesday 10:00'), findsOneWidget);
     await tester.tap(find.text('Morning Pilates'));
     await tester.pumpAndSettle();
     expect(find.text('PACKAGE DETAILS'), findsOneWidget);
@@ -64,5 +66,36 @@ void main() {
     await tester.tap(find.text('Save changes'));
     await tester.pumpAndSettle();
     expect(gateway.updateCount, 1);
+  });
+
+  testWidgets('started series is read-only', (tester) async {
+    final gateway = _ScheduleGateway(AdminFixedOffer(
+      id: 'offer-1',
+      title: 'Started Pilates',
+      branchName: 'Oran',
+      capacity: 3,
+      priceMinor: 500000,
+      totalClasses: 8,
+      sessionsPerWeek: 2,
+      startsOn: DateTime(2026, 10, 12),
+      firstClassStartsAt: DateTime.now().subtract(const Duration(minutes: 1)),
+      slots: const [
+        FixedSeriesSlot(weekday: 1, time: TimeOfDayValue(hour: 9, minute: 0)),
+      ],
+    ));
+    await tester.pumpWidget(AppLanguageScope(
+      language: AppLanguage(),
+      child: MaterialApp(home: ClassSchedulePage(bookings: gateway)),
+    ));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Started Pilates'));
+    await tester.pumpAndSettle();
+    expect(find.text('Edit package'), findsNothing);
+    expect(
+      find.text(
+          'This package can no longer be edited because its first class has started.'),
+      findsOneWidget,
+    );
   });
 }

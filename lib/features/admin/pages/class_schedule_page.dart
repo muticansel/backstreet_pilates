@@ -74,9 +74,15 @@ class _ClassSchedulePageState extends State<ClassSchedulePage> {
                     child: ListTile(
                       onTap: () => _openPackageDetails(offer),
                       title: Text(offer.title),
-                      subtitle: Text(
-                        '${offer.branchName} · ${_money(offer.priceMinor)} · '
-                        '${strings.text('capacity')}: ${offer.capacity}',
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(_weeklySchedule(offer, strings)),
+                          Text(
+                            '${offer.branchName} · ${_money(offer.priceMinor)} · '
+                            '${strings.text('capacity')}: ${offer.capacity}',
+                          ),
+                        ],
                       ),
                       trailing: IconButton(
                         tooltip: strings.text('deletePackage'),
@@ -457,6 +463,13 @@ class _ClassSchedulePageState extends State<ClassSchedulePage> {
                                 child: Text(
                                     '${strings.text('weekday${slot.weekday}')} · ${slot.time.hour.toString().padLeft(2, '0')}:${slot.time.minute.toString().padLeft(2, '0')}'),
                               )),
+                          if (!offer.canEdit) ...[
+                            const SizedBox(height: 12),
+                            Text(
+                              strings.text('packageEditingClosed'),
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
+                          ],
                         ]),
             ),
           ),
@@ -464,7 +477,7 @@ class _ClassSchedulePageState extends State<ClassSchedulePage> {
             TextButton(
                 onPressed: submitting ? null : () => Navigator.pop(context),
                 child: Text(strings.text('cancel'))),
-            if (!editing)
+            if (!editing && offer.canEdit)
               FilledButton(
                   onPressed: () => setDialog(() => editing = true),
                   child: Text(strings.text('editPackage')))
@@ -616,6 +629,15 @@ String _date(DateTime date) => '${date.day.toString().padLeft(2, '0')}.'
     '${date.month.toString().padLeft(2, '0')}.${date.year}';
 
 String _money(int minor) => '₺${(minor / 100).toStringAsFixed(2)}';
+
+String _weeklySchedule(AdminFixedOffer offer, AppLocalizations strings) =>
+    offer.slots
+        .map(
+          (slot) => '${strings.text('weekday${slot.weekday}')} '
+              '${slot.time.hour.toString().padLeft(2, '0')}:'
+              '${slot.time.minute.toString().padLeft(2, '0')}',
+        )
+        .join(' · ');
 
 int? _parsePriceMinor(String value) {
   final normalized = value.trim().replaceAll(',', '.');

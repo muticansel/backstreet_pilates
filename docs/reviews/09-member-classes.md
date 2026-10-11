@@ -45,11 +45,13 @@ its last planned session in Istanbul time. This prevents a final upcoming class
 from incorrectly appearing as zero remaining. A later cancellation policy must
 use a separate audited adjustment; it must not be a client-side update.
 
-Admins can open a fixed-series card to review its complete configuration and
-edit its name, price, capacity and future weekly day/time schedule. The update
-RPC preserves historical sessions, migrates future bookings and pending holds
-in chronological order, and rejects a capacity lower than an occupied future
-session. Total class count remains fixed once sold.
+Admins can see each fixed-series card's weekly days and times, then open it to
+review the complete configuration. A package can be edited only until its first
+class starts; afterwards it is read-only. Before that cutoff, admins can edit
+its name, price, capacity and weekly day/time schedule. The update RPC enforces
+the same cutoff, preserves bookings and pending holds, and rejects a capacity
+lower than an occupied future session. Total class count remains fixed once
+sold.
 
 ## Required review decision
 

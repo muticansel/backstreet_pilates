@@ -378,6 +378,8 @@ class AppLocalizations {
       'saveChanges': 'Save changes',
       'scheduleUpdatesFuture':
           'Changes apply to future classes and keep existing reservations.',
+      'packageEditingClosed':
+          'This package can no longer be edited because its first class has started.',
       'fixedPackageStarts': 'First class: {date}',
       'packageDetails':
           '{branch} · {classes} classes · {weeks} weeks · {price}',
@@ -806,6 +808,8 @@ class AppLocalizations {
       'saveChanges': 'Değişiklikleri kaydet',
       'scheduleUpdatesFuture':
           'Değişiklikler gelecek derslere uygulanır; mevcut rezervasyonlar korunur.',
+      'packageEditingClosed':
+          'İlk dersi başladığı için bu paket artık düzenlenemez.',
       'fixedPackageStarts': 'İlk ders: {date}',
       'packageDetails': '{branch} · {classes} ders · {weeks} hafta · {price}',
       'cashPaymentOnly': 'Bu paket için nakit ödeme kullanılabilir.',

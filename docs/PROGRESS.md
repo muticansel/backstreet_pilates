@@ -2,6 +2,13 @@
 
 ## Current state
 
+- Fixed-series package cards now show their localized weekly day/time schedule.
+  Admins can edit package name, price, capacity and weekly schedule only before
+  the first class begins; started packages are read-only in the app and the
+  update RPC rejects bypass attempts. Prepared
+  `20261011000200_lock_started_fixed_offer_editing.sql` and its database check;
+  the migration still needs to be applied to Supabase before runtime review.
+
 - Reinstalled and launched the configured Supabase debug build on the iPhone
   17 simulator on 2026-10-10. The project URL and publishable key were passed
   only through launch-time defines; neither value was written to the repository.
