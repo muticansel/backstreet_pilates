@@ -153,9 +153,9 @@ class SupabasePurchaseGateway implements PurchaseGateway, AdminPurchaseGateway {
         }),
         _client
             .from('user_memberships')
-            .select('user_id, branches!inner(code)')
-            .eq('status', 'active')
-            .gt('end_date_exclusive', today.toIso8601String().split('T').first),
+            .select('user_id, status, branches!inner(code)')
+            .inFilter('status', ['active', 'pending_start']).gt(
+                'end_date_exclusive', today.toIso8601String().split('T').first),
         _client
             .from('individual_lesson_records')
             .select('earning_minor')
@@ -167,15 +167,22 @@ class SupabasePurchaseGateway implements PurchaseGateway, AdminPurchaseGateway {
       final individualLessons = results[3] as List<dynamic>;
       final activeUsers = <String>{};
       final activeUsersByBranch = <String, Set<String>>{};
+      final upcomingUsersByBranch = <String, Set<String>>{};
       for (final row in members) {
         final membership = row as Map<String, dynamic>;
         final userId = membership['user_id'] as String;
         final branch = membership['branches'] as Map<String, dynamic>;
         final branchCode = branch['code'] as String;
-        activeUsers.add(userId);
-        activeUsersByBranch
-            .putIfAbsent(branchCode, () => <String>{})
-            .add(userId);
+        if (membership['status'] == 'active') {
+          activeUsers.add(userId);
+          activeUsersByBranch
+              .putIfAbsent(branchCode, () => <String>{})
+              .add(userId);
+        } else {
+          upcomingUsersByBranch
+              .putIfAbsent(branchCode, () => <String>{})
+              .add(userId);
+        }
       }
       final individualLessonEarningsMinor = individualLessons.fold<int>(
         0,
@@ -191,6 +198,8 @@ class SupabasePurchaseGateway implements PurchaseGateway, AdminPurchaseGateway {
         activeMembers: activeUsers.length,
         oranActiveMembers: activeUsersByBranch['oran']?.length ?? 0,
         incekActiveMembers: activeUsersByBranch['incek']?.length ?? 0,
+        oranUpcomingMembers: upcomingUsersByBranch['oran']?.length ?? 0,
+        incekUpcomingMembers: upcomingUsersByBranch['incek']?.length ?? 0,
       );
     } on PostgrestException catch (error) {
       throw PurchaseFailure(error.message);

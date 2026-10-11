@@ -367,15 +367,24 @@ class _ManagementTab extends StatelessWidget {
               const SizedBox(width: 14),
               Expanded(
                 child: _MetricCard(
-                  label: strings.text('activeMembers'),
-                  value: '${value.activeMembers}',
+                  label: strings.text('groupLessonMembers'),
+                  value:
+                      '${value.activeMembers + value.oranUpcomingMembers + value.incekUpcomingMembers}',
                   details: [
                     _MetricDetail(
-                      label: strings.text('groupMembers'),
+                      label: strings.text('activeMembers'),
                       value: strings
                           .text('activeMembersByBranch')
                           .replaceAll('{oran}', '${value.oranActiveMembers}')
                           .replaceAll('{incek}', '${value.incekActiveMembers}'),
+                    ),
+                    _MetricDetail(
+                      label: strings.text('upcomingMembers'),
+                      value: strings
+                          .text('activeMembersByBranch')
+                          .replaceAll('{oran}', '${value.oranUpcomingMembers}')
+                          .replaceAll(
+                              '{incek}', '${value.incekUpcomingMembers}'),
                     ),
                     _MetricDetail(
                       label: strings.text('individualLessonEarnings'),

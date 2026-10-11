@@ -106,6 +106,8 @@ class FakeAdminPurchaseGateway implements AdminPurchaseGateway {
         activeMembers: 12,
         oranActiveMembers: 7,
         incekActiveMembers: 5,
+        oranUpcomingMembers: 0,
+        incekUpcomingMembers: 0,
       );
 
   @override
@@ -327,8 +329,11 @@ void main() {
     expect(find.text('₺68.000'), findsOneWidget);
     expect(find.text('Individual lessons'), findsNWidgets(2));
     expect(find.text('₺400'), findsOneWidget);
-    expect(find.text('Group members'), findsOneWidget);
+    expect(find.text('GROUP LESSON MEMBERS'), findsOneWidget);
+    expect(find.text('ACTIVE MEMBERS'), findsOneWidget);
     expect(find.text('Oran: 7 · İncek: 5'), findsOneWidget);
+    expect(find.text('Upcoming members'), findsOneWidget);
+    expect(find.text('Oran: 0 · İncek: 0'), findsOneWidget);
     expect(find.text('1 this month'), findsOneWidget);
 
     final cashPayment = find.text('Payments awaiting approval');
