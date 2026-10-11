@@ -45,16 +45,18 @@ class SupabasePurchaseGateway implements PurchaseGateway, AdminPurchaseGateway {
   Future<List<ApprovedPackage>> loadApprovedPackages() async {
     try {
       final rows = await _client.rpc('member_approved_packages');
-      return rows.map((row) {
+      return (rows as List<dynamic>).map<ApprovedPackage>((row) {
+        final value = row as Map<String, dynamic>;
         return ApprovedPackage(
-          id: row['id'] as String,
-          title: row['plan_name'] as String,
-          branchName: row['branch_name'] as String,
-          status: row['status'] as String,
-          totalCredits: row['total_credits'] as int,
-          remainingCredits: row['remaining_credits'] as int,
-          startDate: DateTime.parse(row['effective_start_date'] as String),
-          endDateExclusive: DateTime.parse(row['end_date_exclusive'] as String),
+          id: value['id'] as String,
+          title: value['plan_name'] as String,
+          branchName: value['branch_name'] as String,
+          status: value['status'] as String,
+          totalCredits: value['total_credits'] as int,
+          remainingCredits: value['remaining_credits'] as int,
+          startDate: DateTime.parse(value['effective_start_date'] as String),
+          endDateExclusive:
+              DateTime.parse(value['end_date_exclusive'] as String),
         );
       }).toList();
     } on PostgrestException catch (error) {
