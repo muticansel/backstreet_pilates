@@ -236,8 +236,8 @@ class AppLocalizations {
       'navExplore': 'Explore',
       'gotIt': 'Got it',
       'explorePackages': 'Explore packages',
-      'explorePackagesTitle': 'More time for you',
-      'explorePackagesDetail': 'Explore a package that fits your pace.',
+      'explorePackagesTitle': 'Explore new packages',
+      'explorePackagesDetail': 'Find a package that fits your next rhythm.',
       'packagePreviewDetail':
           'This is where you’ll compare packages and purchase the one that suits your practice.',
       'dashboardPreviewNote':
@@ -661,8 +661,8 @@ class AppLocalizations {
       'navExplore': 'Keşfet',
       'gotIt': 'Anladım',
       'explorePackages': 'Paketleri keşfet',
-      'explorePackagesTitle': 'Kendine daha çok zaman ayır',
-      'explorePackagesDetail': 'Ritmine uygun bir paketi keşfet.',
+      'explorePackagesTitle': 'Yeni paketleri keşfet',
+      'explorePackagesDetail': 'Sıradaki ritmine uygun bir paket bul.',
       'packagePreviewDetail':
           'Pratiğine uygun paketi burada karşılaştırıp satın alabileceksin.',
       'dashboardPreviewNote':

@@ -242,9 +242,10 @@ class _DashboardPageState extends State<DashboardPage> {
                   onViewClasses: () => _selectDestination(2),
                 ),
                 const SizedBox(height: 30),
-                const _SectionLabel(titleKey: 'nextRhythm'),
-                const SizedBox(height: 10),
-                _ExplorePackagesCard(onPressed: _showPurchasePreview),
+                _NextRhythmSection(
+                  packages: _approvedPackages,
+                  onPressed: _showPurchasePreview,
+                ),
                 const SizedBox(height: 30),
                 const _SectionLabel(titleKey: 'recentPractice'),
                 const SizedBox(height: 10),
@@ -1083,6 +1084,43 @@ class _ProgressMessageCard extends StatelessWidget {
       );
 }
 
+class _NextRhythmSection extends StatelessWidget {
+  const _NextRhythmSection({required this.packages, required this.onPressed});
+
+  final Future<List<ApprovedPackage>> packages;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) => FutureBuilder<List<ApprovedPackage>>(
+        future: packages,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState != ConnectionState.done ||
+              snapshot.hasError) {
+            return const SizedBox.shrink();
+          }
+          final today = DateUtils.dateOnly(DateTime.now());
+          final active = snapshot.data!
+              .where((package) =>
+                  package.status == 'active' &&
+                  package.endDateExclusive.isAfter(today))
+              .toList();
+          final shouldShow = active.isEmpty ||
+              active.any((package) =>
+                  package.remainingCredits >= 1 &&
+                  package.remainingCredits <= 3);
+          if (!shouldShow) return const SizedBox.shrink();
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const _SectionLabel(titleKey: 'nextRhythm'),
+              const SizedBox(height: 10),
+              _ExplorePackagesCard(onPressed: onPressed),
+            ],
+          );
+        },
+      );
+}
+
 class _ExplorePackagesCard extends StatelessWidget {
   const _ExplorePackagesCard({required this.onPressed});
 
@@ -1090,44 +1128,46 @@ class _ExplorePackagesCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: const Color(0xFFE3E9DD),
+    return Material(
+      color: const Color(0xFFE3E9DD),
+      borderRadius: BorderRadius.circular(20),
+      child: InkWell(
+        onTap: onPressed,
         borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(
-        children: [
-          Container(
-            height: 54,
-            width: 54,
-            decoration: const BoxDecoration(
-              color: Color(0xFFCFDBC6),
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(Icons.add_circle_outline, color: AppTheme.sage),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  AppLocalizations.of(context).text('explorePackagesTitle'),
-                  style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Row(
+            children: [
+              Container(
+                height: 54,
+                width: 54,
+                decoration: const BoxDecoration(
+                  color: Color(0xFFCFDBC6),
+                  shape: BoxShape.circle,
                 ),
-                SizedBox(height: 4),
-                Text(
-                    AppLocalizations.of(context).text('explorePackagesDetail')),
-              ],
-            ),
+                child:
+                    const Icon(Icons.add_circle_outline, color: AppTheme.sage),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      AppLocalizations.of(context).text('explorePackagesTitle'),
+                      style: const TextStyle(
+                          fontWeight: FontWeight.w700, fontSize: 16),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(AppLocalizations.of(context)
+                        .text('explorePackagesDetail')),
+                  ],
+                ),
+              ),
+              const Icon(Icons.arrow_forward),
+            ],
           ),
-          IconButton(
-            tooltip: AppLocalizations.of(context).text('explorePackages'),
-            onPressed: onPressed,
-            icon: const Icon(Icons.arrow_forward),
-          ),
-        ],
+        ),
       ),
     );
   }
