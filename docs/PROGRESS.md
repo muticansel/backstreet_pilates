@@ -2,6 +2,13 @@
 
 ## Current state
 
+- Prepared release version `0.1.1+3` on 2026-10-12. Generated a signed iOS
+  App Store IPA for TestFlight and a signed Android release APK for Firebase
+  App Distribution with Supabase settings supplied only as build-time defines.
+  Android release signing now reads the ignored local `android/key.properties`
+  upload-keystore configuration. Uploading remains an App Store Connect/Firebase
+  Console step.
+
 - Fixed-series package cards now show their localized weekly day/time schedule.
   Admins can edit package name, price, capacity and weekly schedule only before
   the first class begins; started packages are read-only in the app and the
