@@ -470,6 +470,18 @@ class AppLocalizations {
       'decline': 'Decline',
       'declined': 'Declined',
       'cancelled': 'Cancelled',
+      'privateLessonSettings': 'Private lesson settings',
+      'privateLessonSettingsDetail':
+          'Choose whether members can see and request private lessons.',
+      'privateLessonFeature': 'Private lesson requests',
+      'privateLessonFeatureOpenDetail':
+          'Open — members can see and request private lessons.',
+      'privateLessonFeatureClosedDetail':
+          'Closed — this feature is hidden from members.',
+      'privateLessonFeatureOpened': 'Private lesson requests are now open.',
+      'privateLessonFeatureClosed': 'Private lesson requests are now closed.',
+      'privateLessonFeatureSaveError':
+          'Private lesson settings could not be saved. Try again.',
     },
     'tr': {
       'language': 'Dil',
@@ -895,6 +907,18 @@ class AppLocalizations {
       'decline': 'Reddet',
       'declined': 'Reddedildi',
       'cancelled': 'İptal edildi',
+      'privateLessonSettings': 'Özel ders ayarları',
+      'privateLessonSettingsDetail':
+          'Üyelerin özel dersleri görüp talep edebilmesini seçin.',
+      'privateLessonFeature': 'Özel ders talepleri',
+      'privateLessonFeatureOpenDetail':
+          'Açık — üyeler özel dersleri görebilir ve talep edebilir.',
+      'privateLessonFeatureClosedDetail':
+          'Kapalı — bu özellik üyelerden gizlenir.',
+      'privateLessonFeatureOpened': 'Özel ders talepleri açıldı.',
+      'privateLessonFeatureClosed': 'Özel ders talepleri kapatıldı.',
+      'privateLessonFeatureSaveError':
+          'Özel ders ayarları kaydedilemedi. Tekrar deneyin.',
     },
   };
 }

@@ -91,6 +91,7 @@ abstract class BookingGateway {
       const [];
   Future<void> requestPrivateLesson(DateTime startsAt) async {}
   Future<List<MemberPrivateLesson>> loadMyPrivateLessons() async => const [];
+  Future<bool> isPrivateLessonFeatureEnabled() async => false;
 }
 
 class StudioBranch {
@@ -319,6 +320,8 @@ abstract interface class AdminBookingGateway {
     required String requestId,
     required bool approve,
   });
+  Future<bool> isPrivateLessonFeatureEnabled();
+  Future<void> setPrivateLessonFeatureEnabled({required bool enabled});
 }
 
 class UnconfiguredBookingGateway extends BookingGateway {
@@ -337,6 +340,9 @@ class UnconfiguredBookingGateway extends BookingGateway {
   Future<void> requestPrivateLesson(DateTime startsAt) async {}
   @override
   Future<List<MemberPrivateLesson>> loadMyPrivateLessons() async => const [];
+
+  @override
+  Future<bool> isPrivateLessonFeatureEnabled() async => false;
 }
 
 class UnconfiguredAdminBookingGateway implements AdminBookingGateway {
@@ -412,4 +418,8 @@ class UnconfiguredAdminBookingGateway implements AdminBookingGateway {
     required String requestId,
     required bool approve,
   }) async {}
+  @override
+  Future<bool> isPrivateLessonFeatureEnabled() async => false;
+  @override
+  Future<void> setPrivateLessonFeatureEnabled({required bool enabled}) async {}
 }

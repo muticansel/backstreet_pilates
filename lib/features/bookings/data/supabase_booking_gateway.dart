@@ -7,6 +7,19 @@ class SupabaseBookingGateway implements BookingGateway, AdminBookingGateway {
   final SupabaseClient _client;
 
   @override
+  Future<bool> isPrivateLessonFeatureEnabled() async =>
+      await _client.rpc('private_lesson_feature_enabled') as bool;
+
+  @override
+  Future<void> setPrivateLessonFeatureEnabled({required bool enabled}) async {
+    // The PostgreSQL RPC returns void (JSON null). Await it here instead of
+    // forwarding its dynamic result as Future<void>.
+    await _client.rpc('set_private_lesson_feature_enabled', params: {
+      'enabled': enabled,
+    });
+  }
+
+  @override
   Future<List<ScheduledClass>> loadUpcomingClasses() async {
     final rows = await _client
         .from('bookings')

@@ -21,10 +21,15 @@ class _UpcomingClassesPageState extends State<UpcomingClassesPage> {
   late Future<List<ScheduledClass>> _classes =
       widget.bookings.loadUpcomingClasses();
   DateTime? _selectedDate;
+  late Future<bool> _privateLessonsEnabled =
+      widget.bookings.isPrivateLessonFeatureEnabled();
 
   Future<void> _refresh() async {
-    setState(() => _classes = widget.bookings.loadUpcomingClasses());
-    await _classes;
+    setState(() {
+      _classes = widget.bookings.loadUpcomingClasses();
+      _privateLessonsEnabled = widget.bookings.isPrivateLessonFeatureEnabled();
+    });
+    await Future.wait([_classes, _privateLessonsEnabled]);
   }
 
   Future<void> _selectDate() async {
@@ -74,26 +79,34 @@ class _UpcomingClassesPageState extends State<UpcomingClassesPage> {
               Text(strings.text('myClassesSubtitle'),
                   style: Theme.of(context).textTheme.bodyLarge),
               const SizedBox(height: 18),
-              FilledButton.icon(
-                onPressed: () => Navigator.of(context).push(
-                  MaterialPageRoute<void>(
-                    builder: (_) =>
-                        PrivateLessonBookingPage(bookings: widget.bookings),
-                  ),
-                ),
-                icon: const Icon(Icons.person_outline),
-                label: Text(strings.text('bookPrivateLesson')),
-              ),
-              const SizedBox(height: 10),
-              OutlinedButton.icon(
-                onPressed: () => Navigator.of(context).push(
-                  MaterialPageRoute<void>(
-                    builder: (_) =>
-                        MyPrivateLessonsPage(bookings: widget.bookings),
-                  ),
-                ),
-                icon: const Icon(Icons.event_note_outlined),
-                label: Text(strings.text('myPrivateLessons')),
+              FutureBuilder<bool>(
+                future: _privateLessonsEnabled,
+                builder: (context, featureSnapshot) {
+                  if (featureSnapshot.data != true) return const SizedBox();
+                  return Column(children: [
+                    FilledButton.icon(
+                      onPressed: () => Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (_) => PrivateLessonBookingPage(
+                              bookings: widget.bookings),
+                        ),
+                      ),
+                      icon: const Icon(Icons.person_outline),
+                      label: Text(strings.text('bookPrivateLesson')),
+                    ),
+                    const SizedBox(height: 10),
+                    OutlinedButton.icon(
+                      onPressed: () => Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (_) =>
+                              MyPrivateLessonsPage(bookings: widget.bookings),
+                        ),
+                      ),
+                      icon: const Icon(Icons.event_note_outlined),
+                      label: Text(strings.text('myPrivateLessons')),
+                    ),
+                  ]);
+                },
               ),
               const SizedBox(height: 28),
               OutlinedButton.icon(

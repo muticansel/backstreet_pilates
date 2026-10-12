@@ -14,6 +14,7 @@ import 'cash_purchase_requests_page.dart';
 import 'class_schedule_page.dart';
 import 'individual_lessons_page.dart';
 import 'private_lesson_calendar_page.dart';
+import 'private_lesson_settings_page.dart';
 import 'today_operations_page.dart';
 
 class AdminDashboardPage extends StatefulWidget {
@@ -207,6 +208,9 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
           onOpenPayments: () => _open(
             CashPurchaseRequestsPage(purchases: widget.adminPurchases),
           ),
+          onOpenPrivateLessonSettings: () => _open(
+            PrivateLessonSettingsPage(bookings: widget.adminBookings),
+          ),
         );
     }
   }
@@ -312,11 +316,13 @@ class _ManagementTab extends StatelessWidget {
     required this.onRetry,
     required this.onOpenUsers,
     required this.onOpenPayments,
+    required this.onOpenPrivateLessonSettings,
   });
   final Future<AdminDashboardMetrics> metrics;
   final Future<void> Function() onRetry;
   final VoidCallback onOpenUsers;
   final VoidCallback onOpenPayments;
+  final VoidCallback onOpenPrivateLessonSettings;
 
   @override
   Widget build(BuildContext context) {
@@ -399,6 +405,13 @@ class _ManagementTab extends StatelessWidget {
           },
         ),
         const SizedBox(height: 28),
+        _AdminActionCard(
+          icon: Icons.tune_outlined,
+          title: strings.text('privateLessonSettings'),
+          detail: strings.text('privateLessonSettingsDetail'),
+          onTap: onOpenPrivateLessonSettings,
+        ),
+        const SizedBox(height: 14),
         _AdminActionCard(
           icon: Icons.people_outline,
           title: strings.text('users'),

@@ -2,6 +2,14 @@
 
 ## Current state
 
+- Added an admin-controlled private-lesson feature toggle. It defaults to
+  closed, hides the member private-lesson actions while disabled, and is
+  available under Admin → Management → Private lesson settings. The prepared
+  `20261012000100_private_lesson_feature_toggle.sql` migration makes the
+  server reject slot reads and new requests while closed, so older clients
+  cannot bypass the setting. Apply it after the existing private-lesson
+  migrations before runtime review.
+
 - Prepared release version `0.1.1+3` on 2026-10-12. Generated a signed iOS
   App Store IPA for TestFlight and a signed Android release APK for Firebase
   App Distribution with Supabase settings supplied only as build-time defines.

@@ -2,7 +2,10 @@
 
 ## Member flow
 
-- **Classes** now includes **Book a private lesson**.
+- Private lessons are closed by default. When closed, the related actions are
+  hidden from the member's **Classes** screen.
+- When an administrator opens the feature, **Classes** includes **Book a
+  private lesson** and **My private lessons**.
 - **My private lessons** lets a member review only their own requests and
   confirmed lessons. Each record shows its local date, time and current status
   (awaiting approval, approved, declined or cancelled). The existing RLS
@@ -17,6 +20,9 @@
 
 ## Admin flow
 
+- **Management → Private lesson settings** has a single switch for opening or
+  closing member private-lesson requests. The admin calendar remains available
+  to administrators either way, so existing requests can still be managed.
 - **Private lesson requests** on the admin dashboard presents the selected
   week's pending requests, confirmed private lessons and blocked time.
 - A pending request can be approved or declined. Approval makes it a confirmed
@@ -45,6 +51,11 @@ read policy for `private_lesson_requests`. The member page also explicitly
 filters by the current authenticated user's ID, while RLS remains the
 authoritative access control.
 
+`20261012000100_private_lesson_feature_toggle.sql` creates the default-closed
+setting and admin-only update RPC. It also makes the slot-listing and
+request-creation RPCs reject calls while the feature is closed, which protects
+against a stale client that still displays the old member controls.
+
 After applying the notification migration, deploy the matching local
 `send-push-notification` Edge Function and keep the existing database webhook
 on `notification_events` INSERT. No secret or client service key is added.
@@ -56,3 +67,5 @@ on `notification_events` INSERT. No secret or client service key is added.
 does now, or should only approved lessons reserve it?
 3. Should requesting/approving a private lesson create payment or package-credit
 records in a later iteration?
+4. When the feature is closed, should members retain access to their previous
+private-lesson history, or should that history remain hidden as it is now?
