@@ -392,11 +392,6 @@ class _ManagementTab extends StatelessWidget {
                           .replaceAll(
                               '{incek}', '${value.incekUpcomingMembers}'),
                     ),
-                    _MetricDetail(
-                      label: strings.text('individualLessonEarnings'),
-                      value: strings.text('monthlyCount').replaceAll(
-                          '{count}', '${value.individualLessonCount}'),
-                    ),
                   ],
                   icon: Icons.people_outline,
                 ),

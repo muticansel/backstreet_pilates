@@ -327,14 +327,14 @@ void main() {
     expect(find.text('₺68.400'), findsOneWidget);
     expect(find.text('Group classes'), findsOneWidget);
     expect(find.text('₺68.000'), findsOneWidget);
-    expect(find.text('Individual lessons'), findsNWidgets(2));
+    expect(find.text('Individual lessons'), findsOneWidget);
     expect(find.text('₺400'), findsOneWidget);
     expect(find.text('GROUP LESSON MEMBERS'), findsOneWidget);
     expect(find.text('ACTIVE MEMBERS'), findsOneWidget);
     expect(find.text('Oran: 7 · İncek: 5'), findsOneWidget);
     expect(find.text('Upcoming members'), findsOneWidget);
     expect(find.text('Oran: 0 · İncek: 0'), findsOneWidget);
-    expect(find.text('1 this month'), findsOneWidget);
+    expect(find.text('1 this month'), findsNothing);
 
     final cashPayment = find.text('Payments awaiting approval');
     await tester.drag(find.byType(Scrollable), const Offset(0, -300));

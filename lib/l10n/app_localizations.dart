@@ -159,7 +159,7 @@ class AppLocalizations {
       'studioAtGlance': 'Your studio, at a glance.',
       'adminSubtitle': 'Keep track of the month and support your members.',
       'thisMonth': 'THIS MONTH',
-      'activeMembers': 'ACTIVE MEMBERS',
+      'activeMembers': 'Active Members',
       'groupLessonMembers': 'GROUP LESSON MEMBERS',
       'activeMembersByBranch': 'Oran: {oran} · İncek: {incek}',
       'monthlyIndividualLessonCount': 'This month: {count} individual lessons',
