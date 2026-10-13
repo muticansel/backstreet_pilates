@@ -2,6 +2,16 @@
 
 ## Current state
 
+- Added a compact, localized **Today's movement / Bugünün hareketi** card to
+  the member home page. It selects a reformer preparation cue for members with
+  an upcoming class, a breathing cue before a first completed class, and a
+  gentle stretch after prior practice when no class is upcoming. The card uses
+  the dashboard's existing booking snapshots and introduces no new backend
+  query. `dart format` and `flutter analyze` pass. `flutter test` reaches 14
+  passing tests, then fails in the unrelated existing admin navigation test at
+  `test/auth_flow_test.dart:333` because it cannot find `ACTIVE MEMBERS`.
+  Review it with `docs/reviews/04-member-dashboard.md`.
+
 - Added an admin-controlled private-lesson feature toggle. It defaults to
   closed, hides the member private-lesson actions while disabled, and is
   available under Admin → Management → Private lesson settings. The prepared

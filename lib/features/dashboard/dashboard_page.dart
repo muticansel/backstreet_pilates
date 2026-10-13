@@ -41,6 +41,7 @@ class _DashboardPageState extends State<DashboardPage> {
   late Future<List<ApprovedPackage>> _approvedPackages;
   late Future<List<FeedbackClass>> _recentPractice;
   late Future<List<ScheduledClass>> _upcomingClasses;
+  late Future<_TodayMovement> _todayMovement;
 
   @override
   void initState() {
@@ -49,6 +50,18 @@ class _DashboardPageState extends State<DashboardPage> {
     _approvedPackages = widget.purchases.loadApprovedPackages();
     _recentPractice = widget.bookings.loadFeedbackClasses();
     _upcomingClasses = widget.bookings.loadUpcomingClasses();
+    _todayMovement = _createTodayMovementFuture();
+  }
+
+  Future<_TodayMovement> _createTodayMovementFuture() async {
+    final results = await Future.wait<Object?>([
+      _upcomingClasses,
+      _completedClassDates,
+    ]);
+    return _TodayMovement.forMember(
+      upcomingClasses: results[0]! as List<ScheduledClass>,
+      completedClassDates: results[1]! as List<DateTime>,
+    );
   }
 
   Future<void> _refreshDashboard() async {
@@ -57,12 +70,14 @@ class _DashboardPageState extends State<DashboardPage> {
       _approvedPackages = widget.purchases.loadApprovedPackages();
       _recentPractice = widget.bookings.loadFeedbackClasses();
       _upcomingClasses = widget.bookings.loadUpcomingClasses();
+      _todayMovement = _createTodayMovementFuture();
     });
     await Future.wait([
       _completedClassDates,
       _approvedPackages,
       _recentPractice,
       _upcomingClasses,
+      _todayMovement,
     ]);
   }
 
@@ -225,6 +240,8 @@ class _DashboardPageState extends State<DashboardPage> {
                   onViewClasses: () => _selectDestination(2),
                   onExplorePackages: _showPurchasePreview,
                 ),
+                const SizedBox(height: 30),
+                _TodayMovementCard(movement: _todayMovement),
                 const SizedBox(height: 30),
                 const _StudioMomentCard(),
                 const SizedBox(height: 30),
@@ -498,6 +515,143 @@ class _SectionLabel extends StatelessWidget {
       ),
     );
   }
+}
+
+enum _TodayMovementKind { breath, stretch, reformer }
+
+class _TodayMovement {
+  const _TodayMovement(this.kind);
+
+  final _TodayMovementKind kind;
+
+  factory _TodayMovement.forMember({
+    required List<ScheduledClass> upcomingClasses,
+    required List<DateTime> completedClassDates,
+  }) {
+    if (upcomingClasses.isNotEmpty) {
+      return const _TodayMovement(_TodayMovementKind.reformer);
+    }
+    if (completedClassDates.isEmpty) {
+      return const _TodayMovement(_TodayMovementKind.breath);
+    }
+    return const _TodayMovement(_TodayMovementKind.stretch);
+  }
+
+  String titleKey() => switch (kind) {
+        _TodayMovementKind.breath => 'todayMovementBreathTitle',
+        _TodayMovementKind.stretch => 'todayMovementStretchTitle',
+        _TodayMovementKind.reformer => 'todayMovementReformerTitle',
+      };
+
+  String detailKey() => switch (kind) {
+        _TodayMovementKind.breath => 'todayMovementBreathDetail',
+        _TodayMovementKind.stretch => 'todayMovementStretchDetail',
+        _TodayMovementKind.reformer => 'todayMovementReformerDetail',
+      };
+
+  IconData get icon => switch (kind) {
+        _TodayMovementKind.breath => Icons.air_rounded,
+        _TodayMovementKind.stretch => Icons.accessibility_new_rounded,
+        _TodayMovementKind.reformer => Icons.bedroom_parent_outlined,
+      };
+
+  Color get accent => switch (kind) {
+        _TodayMovementKind.breath => const Color(0xFF7396A1),
+        _TodayMovementKind.stretch => const Color(0xFFC98162),
+        _TodayMovementKind.reformer => AppTheme.sage,
+      };
+}
+
+class _TodayMovementCard extends StatelessWidget {
+  const _TodayMovementCard({required this.movement});
+
+  final Future<_TodayMovement> movement;
+
+  @override
+  Widget build(BuildContext context) => FutureBuilder<_TodayMovement>(
+        future: movement,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState != ConnectionState.done ||
+              snapshot.hasError) {
+            return const SizedBox.shrink();
+          }
+          final suggestion = snapshot.data!;
+          final strings = AppLocalizations.of(context);
+          return Semantics(
+            label: '${strings.text('todayMovementLabel')}: '
+                '${strings.text(suggestion.titleKey())}. '
+                '${strings.text(suggestion.detailKey())}',
+            child: Container(
+              height: 142,
+              clipBehavior: Clip.antiAlias,
+              decoration: BoxDecoration(
+                color: suggestion.accent.withValues(alpha: .12),
+                borderRadius: BorderRadius.circular(24),
+              ),
+              child: Stack(
+                children: [
+                  Positioned(
+                    right: -30,
+                    top: -48,
+                    child: Container(
+                      height: 164,
+                      width: 164,
+                      decoration: BoxDecoration(
+                        color: suggestion.accent.withValues(alpha: .16),
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    right: 22,
+                    top: 22,
+                    child: Container(
+                      height: 60,
+                      width: 60,
+                      decoration: BoxDecoration(
+                        color: suggestion.accent,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(suggestion.icon, color: Colors.white, size: 30),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 18, 100, 18),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          strings.text('todayMovementLabel'),
+                          style: TextStyle(
+                            color: suggestion.accent,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 1.6,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          strings.text(suggestion.titleKey()),
+                          style: const TextStyle(
+                            fontFamily: 'Georgia',
+                            fontSize: 22,
+                            height: 1.05,
+                          ),
+                        ),
+                        const SizedBox(height: 7),
+                        Text(
+                          strings.text(suggestion.detailKey()),
+                          style: const TextStyle(fontSize: 12, height: 1.28),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      );
 }
 
 class _StudioMomentCard extends StatelessWidget {

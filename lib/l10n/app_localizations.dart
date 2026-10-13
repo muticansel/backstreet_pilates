@@ -53,6 +53,13 @@ class AppLocalizations {
       'authBrandDetail':
           'Mindful movement. Everyday strength.\nYour Pilates practice starts here.',
       'dashboardIntro': 'A little movement can change your whole day.',
+      'todayMovementLabel': 'TODAY\'S MOVEMENT',
+      'todayMovementBreathTitle': 'A quiet reset',
+      'todayMovementBreathDetail': 'Take three slow, spacious breaths.',
+      'todayMovementStretchTitle': 'Open your sides',
+      'todayMovementStretchDetail': 'Reach tall and take a gentle side stretch.',
+      'todayMovementReformerTitle': 'Prepare for reformer',
+      'todayMovementReformerDetail': 'Roll your shoulders back and find a long spine.',
       'studioMomentLabel': 'A MOMENT AT THE STUDIO',
       'studioMoment': 'Make space for your practice.',
       'studioMomentA11y': 'Pilates instructor in the Backstreet studio',
@@ -496,6 +503,14 @@ class AppLocalizations {
       'authBrandDetail':
           'Bilinçli hareket. Günlük güç.\nPilates pratiğin burada başlar.',
       'dashboardIntro': 'Küçük bir hareket, bütün gününü değiştirebilir.',
+      'todayMovementLabel': 'BUGÜNÜN HAREKETİ',
+      'todayMovementBreathTitle': 'Sakin bir başlangıç',
+      'todayMovementBreathDetail': 'Üç yavaş ve ferah nefes al.',
+      'todayMovementStretchTitle': 'Yanlarını aç',
+      'todayMovementStretchDetail': 'Yukarı uzan ve yumuşak bir yan esneme yap.',
+      'todayMovementReformerTitle': 'Reformer\'a hazırlan',
+      'todayMovementReformerDetail':
+          'Omuzlarını geriye al ve omurganı uzat.',
       'studioMomentLabel': 'STÜDYODAN BİR ANI',
       'studioMoment': 'Pratiğin için kendine alan aç.',
       'studioMomentA11y': 'Backstreet stüdyosunda Pilates eğitmeni',
