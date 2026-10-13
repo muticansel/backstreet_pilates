@@ -63,6 +63,11 @@ class _ClassSchedulePageState extends State<ClassSchedulePage> {
                   label: Text(strings.text('createPackage')),
                 ),
                 const SizedBox(height: 28),
+                _ScheduleIntensityHeatmap(
+                  offers: data.offers,
+                  strings: strings,
+                ),
+                const SizedBox(height: 28),
                 Text(
                   strings.text('activePackages'),
                   style: Theme.of(context).textTheme.titleMedium,
@@ -615,6 +620,145 @@ class _SlotInput {
   _SlotInput copyWith({int? weekday, TimeOfDay? time}) => _SlotInput(
         weekday: weekday ?? this.weekday,
         time: time ?? this.time,
+      );
+}
+
+class _ScheduleIntensityHeatmap extends StatelessWidget {
+  const _ScheduleIntensityHeatmap({
+    required this.offers,
+    required this.strings,
+  });
+
+  final List<AdminFixedOffer> offers;
+  final AppLocalizations strings;
+
+  @override
+  Widget build(BuildContext context) {
+    final counts = List<int>.filled(7, 0);
+    for (final offer in offers) {
+      for (final slot in offer.slots) {
+        counts[slot.weekday - 1]++;
+      }
+    }
+    final highest =
+        counts.reduce((first, second) => first > second ? first : second);
+    final narrowWeekdays = MaterialLocalizations.of(context).narrowWeekdays;
+
+    return Semantics(
+      container: true,
+      label: strings.text('weeklyScheduleIntensity'),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: const Color(0xFFFAF8F4),
+          border: Border.all(color: const Color(0xFFE8E2D8)),
+          borderRadius: BorderRadius.circular(18),
+        ),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text(
+            strings.text('weeklyScheduleIntensity'),
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  color: const Color(0xFF455D4A),
+                  fontWeight: FontWeight.w700,
+                ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            strings.text('weeklyScheduleIntensityDetail'),
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+          const SizedBox(height: 14),
+          Row(
+            children: List.generate(7, (index) {
+              final count = counts[index];
+              final weekday = index + 1;
+              return Expanded(
+                child: Semantics(
+                  label:
+                      '${strings.text('weekday$weekday')}: ${strings.text('scheduleLessonCount').replaceAll('{count}', '$count')}',
+                  child: ExcludeSemantics(
+                    child: Column(children: [
+                      Container(
+                        height: 28,
+                        margin: EdgeInsets.only(right: index == 6 ? 0 : 5),
+                        decoration: BoxDecoration(
+                          color: _intensityColor(count, highest),
+                          borderRadius: BorderRadius.circular(7),
+                        ),
+                      ),
+                      const SizedBox(height: 7),
+                      Text(
+                        narrowWeekdays[weekday % 7],
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                              color: const Color(0xFF657067),
+                            ),
+                      ),
+                    ]),
+                  ),
+                ),
+              );
+            }),
+          ),
+          const SizedBox(height: 14),
+          _IntensityLegend(strings: strings),
+        ]),
+      ),
+    );
+  }
+
+  Color _intensityColor(int count, int highest) {
+    if (count == 0 || highest == 0) return const Color(0xFFEDE9E2);
+    final ratio = count / highest;
+    return Color.lerp(
+      const Color(0xFFDCE8D9),
+      const Color(0xFF91AE91),
+      ratio,
+    )!;
+  }
+}
+
+class _IntensityLegend extends StatelessWidget {
+  const _IntensityLegend({required this.strings});
+
+  final AppLocalizations strings;
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+        label: strings.text('weeklyScheduleIntensityLegend'),
+        child: ExcludeSemantics(
+          child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+            Text(
+              strings.text('scheduleLessBusy'),
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: const Color(0xFF657067),
+                  ),
+            ),
+            const SizedBox(width: 7),
+            ...List.generate(
+              4,
+              (index) => Container(
+                width: 12,
+                height: 12,
+                margin: const EdgeInsets.only(right: 3),
+                decoration: BoxDecoration(
+                  color: Color.lerp(
+                    const Color(0xFFDCE8D9),
+                    const Color(0xFF91AE91),
+                    index / 3,
+                  ),
+                  borderRadius: BorderRadius.circular(3),
+                ),
+              ),
+            ),
+            const SizedBox(width: 4),
+            Text(
+              strings.text('scheduleMoreBusy'),
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: const Color(0xFF657067),
+                  ),
+            ),
+          ]),
+        ),
       );
 }
 

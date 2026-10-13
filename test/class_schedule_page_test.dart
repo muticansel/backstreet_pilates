@@ -55,6 +55,9 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Monday 09:00 · Wednesday 10:00'), findsOneWidget);
+    expect(find.text('WEEKLY INTENSITY'), findsOneWidget);
+    expect(find.text('Fewer'), findsOneWidget);
+    expect(find.text('More'), findsOneWidget);
     await tester.tap(find.text('Morning Pilates'));
     await tester.pumpAndSettle();
     expect(find.text('PACKAGE DETAILS'), findsOneWidget);

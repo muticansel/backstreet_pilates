@@ -57,9 +57,11 @@ class AppLocalizations {
       'todayMovementBreathTitle': 'A quiet reset',
       'todayMovementBreathDetail': 'Take three slow, spacious breaths.',
       'todayMovementStretchTitle': 'Open your sides',
-      'todayMovementStretchDetail': 'Reach tall and take a gentle side stretch.',
+      'todayMovementStretchDetail':
+          'Reach tall and take a gentle side stretch.',
       'todayMovementReformerTitle': 'Prepare for reformer',
-      'todayMovementReformerDetail': 'Roll your shoulders back and find a long spine.',
+      'todayMovementReformerDetail':
+          'Roll your shoulders back and find a long spine.',
       'studioMomentLabel': 'A MOMENT AT THE STUDIO',
       'studioMoment': 'Make space for your practice.',
       'studioMomentA11y': 'Pilates instructor in the Backstreet studio',
@@ -356,6 +358,14 @@ class AppLocalizations {
       'sessionsPerWeek': 'Classes per week',
       'firstClassDate': 'First class date',
       'weeklySchedule': 'WEEKLY SCHEDULE',
+      'weeklyScheduleIntensity': 'WEEKLY INTENSITY',
+      'weeklyScheduleIntensityDetail':
+          'A gentle view of how classes are spread across the week. Darker means more classes.',
+      'scheduleLessonCount': '{count} classes',
+      'scheduleLessBusy': 'Fewer',
+      'scheduleMoreBusy': 'More',
+      'weeklyScheduleIntensityLegend':
+          'Color scale: fewer classes to more classes.',
       'addWeeklyClass': 'Add weekly class',
       'removeWeeklyClass': 'Remove weekly class',
       'day': 'Day',
@@ -507,10 +517,10 @@ class AppLocalizations {
       'todayMovementBreathTitle': 'Sakin bir başlangıç',
       'todayMovementBreathDetail': 'Üç yavaş ve ferah nefes al.',
       'todayMovementStretchTitle': 'Yanlarını aç',
-      'todayMovementStretchDetail': 'Yukarı uzan ve yumuşak bir yan esneme yap.',
+      'todayMovementStretchDetail':
+          'Yukarı uzan ve yumuşak bir yan esneme yap.',
       'todayMovementReformerTitle': 'Reformer\'a hazırlan',
-      'todayMovementReformerDetail':
-          'Omuzlarını geriye al ve omurganı uzat.',
+      'todayMovementReformerDetail': 'Omuzlarını geriye al ve omurganı uzat.',
       'studioMomentLabel': 'STÜDYODAN BİR ANI',
       'studioMoment': 'Pratiğin için kendine alan aç.',
       'studioMomentA11y': 'Backstreet stüdyosunda Pilates eğitmeni',
@@ -806,6 +816,13 @@ class AppLocalizations {
       'sessionsPerWeek': 'Haftalık ders sayısı',
       'firstClassDate': 'İlk ders tarihi',
       'weeklySchedule': 'HAFTALIK PROGRAM',
+      'weeklyScheduleIntensity': 'HAFTALIK YOĞUNLUK',
+      'weeklyScheduleIntensityDetail':
+          'Derslerin haftaya nasıl yayıldığını gösteren hafif bir görünüm. Koyu renk, daha fazla ders demektir.',
+      'scheduleLessonCount': '{count} ders',
+      'scheduleLessBusy': 'Az',
+      'scheduleMoreBusy': 'Çok',
+      'weeklyScheduleIntensityLegend': 'Renk skalası: az dersten çok derse.',
       'addWeeklyClass': 'Haftalık ders ekle',
       'removeWeeklyClass': 'Haftalık dersi kaldır',
       'day': 'Gün',

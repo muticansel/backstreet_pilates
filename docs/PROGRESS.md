@@ -2,6 +2,17 @@
 
 ## Current state
 
+- Added a compact weekly-intensity heatmap to the admin **Class schedule /
+  Ders takvimi** page. It derives each day's tone from the configured fixed
+  series slots already loaded by the page, so it needs no additional backend
+  query or placeholder data. The localized, accessible tiles keep a muted sage
+  scale and announce the exact lesson count for each day. A visible, localized
+  legend makes the light-to-dark meaning clear. `dart format` and `flutter
+  analyze` pass; the focused class-schedule widget tests pass. The full suite
+  reaches 14 passing tests, then fails in the unrelated existing admin-
+  navigation expectation at `test/auth_flow_test.dart:333`, which looks for
+  `ACTIVE MEMBERS`.
+
 - Added a compact, localized **Today's movement / Bugünün hareketi** card to
   the member home page. It selects a reformer preparation cue for members with
   an upcoming class, a breathing cue before a first completed class, and a
