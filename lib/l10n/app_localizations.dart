@@ -302,6 +302,8 @@ class AppLocalizations {
       'milestoneReached': '{milestone} reached',
       'milestoneAhead': '{milestone} is next',
       'noPackagesAvailable': 'No packages are available right now.',
+      'noPackagesAvailableDetail':
+          'A new rhythm is being prepared. Please check back soon.',
       'cash': 'Cash',
       'creditCard': 'Credit card',
       'sendRequest': 'Send request',
@@ -783,6 +785,8 @@ class AppLocalizations {
       'milestoneReached': '{milestone} tamamlandı',
       'milestoneAhead': 'Sıradaki: {milestone}',
       'noPackagesAvailable': 'Şu anda paket bulunmuyor.',
+      'noPackagesAvailableDetail':
+          'Yeni bir ritim hazırlanıyor. Lütfen yakında tekrar kontrol et.',
       'cash': 'Nakit',
       'creditCard': 'Kredi kartı',
       'sendRequest': 'Talep gönder',

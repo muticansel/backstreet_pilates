@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../account/data/account_role_resolver.dart';
@@ -1460,9 +1462,11 @@ class _PackagesPlaceholderState extends State<_PackagesPlaceholder> {
                       child: Padding(
                           padding: EdgeInsets.all(32),
                           child: PilatesLoadingIndicator()))
-                else if (snapshot.hasError || snapshot.data!.isEmpty)
+                else if (snapshot.hasError)
                   Text(AppLocalizations.of(context).text('noPackagesAvailable'),
                       textAlign: TextAlign.center)
+                else if (snapshot.data!.isEmpty)
+                  const _EmptyPackageCatalogue()
                 else ...[
                   _BranchOfferPicker(
                     offers: snapshot.data!,
@@ -1488,12 +1492,16 @@ class _PackagesPlaceholderState extends State<_PackagesPlaceholder> {
                     const SizedBox(height: 14),
                   ],
                 ],
-                const SizedBox(height: 24),
-                Text(
-                  AppLocalizations.of(context).text('cashPaymentOnly'),
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 12, color: AppTheme.sage),
-                ),
+                if (snapshot.connectionState == ConnectionState.done &&
+                    !snapshot.hasError &&
+                    snapshot.data!.isNotEmpty) ...[
+                  const SizedBox(height: 24),
+                  Text(
+                    AppLocalizations.of(context).text('cashPaymentOnly'),
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 12, color: AppTheme.sage),
+                  ),
+                ],
               ],
             ),
           );
@@ -1572,6 +1580,148 @@ class _PackagesPlaceholderState extends State<_PackagesPlaceholder> {
       ),
     );
   }
+}
+
+class _EmptyPackageCatalogue extends StatelessWidget {
+  const _EmptyPackageCatalogue();
+
+  @override
+  Widget build(BuildContext context) {
+    final strings = AppLocalizations.of(context);
+    return Semantics(
+      label: strings.text('noPackagesAvailable'),
+      child: Column(
+        children: [
+          const SizedBox(height: 10),
+          const _GentlePackageOrbit(),
+          const SizedBox(height: 16),
+          Text(strings.text('noPackagesAvailable'),
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontWeight: FontWeight.w600)),
+          const SizedBox(height: 7),
+          Text(strings.text('noPackagesAvailableDetail'),
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodySmall),
+        ],
+      ),
+    );
+  }
+}
+
+class _GentlePackageOrbit extends StatefulWidget {
+  const _GentlePackageOrbit();
+
+  @override
+  State<_GentlePackageOrbit> createState() => _GentlePackageOrbitState();
+}
+
+class _GentlePackageOrbitState extends State<_GentlePackageOrbit>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller = AnimationController(
+    vsync: this,
+    duration: const Duration(seconds: 5),
+  );
+  Timer? _restartTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    _beginOrbit();
+  }
+
+  void _beginOrbit() {
+    _controller.forward(from: 0).whenComplete(() {
+      if (!mounted || MediaQuery.disableAnimationsOf(context)) return;
+      _restartTimer = Timer(const Duration(seconds: 5), () {
+        if (mounted) _beginOrbit();
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _restartTimer?.cancel();
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final reduceMotion = MediaQuery.disableAnimationsOf(context);
+    if (reduceMotion) _controller.stop();
+    return ExcludeSemantics(
+      child: SizedBox(
+        height: 116,
+        width: 116,
+        child: AnimatedBuilder(
+          animation: _controller,
+          builder: (context, _) => CustomPaint(
+            painter: _PackageOrbitPainter(
+              turns: reduceMotion ? 0 : _controller.value,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _PackageOrbitPainter extends CustomPainter {
+  const _PackageOrbitPainter({required this.turns});
+
+  final double turns;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = size.center(Offset.zero);
+    final outerRadius = size.width * .39;
+    final innerRadius = size.width * .27;
+    final rotation = turns * 6.283185307179586;
+    final outerPaint = Paint()
+      ..color = AppTheme.sage.withValues(alpha: .22)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.5
+      ..strokeCap = StrokeCap.round;
+    final innerPaint = Paint()
+      ..color = const Color(0xFFE0C89B).withValues(alpha: .55)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.5
+      ..strokeCap = StrokeCap.round;
+
+    canvas.save();
+    canvas.translate(center.dx, center.dy);
+    canvas.rotate(rotation);
+    canvas.translate(-center.dx, -center.dy);
+    canvas.drawArc(Rect.fromCircle(center: center, radius: outerRadius), .35,
+        4.25, false, outerPaint);
+    canvas.drawArc(Rect.fromCircle(center: center, radius: innerRadius), 3.65,
+        1.85, false, innerPaint);
+    canvas.restore();
+
+    final reformer = Paint()
+      ..color = AppTheme.sage
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.2
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round;
+    final base = RRect.fromRectAndRadius(
+      Rect.fromCenter(center: center, width: 30, height: 15),
+      const Radius.circular(3),
+    );
+    canvas.drawRRect(base, reformer);
+    canvas.drawLine(Offset(center.dx - 10, center.dy + 10),
+        Offset(center.dx - 7, center.dy + 15), reformer);
+    canvas.drawLine(Offset(center.dx + 10, center.dy + 10),
+        Offset(center.dx + 7, center.dy + 15), reformer);
+    canvas.drawLine(Offset(center.dx - 9, center.dy - 6),
+        Offset(center.dx - 16, center.dy - 16), reformer);
+    canvas.drawLine(Offset(center.dx + 9, center.dy - 6),
+        Offset(center.dx + 16, center.dy - 16), reformer);
+  }
+
+  @override
+  bool shouldRepaint(_PackageOrbitPainter oldDelegate) =>
+      oldDelegate.turns != turns;
 }
 
 class _BranchOfferPicker extends StatelessWidget {

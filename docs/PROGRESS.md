@@ -2,6 +2,13 @@
 
 ## Current state
 
+- Refined the empty member **Packages / Paketler** state with a small, native
+  Flutter reformer-orbit animation. It uses `CustomPainter`, so no image,
+  Lottie, or video asset increases the app size; it stops as a static drawing
+  for the platform reduce-motion preference. The irrelevant cash-payment note
+  is now hidden when no catalogue offers are available. Review it with
+  `docs/reviews/04-member-dashboard.md`.
+
 - Added localized, minimal branch-selection cards to the member **Packages /
   Paketler** area. Oran uses a warm neutral location treatment and İncek a
   quiet cool one; a card filters the existing loaded catalogue and a second tap

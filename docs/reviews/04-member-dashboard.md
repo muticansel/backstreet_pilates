@@ -85,5 +85,12 @@ metadata. Selecting a card filters the already loaded catalogue; selecting it
 again restores all offers. The cards stay hidden when a catalogue has fewer
 than two branches.
 
+2026-10-14 empty-catalogue iteration: when there are no available packages,
+the page uses a small native-drawn reformer with two slow, periodically moving
+orbit lines rather
+than a bitmap, video, or animation asset. It does not increase the app bundle
+with media, has a static reduce-motion version, and the cash-payment note is
+not shown without a package to purchase.
+
 User feedback: pending.
 Approval: pending.
