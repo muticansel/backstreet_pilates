@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../theme/app_theme.dart';
+import '../../../theme/empty_state_illustration.dart';
 import '../../../theme/app_snack_bars.dart';
 import '../../../theme/pilates_loading_indicator.dart';
 import '../../../l10n/app_localizations.dart';
@@ -387,7 +388,7 @@ class _EmptyPackages extends StatelessWidget {
         padding: const EdgeInsets.all(32),
         children: [
           const SizedBox(height: 80),
-          const Icon(Icons.style_outlined, color: AppTheme.sage, size: 48),
+          const EmptyStateIllustration(),
           const SizedBox(height: 20),
           Text(AppLocalizations.of(context).text('noApprovedPackages'),
               textAlign: TextAlign.center,

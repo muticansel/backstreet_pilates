@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../../theme/app_theme.dart';
+import '../../../theme/empty_state_illustration.dart';
 import '../../../theme/app_status_chip.dart';
 import '../../../theme/pilates_loading_indicator.dart';
 import '../data/booking_gateway.dart';
@@ -139,6 +140,7 @@ class _UpcomingClassesPageState extends State<UpcomingClassesPage> {
               else if (classes.isEmpty)
                 _EmptyState(
                   icon: Icons.event_available_outlined,
+                  illustrated: true,
                   message: _selectedDate == null
                       ? strings.text('noUpcomingClasses')
                       : strings.text('noClassesOnSelectedDate'),
@@ -235,17 +237,25 @@ class _ClassCard extends StatelessWidget {
 }
 
 class _EmptyState extends StatelessWidget {
-  const _EmptyState({required this.icon, required this.message});
+  const _EmptyState({
+    required this.icon,
+    required this.message,
+    this.illustrated = false,
+  });
 
   final IconData icon;
   final String message;
+  final bool illustrated;
 
   @override
   Widget build(BuildContext context) => Padding(
         padding: const EdgeInsets.symmetric(vertical: 36),
         child: Column(
           children: [
-            Icon(icon, color: AppTheme.sage, size: 42),
+            if (illustrated)
+              const EmptyStateIllustration()
+            else
+              Icon(icon, color: AppTheme.sage, size: 42),
             const SizedBox(height: 14),
             Text(message, textAlign: TextAlign.center),
           ],

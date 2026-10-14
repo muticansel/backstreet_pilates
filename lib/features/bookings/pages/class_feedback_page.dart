@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../theme/app_snack_bars.dart';
 import '../../../theme/app_theme.dart';
+import '../../../theme/empty_state_illustration.dart';
 import '../../../theme/pilates_loading_indicator.dart';
 import '../data/booking_gateway.dart';
 
@@ -61,6 +62,7 @@ class _ClassFeedbackPageState extends State<ClassFeedbackPage> {
           if (classes.isEmpty) {
             return _Message(
                 icon: Icons.event_available_outlined,
+                illustrated: true,
                 text: strings.text('noCompletedClasses'));
           }
           return ListView(
@@ -230,15 +232,23 @@ class _ClassHeading extends StatelessWidget {
 }
 
 class _Message extends StatelessWidget {
-  const _Message({required this.icon, required this.text});
+  const _Message({
+    required this.icon,
+    required this.text,
+    this.illustrated = false,
+  });
   final IconData icon;
   final String text;
+  final bool illustrated;
   @override
   Widget build(BuildContext context) => Center(
       child: Padding(
           padding: const EdgeInsets.all(32),
           child: Column(mainAxisSize: MainAxisSize.min, children: [
-            Icon(icon, size: 42, color: AppTheme.sage),
+            if (illustrated)
+              const EmptyStateIllustration()
+            else
+              Icon(icon, size: 42, color: AppTheme.sage),
             const SizedBox(height: 12),
             Text(text, textAlign: TextAlign.center)
           ])));

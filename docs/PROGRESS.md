@@ -2,6 +2,14 @@
 
 ## Current state
 
+- Added an original, transparent reformer illustration for primary member
+  empty states. It replaces static icons for empty classes, packages, private
+  lesson history, feedback and dashboard progress while preserving meaningful
+  error/loading icons. `dart format`, `flutter analyze`, and member-flow tests
+  pass. The full suite reaches 20 passing tests, then fails in the unrelated
+  existing admin-navigation expectation at `test/auth_flow_test.dart:333`,
+  which looks for `ACTIVE MEMBERS`.
+
 - Replaced the member private-lesson vertical slot list with a horizontally
   scrollable daily timeline. It retains visible unavailable hours and the
   existing request/error behavior, now over the 05:00–22:00 window. The

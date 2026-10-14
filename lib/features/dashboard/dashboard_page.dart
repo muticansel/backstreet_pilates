@@ -13,6 +13,7 @@ import '../../../theme/app_theme.dart';
 import '../../../theme/app_snack_bars.dart';
 import '../../../theme/pilates_loading_indicator.dart';
 import '../../../theme/app_status_chip.dart';
+import '../../../theme/empty_state_illustration.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../notifications/push_notification_service.dart';
 
@@ -612,7 +613,8 @@ class _TodayMovementCard extends StatelessWidget {
                         color: suggestion.accent,
                         shape: BoxShape.circle,
                       ),
-                      child: Icon(suggestion.icon, color: Colors.white, size: 30),
+                      child:
+                          Icon(suggestion.icon, color: Colors.white, size: 30),
                     ),
                   ),
                   Padding(
@@ -772,6 +774,7 @@ class _CurrentPackageSection extends StatelessWidget {
               icon: Icons.style_outlined,
               titleKey: 'noCurrentPackage',
               detailKey: 'noCurrentPackageDetail',
+              illustrated: true,
               actionKey: 'explorePackages',
               onPressed: onExplorePackages,
             );
@@ -877,6 +880,7 @@ class _PackageMessageCard extends StatelessWidget {
     required this.icon,
     required this.titleKey,
     required this.detailKey,
+    this.illustrated = false,
     this.actionKey,
     this.onPressed,
   });
@@ -884,6 +888,7 @@ class _PackageMessageCard extends StatelessWidget {
   final IconData icon;
   final String titleKey;
   final String detailKey;
+  final bool illustrated;
   final String? actionKey;
   final VoidCallback? onPressed;
 
@@ -892,6 +897,7 @@ class _PackageMessageCard extends StatelessWidget {
         icon: icon,
         titleKey: titleKey,
         detailKey: detailKey,
+        illustrated: illustrated,
         actionKey: actionKey,
         onPressed: onPressed,
       );
@@ -1159,6 +1165,7 @@ class _NoProgressCard extends StatelessWidget {
         icon: Icons.insights_outlined,
         titleKey: 'noProgressYet',
         detailKey: 'noProgressYetDetail',
+        illustrated: true,
         actionKey: 'viewMyClasses',
         onPressed: onViewClasses,
       );
@@ -1180,6 +1187,7 @@ class _ProgressMessageCard extends StatelessWidget {
     required this.icon,
     required this.titleKey,
     required this.detailKey,
+    this.illustrated = false,
     this.actionKey,
     this.onPressed,
   });
@@ -1187,6 +1195,7 @@ class _ProgressMessageCard extends StatelessWidget {
   final IconData icon;
   final String titleKey;
   final String detailKey;
+  final bool illustrated;
   final String? actionKey;
   final VoidCallback? onPressed;
 
@@ -1200,15 +1209,18 @@ class _ProgressMessageCard extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Container(
-              height: 52,
-              width: 52,
-              decoration: const BoxDecoration(
-                color: Color(0xFFD5E0CF),
-                shape: BoxShape.circle,
+            if (illustrated)
+              const EmptyStateIllustration(height: 84)
+            else
+              Container(
+                height: 52,
+                width: 52,
+                decoration: const BoxDecoration(
+                  color: Color(0xFFD5E0CF),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(icon, color: AppTheme.sage, size: 27),
               ),
-              child: Icon(icon, color: AppTheme.sage, size: 27),
-            ),
             const SizedBox(width: 14),
             Expanded(
               child: Column(

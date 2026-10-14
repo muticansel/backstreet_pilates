@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../../theme/app_theme.dart';
+import '../../../theme/empty_state_illustration.dart';
 import '../../../theme/pilates_loading_indicator.dart';
 import '../data/booking_gateway.dart';
 
@@ -57,6 +58,7 @@ class _MyPrivateLessonsPageState extends State<MyPrivateLessonsPage> {
               else if (snapshot.data!.isEmpty)
                 _PrivateLessonNotice(
                   icon: Icons.event_available_outlined,
+                  illustrated: true,
                   text: strings.text('noMyPrivateLessons'),
                 )
               else
@@ -175,16 +177,24 @@ class _MemberPrivateLessonCard extends StatelessWidget {
 }
 
 class _PrivateLessonNotice extends StatelessWidget {
-  const _PrivateLessonNotice({required this.icon, required this.text});
+  const _PrivateLessonNotice({
+    required this.icon,
+    required this.text,
+    this.illustrated = false,
+  });
 
   final IconData icon;
   final String text;
+  final bool illustrated;
 
   @override
   Widget build(BuildContext context) => Padding(
         padding: const EdgeInsets.symmetric(vertical: 36),
         child: Column(children: [
-          Icon(icon, size: 42, color: AppTheme.sage),
+          if (illustrated)
+            const EmptyStateIllustration()
+          else
+            Icon(icon, size: 42, color: AppTheme.sage),
           const SizedBox(height: 12),
           Text(text, textAlign: TextAlign.center),
         ]),
