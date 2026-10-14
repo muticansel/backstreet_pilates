@@ -2,6 +2,11 @@
 
 ## Current state
 
+- Built release version `0.1.1+5` on 2026-10-14: a signed iOS IPA for
+  TestFlight and a signed Android APK for Firebase App Distribution. Supabase
+  configuration was supplied only through build-time defines and was not
+  written to the repository.
+
 - Refined the empty member **Packages / Paketler** state with a small, native
   Flutter reformer-orbit animation. It uses `CustomPainter`, so no image,
   Lottie, or video asset increases the app size; it stops as a static drawing
