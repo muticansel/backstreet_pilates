@@ -2,6 +2,12 @@
 
 ## Current state
 
+- Added localized, minimal branch-selection cards to the member **Packages /
+  Paketler** area. Oran uses a warm neutral location treatment and İncek a
+  quiet cool one; a card filters the existing loaded catalogue and a second tap
+  restores every offer. This is presentation-only: no package API or database
+  change is needed. Review it with `docs/reviews/04-member-dashboard.md`.
+
 - Added a shared, calm success micro-animation to the existing transient
   notification layer. Successful requests, feedback saves, approvals and
   completed admin actions now use a short expanding ring and check mark

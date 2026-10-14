@@ -1432,62 +1432,72 @@ class _PackagesPlaceholder extends StatefulWidget {
 class _PackagesPlaceholderState extends State<_PackagesPlaceholder> {
   late final Future<List<PackageOffer>> _offers =
       widget.purchases.loadActiveOffers();
+  String? _selectedBranch;
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<PackageOffer>>(
         future: _offers,
-        builder: (context, snapshot) => SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(24, 32, 24, 36),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const Icon(Icons.style_outlined,
-                      color: AppTheme.sage, size: 34),
-                  const SizedBox(height: 24),
-                  Text(AppLocalizations.of(context).text('packages'),
-                      style: Theme.of(context).textTheme.headlineLarge),
-                  const SizedBox(height: 10),
-                  Text(
-                    AppLocalizations.of(context).text('packagesIntro'),
-                    style: Theme.of(context).textTheme.bodyLarge,
+        builder: (context, snapshot) {
+          return SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(24, 32, 24, 36),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const Icon(Icons.style_outlined,
+                    color: AppTheme.sage, size: 34),
+                const SizedBox(height: 24),
+                Text(AppLocalizations.of(context).text('packages'),
+                    style: Theme.of(context).textTheme.headlineLarge),
+                const SizedBox(height: 10),
+                Text(
+                  AppLocalizations.of(context).text('packagesIntro'),
+                  style: Theme.of(context).textTheme.bodyLarge,
+                ),
+                const SizedBox(height: 32),
+                if (snapshot.connectionState != ConnectionState.done)
+                  const Center(
+                      child: Padding(
+                          padding: EdgeInsets.all(32),
+                          child: PilatesLoadingIndicator()))
+                else if (snapshot.hasError || snapshot.data!.isEmpty)
+                  Text(AppLocalizations.of(context).text('noPackagesAvailable'),
+                      textAlign: TextAlign.center)
+                else ...[
+                  _BranchOfferPicker(
+                    offers: snapshot.data!,
+                    selectedBranch: _selectedBranch,
+                    onSelected: (branch) =>
+                        setState(() => _selectedBranch = branch),
                   ),
-                  const SizedBox(height: 32),
-                  if (snapshot.connectionState != ConnectionState.done)
-                    const Center(
-                        child: Padding(
-                            padding: EdgeInsets.all(32),
-                            child: PilatesLoadingIndicator()))
-                  else if (snapshot.hasError || snapshot.data!.isEmpty)
-                    Text(
-                        AppLocalizations.of(context)
-                            .text('noPackagesAvailable'),
-                        textAlign: TextAlign.center)
-                  else
-                    for (final offer in snapshot.data!) ...[
-                      _PackageOptionCard(
-                        title: offer.title,
-                        detail: AppLocalizations.of(context)
-                            .text('packageDetails')
-                            .replaceAll('{branch}', offer.branchName)
-                            .replaceAll('{classes}', '${offer.totalCredits}')
-                            .replaceAll('{weeks}', '${offer.durationWeeks}')
-                            .replaceAll(
-                                '{price}', '₺${offer.priceMinor ~/ 100}'),
-                        icon: Icons.spa_outlined,
-                        onTap: () => _showRequest(context, offer),
-                      ),
-                      const SizedBox(height: 14),
-                    ],
-                  const SizedBox(height: 24),
-                  Text(
-                    AppLocalizations.of(context).text('cashPaymentOnly'),
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 12, color: AppTheme.sage),
-                  ),
+                  const SizedBox(height: 20),
+                  for (final offer in snapshot.data!.where((offer) =>
+                      _selectedBranch == null ||
+                      offer.branchName == _selectedBranch)) ...[
+                    _PackageOptionCard(
+                      title: offer.title,
+                      detail: AppLocalizations.of(context)
+                          .text('packageDetails')
+                          .replaceAll('{branch}', offer.branchName)
+                          .replaceAll('{classes}', '${offer.totalCredits}')
+                          .replaceAll('{weeks}', '${offer.durationWeeks}')
+                          .replaceAll('{price}', '₺${offer.priceMinor ~/ 100}'),
+                      icon: Icons.spa_outlined,
+                      onTap: () => _showRequest(context, offer),
+                    ),
+                    const SizedBox(height: 14),
+                  ],
                 ],
-              ),
-            ));
+                const SizedBox(height: 24),
+                Text(
+                  AppLocalizations.of(context).text('cashPaymentOnly'),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 12, color: AppTheme.sage),
+                ),
+              ],
+            ),
+          );
+        });
   }
 
   Future<void> _showRequest(BuildContext context, PackageOffer offer) async {
@@ -1558,6 +1568,122 @@ class _PackagesPlaceholderState extends State<_PackagesPlaceholder> {
               child: Text(AppLocalizations.of(context).text('sendRequest')),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _BranchOfferPicker extends StatelessWidget {
+  const _BranchOfferPicker({
+    required this.offers,
+    required this.selectedBranch,
+    required this.onSelected,
+  });
+
+  final List<PackageOffer> offers;
+  final String? selectedBranch;
+  final ValueChanged<String?> onSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    final branches = offers.map((offer) => offer.branchName).toSet().toList()
+      ..sort();
+    if (branches.length < 2) return const SizedBox.shrink();
+    final strings = AppLocalizations.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(strings.text('chooseBranch'),
+            style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
+        const SizedBox(height: 4),
+        Text(strings.text('chooseBranchDetail'),
+            style: Theme.of(context).textTheme.bodySmall),
+        const SizedBox(height: 12),
+        for (final branch in branches) ...[
+          _BranchAtmosphereCard(
+            branch: branch,
+            selected: selectedBranch == branch,
+            onTap: () => onSelected(selectedBranch == branch ? null : branch),
+          ),
+          const SizedBox(height: 10),
+        ],
+      ],
+    );
+  }
+}
+
+class _BranchAtmosphereCard extends StatelessWidget {
+  const _BranchAtmosphereCard({
+    required this.branch,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String branch;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final isIncek = branch.toLowerCase().contains('incek');
+    final strings = AppLocalizations.of(context);
+    final tint = isIncek ? const Color(0xFFE9EEF1) : const Color(0xFFF1E9DE);
+    final accent = isIncek ? const Color(0xFF607E87) : const Color(0xFF9A7654);
+    final detailKey = isIncek ? 'incekAtmosphere' : 'oranAtmosphere';
+    return Semantics(
+      button: true,
+      selected: selected,
+      label: strings
+          .text('branchSelectionA11y')
+          .replaceAll('{branch}', branch)
+          .replaceAll('{detail}', strings.text(detailKey)),
+      child: Material(
+        color: tint,
+        borderRadius: BorderRadius.circular(18),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(18),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 180),
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(
+                color: selected ? accent : accent.withValues(alpha: .18),
+                width: selected ? 1.5 : 1,
+              ),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  height: 38,
+                  width: 38,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: .6),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(Icons.location_on_outlined, color: accent),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(branch,
+                          style: TextStyle(
+                              color: accent, fontWeight: FontWeight.w700)),
+                      const SizedBox(height: 3),
+                      Text(strings.text(detailKey),
+                          style: Theme.of(context).textTheme.bodySmall),
+                    ],
+                  ),
+                ),
+                Icon(selected ? Icons.check_circle : Icons.arrow_forward,
+                    color: accent, size: 20),
+              ],
+            ),
+          ),
         ),
       ),
     );

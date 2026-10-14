@@ -15,7 +15,9 @@ Source: `lib/features/dashboard/dashboard_page.dart`.
    no completed classes show a breathing reset, and members with prior practice
    but no upcoming class see a gentle stretch.
 4. A current-package card with branch, package, remaining classes, completion progress and expiry date.
-5. A package-exploration card that establishes the future purchase entry point.
+5. A package-exploration area with minimal branch cards for Oran and İncek.
+   Each card has a muted location/atmosphere treatment and filters the offers
+   without introducing another data request.
 6. A progress card derived from the member's completed (`attended`) bookings:
    six months of attendance, a current/best weekly consistency series, and
    compact class milestones. It shows a clear empty state before a first
@@ -76,6 +78,12 @@ status treatment, not a global approval of all screens.
 card. It only uses the already loaded upcoming-class and completed-booking
 snapshots, so it does not add another member data request. Loading and data
 errors leave the optional card out rather than displaying a generic suggestion.
+
+2026-10-14 package exploration iteration: Oran and İncek are separated with
+small, softly tinted location cards instead of treating branch as secondary
+metadata. Selecting a card filters the already loaded catalogue; selecting it
+again restores all offers. The cards stay hidden when a catalogue has fewer
+than two branches.
 
 User feedback: pending.
 Approval: pending.
