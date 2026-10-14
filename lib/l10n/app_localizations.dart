@@ -459,6 +459,9 @@ class AppLocalizations {
       'privateLessonBookingTitle': 'Choose a private lesson time',
       'privateLessonBookingDetail':
           'Available one-hour times are shown in green. Your request is sent to the studio for approval.',
+      'privateLessonTimeline': 'DAILY AVAILABILITY',
+      'privateLessonTimelineHint': 'Swipe across to see every available time.',
+      'showAvailableTimesOnly': 'Available times only',
       'available': 'Available',
       'unavailable': 'Unavailable',
       'privateLessonRequestSent':
@@ -930,6 +933,9 @@ class AppLocalizations {
       'privateLessonBookingTitle': 'Özel ders saati seç',
       'privateLessonBookingDetail':
           'Yeşil renkteki bir saatlik zamanlar açıktır. Talebin onay için stüdyoya iletilir.',
+      'privateLessonTimeline': 'GÜNLÜK UYGUNLUK',
+      'privateLessonTimelineHint': 'Tüm saatleri görmek için yatay kaydır.',
+      'showAvailableTimesOnly': 'Yalnızca uygun saatler',
       'available': 'Açık',
       'unavailable': 'Uygun değil',
       'privateLessonRequestSent': 'Özel ders talebin onay için gönderildi.',

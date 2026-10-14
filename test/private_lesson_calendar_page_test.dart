@@ -35,22 +35,34 @@ class _CalendarGateway extends UnconfiguredAdminBookingGateway {
 }
 
 class _PrivateLessonGateway extends UnconfiguredBookingGateway {
-  const _PrivateLessonGateway();
+  _PrivateLessonGateway();
+
+  DateTime? requestedSlot;
 
   @override
   Future<List<PrivateLessonSlot>> loadPrivateLessonSlots(DateTime date) async =>
       [
         PrivateLessonSlot(
-          startsAt: DateTime(date.year, date.month, date.day, 6),
+          startsAt: DateTime(date.year, date.month, date.day, 5),
           isAvailable: true,
           isDefaultClosed: false,
         ),
         PrivateLessonSlot(
-          startsAt: DateTime(date.year, date.month, date.day, 7),
+          startsAt: DateTime(date.year, date.month, date.day, 21),
           isAvailable: false,
           isDefaultClosed: false,
         ),
+        PrivateLessonSlot(
+          startsAt: DateTime(date.year, date.month, date.day, 22),
+          isAvailable: true,
+          isDefaultClosed: false,
+        ),
       ];
+
+  @override
+  Future<void> requestPrivateLesson(DateTime startsAt) async {
+    requestedSlot = startsAt;
+  }
 
   @override
   Future<List<MemberPrivateLesson>> loadMyPrivateLessons() async => [
@@ -92,17 +104,35 @@ void main() {
 
   testWidgets('renders slots returned by the member slot gateway',
       (tester) async {
-    await tester.pumpWidget(_testApp(
-        const PrivateLessonBookingPage(bookings: _PrivateLessonGateway())));
+    final gateway = _PrivateLessonGateway();
+    await tester
+        .pumpWidget(_testApp(PrivateLessonBookingPage(bookings: gateway)));
     await tester.pumpAndSettle();
 
-    expect(find.text('06:00 – 07:00'), findsOneWidget);
-    expect(find.text('07:00 – 08:00'), findsOneWidget);
+    expect(find.byKey(const ValueKey('private-lesson-daily-timeline')),
+        findsOneWidget);
+    expect(find.byKey(const ValueKey('private-lesson-slot-05:00')),
+        findsOneWidget);
+    expect(find.byKey(const ValueKey('private-lesson-slot-21:00')),
+        findsOneWidget);
+    expect(
+        find.byKey(const ValueKey('private-lesson-slot-22:00')), findsNothing);
+
+    await tester.tap(find.text('Available times only'));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('private-lesson-slot-05:00')),
+        findsOneWidget);
+    expect(
+        find.byKey(const ValueKey('private-lesson-slot-21:00')), findsNothing);
+
+    await tester.tap(find.text('05:00'));
+    await tester.pumpAndSettle();
+    expect(gateway.requestedSlot?.hour, 5);
   });
 
   testWidgets('renders the member private lesson history', (tester) async {
-    await tester.pumpWidget(_testApp(
-        const MyPrivateLessonsPage(bookings: _PrivateLessonGateway())));
+    await tester.pumpWidget(
+        _testApp(MyPrivateLessonsPage(bookings: _PrivateLessonGateway())));
     await tester.pumpAndSettle();
 
     expect(find.text('Approved'), findsOneWidget);
@@ -113,7 +143,7 @@ void main() {
 
   testWidgets('shows private lesson actions only when the feature is open',
       (tester) async {
-    await tester.pumpWidget(_testApp(const UpcomingClassesPage(
+    await tester.pumpWidget(_testApp(UpcomingClassesPage(
         key: ValueKey('private-lessons-closed'),
         bookings: UnconfiguredBookingGateway())));
     await tester.pumpAndSettle();
@@ -121,7 +151,7 @@ void main() {
     expect(find.text('Book a private lesson'), findsNothing);
     expect(find.text('My private lessons'), findsNothing);
 
-    await tester.pumpWidget(_testApp(const UpcomingClassesPage(
+    await tester.pumpWidget(_testApp(UpcomingClassesPage(
         key: ValueKey('private-lessons-open'),
         bookings: _PrivateLessonGateway())));
     await tester.pumpAndSettle();

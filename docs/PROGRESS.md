@@ -2,6 +2,18 @@
 
 ## Current state
 
+- Replaced the member private-lesson vertical slot list with a horizontally
+  scrollable daily timeline. It retains visible unavailable hours and the
+  existing request/error behavior, now over the 05:00–22:00 window. The
+  existing `20261009000300_private_lesson_default_closed_hours.sql` migration
+  already permits requests from 05:00 through 21:00 and returns the 22:00
+  closing boundary; no new server migration is needed. Members can now switch
+  the timeline to show only available times. `dart format`, `flutter analyze`,
+  and all four focused private-lesson widget tests pass. The full suite reaches
+  20 passing tests, then fails in the unrelated existing admin-navigation
+  expectation at `test/auth_flow_test.dart:333`, which looks for `ACTIVE
+  MEMBERS`.
+
 - Added a compact operational-summary strip to the admin **Today / Bugün**
   screen. It turns the existing snapshot into an occupancy ring, a no-show
   ratio bar, and a payment-queue indicator with exact counts and total value.

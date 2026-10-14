@@ -20,6 +20,7 @@ class _PrivateLessonBookingPageState extends State<PrivateLessonBookingPage> {
   late DateTime _selectedDate = _today();
   late Future<List<PrivateLessonSlot>> _slots = _load();
   String? _requestingSlot;
+  bool _availableOnly = false;
 
   static DateTime _today() {
     final now = DateTime.now();
@@ -51,12 +52,16 @@ class _PrivateLessonBookingPageState extends State<PrivateLessonBookingPage> {
       if (!mounted) return;
       AppNotifications.success(
           AppLocalizations.of(context).text('privateLessonRequestSent'));
-      setState(() => _slots = _load());
+      setState(() {
+        _slots = _load();
+      });
     } catch (_) {
       if (mounted) {
         AppNotifications.error(
             AppLocalizations.of(context).text('privateLessonRequestError'));
-        setState(() => _slots = _load());
+        setState(() {
+          _slots = _load();
+        });
       }
     } finally {
       if (mounted) setState(() => _requestingSlot = null);
@@ -76,7 +81,9 @@ class _PrivateLessonBookingPageState extends State<PrivateLessonBookingPage> {
     return Scaffold(
       appBar: AppBar(title: Text(strings.text('bookPrivateLesson'))),
       body: RefreshIndicator(
-        onRefresh: () async => setState(() => _slots = _load()),
+        onRefresh: () async => setState(() {
+          _slots = _load();
+        }),
         child: FutureBuilder<List<PrivateLessonSlot>>(
           future: _slots,
           builder: (context, snapshot) => ListView(
@@ -109,14 +116,25 @@ class _PrivateLessonBookingPageState extends State<PrivateLessonBookingPage> {
               else ...[
                 _Legend(strings: strings),
                 const SizedBox(height: 12),
-                ...snapshot.data!.map((slot) => _SlotTile(
-                      slot: slot,
-                      requesting:
-                          _requestingSlot == slot.startsAt.toIso8601String(),
-                      onTap: slot.isAvailable ? () => _request(slot) : null,
-                      onUnavailable: () => _showUnavailableReason(slot),
-                      strings: strings,
-                    )),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: FilterChip(
+                    selected: _availableOnly,
+                    onSelected: (selected) =>
+                        setState(() => _availableOnly = selected),
+                    label: Text(strings.text('showAvailableTimesOnly')),
+                    avatar: const Icon(Icons.filter_alt_outlined, size: 18),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                _DailyTimeline(
+                  slots: snapshot.data!,
+                  requestingSlot: _requestingSlot,
+                  availableOnly: _availableOnly,
+                  onRequest: _request,
+                  onUnavailable: _showUnavailableReason,
+                  strings: strings,
+                ),
               ],
             ],
           ),
@@ -131,13 +149,26 @@ class _Legend extends StatelessWidget {
   final AppLocalizations strings;
 
   @override
-  Widget build(BuildContext context) => Row(children: [
-        _LegendItem(
-            color: const Color(0xFFE1EEE4), text: strings.text('available')),
-        const SizedBox(width: 16),
-        _LegendItem(
-            color: const Color(0xFFECECE8), text: strings.text('unavailable')),
-      ]);
+  Widget build(BuildContext context) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(strings.text('privateLessonTimeline'),
+              style: const TextStyle(fontWeight: FontWeight.w700)),
+          const SizedBox(height: 4),
+          Text(strings.text('privateLessonTimelineHint'),
+              style: Theme.of(context).textTheme.bodySmall),
+          const SizedBox(height: 10),
+          Row(children: [
+            _LegendItem(
+                color: const Color(0xFFE1EEE4),
+                text: strings.text('available')),
+            const SizedBox(width: 16),
+            _LegendItem(
+                color: const Color(0xFFECECE8),
+                text: strings.text('unavailable')),
+          ]),
+        ],
+      );
 }
 
 class _LegendItem extends StatelessWidget {
@@ -156,17 +187,67 @@ class _LegendItem extends StatelessWidget {
       ]);
 }
 
-class _SlotTile extends StatelessWidget {
-  const _SlotTile(
-      {required this.slot,
-      required this.requesting,
-      required this.onTap,
-      required this.onUnavailable,
-      required this.strings});
+class _DailyTimeline extends StatelessWidget {
+  const _DailyTimeline({
+    required this.slots,
+    required this.requestingSlot,
+    required this.availableOnly,
+    required this.onRequest,
+    required this.onUnavailable,
+    required this.strings,
+  });
+
+  final List<PrivateLessonSlot> slots;
+  final String? requestingSlot;
+  final bool availableOnly;
+  final ValueChanged<PrivateLessonSlot> onRequest;
+  final ValueChanged<PrivateLessonSlot> onUnavailable;
+  final AppLocalizations strings;
+
+  @override
+  Widget build(BuildContext context) {
+    final timelineSlots = slots
+        .where((slot) => slot.startsAt.hour >= 5 && slot.startsAt.hour < 22)
+        .where((slot) => !availableOnly || slot.isAvailable)
+        .toList()
+      ..sort((first, second) => first.startsAt.compareTo(second.startsAt));
+    return SingleChildScrollView(
+      key: const ValueKey('private-lesson-daily-timeline'),
+      scrollDirection: Axis.horizontal,
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: timelineSlots
+            .map((slot) => Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: _TimelineSlot(
+                    slot: slot,
+                    requesting:
+                        requestingSlot == slot.startsAt.toIso8601String(),
+                    onRequest: onRequest,
+                    onUnavailable: onUnavailable,
+                    strings: strings,
+                  ),
+                ))
+            .toList(),
+      ),
+    );
+  }
+}
+
+class _TimelineSlot extends StatelessWidget {
+  const _TimelineSlot({
+    required this.slot,
+    required this.requesting,
+    required this.onRequest,
+    required this.onUnavailable,
+    required this.strings,
+  });
+
   final PrivateLessonSlot slot;
   final bool requesting;
-  final VoidCallback? onTap;
-  final VoidCallback onUnavailable;
+  final ValueChanged<PrivateLessonSlot> onRequest;
+  final ValueChanged<PrivateLessonSlot> onUnavailable;
   final AppLocalizations strings;
 
   @override
@@ -174,35 +255,62 @@ class _SlotTile extends StatelessWidget {
     final start = slot.startsAt;
     final end = start.add(const Duration(hours: 1));
     final time = '${_clock(start)} – ${_clock(end)}';
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: Material(
-        color: slot.isAvailable
-            ? const Color(0xFFEAF1E7)
-            : const Color(0xFFF0F0EC),
-        borderRadius: BorderRadius.circular(16),
-        clipBehavior: Clip.antiAlias,
-        child: ListTile(
-          leading: Icon(
-              slot.isAvailable ? Icons.schedule : Icons.block_outlined,
-              color: slot.isAvailable ? AppTheme.sage : Colors.black45),
-          title:
-              Text(time, style: const TextStyle(fontWeight: FontWeight.w700)),
-          subtitle: Text(slot.isAvailable
-              ? strings.text('available')
-              : slot.isDefaultClosed
-                  ? strings.text('privateLessonDefaultClosed')
-                  : strings.text('unavailable')),
-          trailing: slot.isAvailable
-              ? requesting
-                  ? const SizedBox(
-                      width: 22,
-                      height: 22,
-                      child: CircularProgressIndicator(strokeWidth: 2))
-                  : const Icon(Icons.arrow_forward)
-              : const Icon(Icons.lock_outline, size: 18),
-          enabled: !requesting,
-          onTap: requesting ? null : (onTap ?? onUnavailable),
+    final status = slot.isAvailable
+        ? strings.text('available')
+        : slot.isDefaultClosed
+            ? strings.text('privateLessonDefaultClosed')
+            : strings.text('unavailable');
+    return Semantics(
+      button: !requesting,
+      label: '$time · $status',
+      child: ExcludeSemantics(
+        child: Material(
+          color: slot.isAvailable
+              ? const Color(0xFFEAF1E7)
+              : const Color(0xFFF0F0EC),
+          borderRadius: BorderRadius.circular(16),
+          clipBehavior: Clip.antiAlias,
+          child: InkWell(
+            onTap: requesting
+                ? null
+                : slot.isAvailable
+                    ? () => onRequest(slot)
+                    : () => onUnavailable(slot),
+            child: SizedBox(
+              key: ValueKey('private-lesson-slot-${_clock(start)}'),
+              width: 76,
+              height: 104,
+              child: Column(children: [
+                Container(
+                  height: 5,
+                  color: slot.isAvailable
+                      ? AppTheme.sage
+                      : const Color(0xFFB7B7B1),
+                ),
+                const SizedBox(height: 13),
+                Text(_clock(start),
+                    style: const TextStyle(fontWeight: FontWeight.w700)),
+                const SizedBox(height: 3),
+                Text(_clock(end), style: const TextStyle(fontSize: 11)),
+                const Spacer(),
+                requesting
+                    ? const SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : Icon(
+                        slot.isAvailable
+                            ? Icons.arrow_forward
+                            : Icons.lock_outline,
+                        size: 18,
+                        color:
+                            slot.isAvailable ? AppTheme.sage : Colors.black45,
+                      ),
+                const SizedBox(height: 12),
+              ]),
+            ),
+          ),
         ),
       ),
     );

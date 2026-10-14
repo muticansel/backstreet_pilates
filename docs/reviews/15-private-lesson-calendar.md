@@ -11,9 +11,10 @@
   (awaiting approval, approved, declined or cancelled). The existing RLS
   policy remains the access boundary; the client does not receive another
   member's lesson details.
-- A member picks a date within the next 60 days and sees one-hour slots from
-  07:00 to 22:00 Istanbul time. Green slots are requestable; unavailable slots
-  remain visible without exposing another member's identity or booking detail.
+- A member picks a date within the next 60 days and sees a horizontally
+  scrollable daily timeline of one-hour slots from 05:00 to 22:00 Istanbul
+  time. Green slots are requestable; unavailable slots remain visible without
+  exposing another member's identity or booking detail.
 - A request holds the slot while it is pending, so two members cannot request
   the same instructor time. The request is not a paid booking and does not use
   a package credit.
@@ -62,7 +63,7 @@ on `notification_events` INSERT. No secret or client service key is added.
 
 ## Review questions
 
-1. Is 07:00–22:00 the intended standard private-lesson window?
+1. Is 05:00–22:00 the intended standard private-lesson window?
 2. Should a pending request temporarily hide the slot from other members, as it
 does now, or should only approved lessons reserve it?
 3. Should requesting/approving a private lesson create payment or package-credit

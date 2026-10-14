@@ -50,7 +50,7 @@ create policy private_lesson_requests_read on public.private_lesson_requests
     member_user_id = (select auth.uid()) or (select private.is_admin())
   );
 
--- A private lesson is offered in whole one-hour slots from 07:00 through
+-- A private lesson is offered in whole one-hour slots from 05:00 through
 -- 21:00. The end at 22:00 is intentionally exclusive. Administrators close
 -- arbitrary ranges from their calendar; blocks and approved/pending requests
 -- make the corresponding slot unavailable.
@@ -74,7 +74,7 @@ begin
   if instructor_id is null then raise exception 'No instructor is available'; end if;
   for slot_start in
     select ((target_date + make_time(hour_value, 0, 0)) at time zone 'Europe/Istanbul')
-    from generate_series(7, 21) as hour_value
+    from generate_series(5, 21) as hour_value
   loop
     slot_status := case
       when slot_start <= now() then 'unavailable'
@@ -108,7 +108,7 @@ begin
   end if;
   local_start := target_starts_at at time zone 'Europe/Istanbul';
   if date_trunc('hour', local_start) <> local_start
-    or extract(hour from local_start) not between 7 and 21
+    or extract(hour from local_start) not between 5 and 21
     or target_starts_at <= now() then
     raise exception 'Choose an available one-hour slot';
   end if;
