@@ -2,6 +2,16 @@
 
 ## Current state
 
+- Added a circular, localized remaining-credit indicator to active and
+  upcoming cards in the member **My packages / Paketlerim** page. Active
+  packages show their remaining-credit proportion, while upcoming packages
+  show their full, unused entitlement. Expired cards retain their compact text
+  summary. The ring uses existing package data only; no backend or schema
+  change is needed. `dart format`, `flutter analyze`, and the four focused
+  package-page widget tests pass. The full suite reaches 18 passing tests,
+  then fails in the unrelated existing admin-navigation expectation at
+  `test/auth_flow_test.dart:333`, which looks for `ACTIVE MEMBERS`.
+
 - Added a compact weekly-intensity heatmap to the admin **Class schedule /
   Ders takvimi** page. It derives each day's tone from the configured fixed
   series slots already loaded by the page, so it needs no additional backend

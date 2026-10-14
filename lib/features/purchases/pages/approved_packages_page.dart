@@ -195,14 +195,20 @@ class _ApprovedPackageCard extends StatelessWidget {
         const SizedBox(height: 6),
         Text(package.branchName, style: const TextStyle(color: AppTheme.sage)),
         const SizedBox(height: 18),
-        Text(
-          _isActive
-              ? '${package.remainingCredits} of ${package.totalCredits} classes remaining'
-              : '${package.totalCredits} classes',
-          style: const TextStyle(fontWeight: FontWeight.w600),
-        ),
-        const SizedBox(height: 6),
-        Text(dateLabel),
+        if (_isActive || _isUpcoming)
+          Row(children: [
+            _PackageCreditRing(package: package, isUpcoming: _isUpcoming),
+            const SizedBox(width: 18),
+            Expanded(child: Text(dateLabel)),
+          ])
+        else ...[
+          Text(
+            '${package.totalCredits} classes',
+            style: const TextStyle(fontWeight: FontWeight.w600),
+          ),
+          const SizedBox(height: 6),
+          Text(dateLabel),
+        ],
         if (renewalOffer != null) ...[
           const Divider(height: 32),
           _RenewalPrompt(
@@ -217,6 +223,78 @@ class _ApprovedPackageCard extends StatelessWidget {
   }
 
   String _formatDate(DateTime date) => '${date.day}.${date.month}.${date.year}';
+}
+
+class _PackageCreditRing extends StatelessWidget {
+  const _PackageCreditRing({required this.package, required this.isUpcoming});
+
+  final ApprovedPackage package;
+  final bool isUpcoming;
+
+  int get _remainingCredits {
+    if (package.totalCredits <= 0) return 0;
+    if (isUpcoming) return package.totalCredits;
+    return package.remainingCredits.clamp(0, package.totalCredits);
+  }
+
+  double get _progress =>
+      package.totalCredits <= 0 ? 0 : _remainingCredits / package.totalCredits;
+
+  @override
+  Widget build(BuildContext context) {
+    final strings = AppLocalizations.of(context);
+    final label = strings
+        .text(isUpcoming
+            ? 'packageCreditsAvailableSemantics'
+            : 'packageCreditsRemainingSemantics')
+        .replaceAll('{remaining}', '$_remainingCredits')
+        .replaceAll('{total}', '${package.totalCredits}');
+    return Semantics(
+      label: label,
+      child: ExcludeSemantics(
+        child: SizedBox(
+          width: 88,
+          height: 88,
+          child: Stack(alignment: Alignment.center, children: [
+            SizedBox(
+              width: 88,
+              height: 88,
+              child: CircularProgressIndicator(
+                key: ValueKey('package-credit-progress-${package.id}'),
+                value: _progress,
+                strokeWidth: 7,
+                backgroundColor: const Color(0xFFE1E9DE),
+                valueColor: const AlwaysStoppedAnimation(AppTheme.sage),
+              ),
+            ),
+            Column(mainAxisSize: MainAxisSize.min, children: [
+              Text(
+                '$_remainingCredits',
+                style: const TextStyle(
+                  color: AppTheme.sage,
+                  fontSize: 22,
+                  fontWeight: FontWeight.w700,
+                  height: 1,
+                ),
+              ),
+              const SizedBox(height: 3),
+              Text(
+                strings.text(isUpcoming
+                    ? 'classesAvailableCompact'
+                    : 'classesRemainingCompact'),
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: AppTheme.sage,
+                  fontSize: 10,
+                  height: 1.1,
+                ),
+              ),
+            ]),
+          ]),
+        ),
+      ),
+    );
+  }
 }
 
 class _RenewalPrompt extends StatelessWidget {

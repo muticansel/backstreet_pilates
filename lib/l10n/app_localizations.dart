@@ -256,6 +256,11 @@ class AppLocalizations {
       'dashboardPreviewNote':
           'Dashboard content is currently preview data while memberships and bookings are being connected.',
       'classesRemainingCompact': 'classes\nremaining',
+      'classesAvailableCompact': 'classes\navailable',
+      'packageCreditsRemainingSemantics':
+          '{remaining} of {total} classes remaining',
+      'packageCreditsAvailableSemantics':
+          '{remaining} of {total} classes available',
       'membershipProgressDetail':
           '{completed} of {total} classes completed · valid through {date}',
       'noCurrentPackage': 'No active package yet',
@@ -715,6 +720,11 @@ class AppLocalizations {
       'dashboardPreviewNote':
           'Üyelikler ve rezervasyonlar bağlanırken kontrol paneli örnek veriler gösterir.',
       'classesRemainingCompact': 'ders\nkaldı',
+      'classesAvailableCompact': 'ders\nhakkı',
+      'packageCreditsRemainingSemantics':
+          '{remaining} / {total} ders hakkı kaldı',
+      'packageCreditsAvailableSemantics':
+          '{remaining} / {total} ders hakkı kullanılabilir',
       'membershipProgressDetail':
           '{total} dersin {completed} tanesi tamamlandı · geçerlilik: {date}',
       'noCurrentPackage': 'Henüz aktif paketin yok',
