@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'app_theme.dart';
+import 'success_micro_animation.dart';
 
 class AppSnackBars {
   const AppSnackBars._();
@@ -22,11 +23,16 @@ class AppNotifications {
   static final navigatorKey = GlobalKey<NavigatorState>();
   static OverlayEntry? _current;
 
-  static void success(String message) => _show(message, AppTheme.sage);
+  static void success(String message) =>
+      _show(message, AppTheme.sage, showSuccessAnimation: true);
 
   static void error(String message) => _show(message, AppTheme.terracotta);
 
-  static void _show(String message, Color color) {
+  static void _show(
+    String message,
+    Color color, {
+    bool showSuccessAnimation = false,
+  }) {
     _dismiss(_current);
     final overlay = navigatorKey.currentState?.overlay;
     if (overlay == null) return;
@@ -51,8 +57,10 @@ class AppNotifications {
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(16),
-                  child: Text(message,
-                      style: const TextStyle(color: Colors.white)),
+                  child: showSuccessAnimation
+                      ? SuccessMicroAnimation(message: message)
+                      : Text(message,
+                          style: const TextStyle(color: Colors.white)),
                 ),
               ),
             ),

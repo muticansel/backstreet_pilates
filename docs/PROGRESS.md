@@ -2,6 +2,12 @@
 
 ## Current state
 
+- Added a shared, calm success micro-animation to the existing transient
+  notification layer. Successful requests, feedback saves, approvals and
+  completed admin actions now use a short expanding ring and check mark
+  without blocking the current screen; the platform reduce-motion preference
+  shows the static check mark instead. No API or schema change is needed.
+
 - Added an original, transparent reformer illustration for primary member
   empty states. It replaces static icons for empty classes, packages, private
   lesson history, feedback and dashboard progress while preserving meaningful
