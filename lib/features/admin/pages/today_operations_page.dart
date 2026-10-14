@@ -96,6 +96,8 @@ class AdminTodayOperationsContent extends StatelessWidget {
         .fold<int>(0, (total, session) => total + session.bookedCount);
     final occupancy =
         totalCapacity == 0 ? 0 : (totalBooked * 100 / totalCapacity).round();
+    final pendingPaymentTotal = data.pendingPayments
+        .fold<int>(0, (total, payment) => total + payment.priceMinor);
     return ListView(
       padding: const EdgeInsets.fromLTRB(24, 24, 24, 36),
       children: [
@@ -105,23 +107,29 @@ class AdminTodayOperationsContent extends StatelessWidget {
         Text(strings.text('todayOperationsSubtitle'),
             style: Theme.of(context).textTheme.bodyLarge),
         const SizedBox(height: 24),
-        Row(children: [
-          Expanded(
-            child: _Metric(
-              label: strings.text('todayClasses'),
-              value: '${data.classes.length}',
-              icon: Icons.calendar_today_outlined,
-            ),
+        Text(strings.text('todayAtAGlance'),
+            style: const TextStyle(
+                color: AppTheme.sage,
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 1.1)),
+        const SizedBox(height: 10),
+        _OperationsSummary(
+          occupancy: occupancy,
+          totalCapacity: totalCapacity,
+          totalBooked: totalBooked,
+          noShowCount: data.noShows.length,
+          pendingPaymentCount: data.pendingPayments.length,
+          pendingPaymentTotal: pendingPaymentTotal,
+          onNoShowsPressed: () => Navigator.of(context).push(
+            MaterialPageRoute<void>(
+                builder: (_) => AttendancePage(bookings: bookings)),
           ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: _Metric(
-              label: strings.text('occupancy'),
-              value: '$occupancy%',
-              icon: Icons.pie_chart_outline,
-            ),
+          onPaymentsPressed: () => Navigator.of(context).push(
+            MaterialPageRoute<void>(
+                builder: (_) => CashPurchaseRequestsPage(purchases: purchases)),
           ),
-        ]),
+        ),
         const SizedBox(height: 28),
         _Section(
           title: strings.text('todayClasses'),
@@ -185,29 +193,207 @@ class AdminTodayOperationsContent extends StatelessWidget {
   }
 }
 
-class _Metric extends StatelessWidget {
-  const _Metric({required this.label, required this.value, required this.icon});
-  final String label;
-  final String value;
-  final IconData icon;
+class _OperationsSummary extends StatelessWidget {
+  const _OperationsSummary({
+    required this.occupancy,
+    required this.totalCapacity,
+    required this.totalBooked,
+    required this.noShowCount,
+    required this.pendingPaymentCount,
+    required this.pendingPaymentTotal,
+    required this.onNoShowsPressed,
+    required this.onPaymentsPressed,
+  });
+
+  final int occupancy;
+  final int totalCapacity;
+  final int totalBooked;
+  final int noShowCount;
+  final int pendingPaymentCount;
+  final int pendingPaymentTotal;
+  final VoidCallback onNoShowsPressed;
+  final VoidCallback onPaymentsPressed;
 
   @override
-  Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
+  Widget build(BuildContext context) {
+    final strings = AppLocalizations.of(context);
+    final noShowRatio =
+        totalBooked == 0 ? 0.0 : (noShowCount / totalBooked).clamp(0.0, 1.0);
+    final cards = [
+      _SummaryCard(
+        semanticLabel: strings
+            .text('occupancyChartSemantics')
+            .replaceAll('{booked}', '$totalBooked')
+            .replaceAll('{capacity}', '$totalCapacity')
+            .replaceAll('{percent}', '$occupancy'),
+        title: strings.text('occupancy'),
+        content: Row(children: [
+          SizedBox(
+            width: 58,
+            height: 58,
+            child: Stack(alignment: Alignment.center, children: [
+              CircularProgressIndicator(
+                key: const ValueKey('today-occupancy-progress'),
+                value: (occupancy / 100).clamp(0.0, 1.0),
+                strokeWidth: 6,
+                color: AppTheme.sage,
+                backgroundColor: const Color(0xFFE1E9DB),
+              ),
+              Text('$occupancy%',
+                  style: const TextStyle(
+                      color: AppTheme.sage,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700)),
+            ]),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              strings
+                  .text('occupancyDetail')
+                  .replaceAll('{booked}', '$totalBooked')
+                  .replaceAll('{capacity}', '$totalCapacity'),
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+          ),
+        ]),
+      ),
+      _SummaryCard(
+        semanticLabel: strings
+            .text('noShowChartSemantics')
+            .replaceAll('{count}', '$noShowCount')
+            .replaceAll('{booked}', '$totalBooked'),
+        title: strings.text('noShowList'),
+        onPressed: onNoShowsPressed,
+        content:
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text(
+            strings
+                .text('noShowDetail')
+                .replaceAll('{count}', '$noShowCount')
+                .replaceAll('{booked}', '$totalBooked'),
+            style: const TextStyle(fontWeight: FontWeight.w700),
+          ),
+          const SizedBox(height: 12),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(99),
+            child: LinearProgressIndicator(
+              key: const ValueKey('today-no-show-progress'),
+              value: noShowRatio,
+              minHeight: 8,
+              color: const Color(0xFFC27862),
+              backgroundColor: const Color(0xFFF1E3DE),
+            ),
+          ),
+        ]),
+      ),
+      _SummaryCard(
+        semanticLabel: strings
+            .text('pendingPaymentsChartSemantics')
+            .replaceAll('{count}', '$pendingPaymentCount')
+            .replaceAll('{amount}', _formatTry(pendingPaymentTotal)),
+        title: strings.text('paymentsAwaitingApproval'),
+        onPressed: onPaymentsPressed,
+        content:
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text(
+            strings
+                .text('pendingPaymentsDetail')
+                .replaceAll('{count}', '$pendingPaymentCount')
+                .replaceAll('{amount}', _formatTry(pendingPaymentTotal)),
+            style: const TextStyle(fontWeight: FontWeight.w700),
+          ),
+          const SizedBox(height: 12),
+          Row(children: [
+            ...List.generate(
+              pendingPaymentCount > 6 ? 6 : pendingPaymentCount,
+              (index) => Container(
+                key: ValueKey('pending-payment-tick-$index'),
+                width: 16,
+                height: 8,
+                margin: const EdgeInsets.only(right: 4),
+                decoration: BoxDecoration(
+                  color: AppTheme.sage,
+                  borderRadius: BorderRadius.circular(99),
+                ),
+              ),
+            ),
+            if (pendingPaymentCount > 6)
+              Text('+${pendingPaymentCount - 6}',
+                  style: const TextStyle(
+                      color: AppTheme.sage, fontWeight: FontWeight.w700)),
+            if (pendingPaymentCount == 0)
+              const Icon(Icons.check_circle_outline,
+                  color: AppTheme.sage, size: 18),
+          ]),
+        ]),
+      ),
+    ];
+    return LayoutBuilder(builder: (context, constraints) {
+      if (constraints.maxWidth >= 640) {
+        return Row(children: [
+          for (var index = 0; index < cards.length; index++) ...[
+            Expanded(child: cards[index]),
+            if (index < cards.length - 1) const SizedBox(width: 12),
+          ],
+        ]);
+      }
+      return Column(
+        children: [
+          for (var index = 0; index < cards.length; index++) ...[
+            cards[index],
+            if (index < cards.length - 1) const SizedBox(height: 10),
+          ],
+        ],
+      );
+    });
+  }
+}
+
+class _SummaryCard extends StatelessWidget {
+  const _SummaryCard({
+    required this.semanticLabel,
+    required this.title,
+    required this.content,
+    this.onPressed,
+  });
+
+  final String semanticLabel;
+  final String title;
+  final Widget content;
+  final VoidCallback? onPressed;
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+        button: onPressed != null,
+        label: semanticLabel,
+        child: Material(
           color: Colors.white,
           borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: const Color(0xFFD8DED5)),
+          child: InkWell(
+            onTap: onPressed,
+            borderRadius: BorderRadius.circular(18),
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(18),
+                border: Border.all(color: const Color(0xFFD8DED5)),
+              ),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(title,
+                        style: const TextStyle(
+                            color: AppTheme.sage,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700)),
+                    const SizedBox(height: 12),
+                    content,
+                  ]),
+            ),
+          ),
         ),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Icon(icon, color: AppTheme.sage),
-          const SizedBox(height: 18),
-          Text(value,
-              style:
-                  const TextStyle(fontSize: 26, fontWeight: FontWeight.w700)),
-          const SizedBox(height: 3),
-          Text(label, style: const TextStyle(fontSize: 12)),
-        ]),
       );
 }
 

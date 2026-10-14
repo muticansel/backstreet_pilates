@@ -2,6 +2,16 @@
 
 ## Current state
 
+- Added a compact operational-summary strip to the admin **Today / Bugün**
+  screen. It turns the existing snapshot into an occupancy ring, a no-show
+  ratio bar, and a payment-queue indicator with exact counts and total value.
+  The no-show and payment cards preserve their existing navigation targets.
+  No backend query, API, or schema change is required. `dart format`, `flutter
+  analyze`, and the two focused summary widget tests pass. The full suite
+  reaches 20 passing tests, then fails in the unrelated existing admin-
+  navigation expectation at `test/auth_flow_test.dart:333`, which looks for
+  `ACTIVE MEMBERS`.
+
 - Added a circular, localized remaining-credit indicator to active and
   upcoming cards in the member **My packages / Paketlerim** page. Active
   packages show their remaining-credit proportion, while upcoming packages

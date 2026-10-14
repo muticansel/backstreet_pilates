@@ -427,16 +427,26 @@ class AppLocalizations {
           'Run the studio from one up-to-date operational view.',
       'todayOperationsLoadError':
           'Today’s operations could not be loaded. Pull to try again.',
+      'todayAtAGlance': 'AT A GLANCE',
       'todayClasses': 'Today’s group classes',
       'occupancy': 'Occupancy',
+      'occupancyDetail': '{booked} of {capacity} places filled',
+      'occupancyChartSemantics':
+          'Occupancy: {booked} of {capacity} places filled, {percent} percent.',
       'noClassesToday': 'There are no scheduled group classes today.',
       'noShowList': 'No-show list',
+      'noShowDetail': '{count} no-shows from {booked} booked places',
+      'noShowChartSemantics':
+          'No-shows: {count} from {booked} booked places today.',
       'noNoShowsToday': 'No no-shows have been recorded today.',
       'upcomingPackageEndings': 'Upcoming package endings',
       'noUpcomingPackageEndings': 'No packages end in the next 7 days.',
       'endsOn': 'Ends {date}',
       'classesLeft': '{count} classes left',
       'noPendingPayments': 'There are no payments awaiting approval.',
+      'pendingPaymentsDetail': '{count} awaiting · {amount}',
+      'pendingPaymentsChartSemantics':
+          '{count} payments awaiting approval, total {amount}.',
       'viewAll': 'View all',
       'bookPrivateLesson': 'Book a private lesson',
       'myPrivateLessons': 'My private lessons',
@@ -888,16 +898,26 @@ class AppLocalizations {
           'Stüdyoyu güncel operasyon görünümünden yönetin.',
       'todayOperationsLoadError':
           'Bugünün operasyonları yüklenemedi. Tekrar denemek için aşağı çek.',
+      'todayAtAGlance': 'GENEL BAKIŞ',
       'todayClasses': 'Bugünkü grup dersleri',
       'occupancy': 'Doluluk',
+      'occupancyDetail': '{capacity} kontenjanın {booked} tanesi dolu',
+      'occupancyChartSemantics':
+          'Doluluk: {capacity} kontenjanın {booked} tanesi dolu, yüzde {percent}.',
       'noClassesToday': 'Bugün planlanmış grup dersi bulunmuyor.',
       'noShowList': 'No-show listesi',
+      'noShowDetail': '{booked} dolu kontenjanda {count} no-show',
+      'noShowChartSemantics':
+          'Bugün {booked} dolu kontenjanda {count} no-show var.',
       'noNoShowsToday': 'Bugün kaydedilmiş no-show yok.',
       'upcomingPackageEndings': 'Yaklaşan paket bitişleri',
       'noUpcomingPackageEndings': 'Önümüzdeki 7 gün içinde bitecek paket yok.',
       'endsOn': 'Bitiş: {date}',
       'classesLeft': '{count} ders kaldı',
       'noPendingPayments': 'Onay bekleyen ödeme bulunmuyor.',
+      'pendingPaymentsDetail': '{count} onay bekliyor · {amount}',
+      'pendingPaymentsChartSemantics':
+          '{count} ödeme onay bekliyor, toplam {amount}.',
       'viewAll': 'Tümünü gör',
       'bookPrivateLesson': 'Özel ders talep et',
       'myPrivateLessons': 'Özel derslerim',
