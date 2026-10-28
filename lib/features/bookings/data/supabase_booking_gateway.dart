@@ -216,7 +216,8 @@ class SupabaseBookingGateway implements BookingGateway, AdminBookingGateway {
             'id, user_id, status, class_sessions!inner(starts_at, class_series!inner(title, branches!inner(name)))')
         .inFilter('status', ['booked', 'attended', 'no_show']).order(
             'starts_at',
-            referencedTable: 'class_sessions');
+            referencedTable: 'class_sessions',
+            ascending: false);
     // PostgREST's embedded-resource date filter did not consistently return
     // matching rows for this relation. Fetch only attendance-eligible booking
     // statuses from the RLS-protected table, then apply the session-date rule
