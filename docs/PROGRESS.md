@@ -2,6 +2,15 @@
 
 ## Current state
 
+- Prepared release version `0.1.1+6` on 2026-10-30. Generated a signed
+  Android APK for Firebase App Distribution and a signed iOS IPA for
+  TestFlight with the Supabase URL and publishable key supplied only as
+  build-time defines; neither value was written to the repository. The IPA
+  archive is signed by `Apple Distribution: Cansel Muti (2MF496Y4BS)`.
+  `dart format lib test` made no changes and `flutter analyze` passed.
+  `flutter test` reached 25 passing tests, then failed at the pre-existing
+  `ACTIVE MEMBERS` expectation in `test/auth_flow_test.dart:419`.
+
 - Added a verified-session gate for every first post-login data request. The
   root now waits for a non-null Supabase session that also passes `getUser()`
   validation before it creates the role/onboarding, member-dashboard, or
