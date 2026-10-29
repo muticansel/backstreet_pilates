@@ -26,6 +26,10 @@ It does not add the member dashboard, admin panel, reservations, or payments.
 - Closing and reopening the app retains a valid Supabase session and opens the
   appropriate member or admin home without asking for credentials again.
 - Signing out clears the Supabase session, so the next launch opens Login.
+- Before account pages are built, a non-null session is verified through
+  Supabase Auth. This avoids issuing first-login RLS reads while an anonymous
+  request context could still be used. Login and sign-out only change the
+  session; the application root owns the destination.
 - The URL and publishable key are not stored in Git; a secret/service-role key is never used by Flutter.
 
 ## Session storage
@@ -60,6 +64,13 @@ flutter run -d C9F6A868-3B6F-4E6B-9531-69F4480BB6E7 \
 Without both values, the app opens but auth submits show a configuration message.
 
 ## Review notes
+
+2026-10-30 session-readiness iteration: added a root-level verified-session
+gate. A password sign-in and a restored session both validate the signed-in
+user before role, approval, member or admin data loads start. This does not
+persist or log passwords, and no schema or RLS policy changed. Please verify
+on a freshly launched app: sign in once and confirm dashboard data appears
+without closing and reopening the app.
 
 User feedback: pending.
 Approval: pending.

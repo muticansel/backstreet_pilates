@@ -5,7 +5,6 @@ import '../../../notifications/push_notification_service.dart';
 import '../../../theme/app_theme.dart';
 import '../../account/data/account_role_resolver.dart';
 import '../../auth/data/auth_gateway.dart';
-import '../../auth/pages/login_page.dart';
 import '../../bookings/data/booking_gateway.dart';
 import '../../purchases/data/purchase_gateway.dart';
 import 'admin_users_page.dart';
@@ -66,18 +65,6 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
     try {
       await PushNotificationService.instance.unregisterCurrentDevice();
       await widget.auth.signOut();
-      if (!mounted) return;
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute<void>(
-          builder: (_) => LoginPage(
-            auth: widget.auth,
-            roles: widget.roles,
-            purchases: widget.purchases,
-            adminPurchases: widget.adminPurchases,
-          ),
-        ),
-        (_) => false,
-      );
     } on AuthFailure catch (error) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(

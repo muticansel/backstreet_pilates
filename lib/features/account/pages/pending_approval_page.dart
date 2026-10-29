@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../theme/app_theme.dart';
 import '../../auth/data/auth_gateway.dart';
-import '../../auth/pages/login_page.dart';
 import '../data/account_role_resolver.dart';
 
 class PendingApprovalPage extends StatefulWidget {
@@ -28,13 +27,6 @@ class _PendingApprovalPageState extends State<PendingApprovalPage> {
   Future<void> _signOut() async {
     setState(() => _signingOut = true);
     await widget.auth.signOut();
-    if (!mounted) return;
-    Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute<void>(
-        builder: (_) => LoginPage(auth: widget.auth, roles: widget.roles),
-      ),
-      (_) => false,
-    );
   }
 
   @override

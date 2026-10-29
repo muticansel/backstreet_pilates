@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../account/data/account_role_resolver.dart';
-import '../../account/pages/account_home_page.dart';
 import '../../bookings/data/booking_gateway.dart';
 import '../../purchases/data/purchase_gateway.dart';
 import '../../../l10n/app_localizations.dart';
@@ -56,19 +55,6 @@ class _LoginPageState extends State<LoginPage> {
     try {
       await widget.auth
           .signIn(email: _email.text.trim(), password: _password.text);
-      if (!mounted) return;
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute<void>(
-          builder: (_) => AccountHomePage(
-              auth: widget.auth,
-              roles: widget.roles,
-              purchases: widget.purchases,
-              adminPurchases: widget.adminPurchases,
-              bookings: widget.bookings,
-              adminBookings: widget.adminBookings),
-        ),
-        (_) => false,
-      );
     } on AuthFailure catch (error) {
       if (mounted) setState(() => _errorMessage = error.message);
     } finally {

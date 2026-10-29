@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 
 import '../account/data/account_role_resolver.dart';
 import '../auth/data/auth_gateway.dart';
-import '../auth/pages/login_page.dart';
 import '../bookings/data/booking_gateway.dart';
 import '../bookings/pages/class_feedback_page.dart';
 import '../bookings/pages/upcoming_classes_page.dart';
@@ -89,13 +88,6 @@ class _DashboardPageState extends State<DashboardPage> {
     try {
       await PushNotificationService.instance.unregisterCurrentDevice();
       await widget.auth.signOut();
-      if (!mounted) return;
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute<void>(
-          builder: (_) => LoginPage(auth: widget.auth, roles: widget.roles),
-        ),
-        (_) => false,
-      );
     } on AuthFailure catch (error) {
       if (!mounted) return;
       AppNotifications.error(error.message);

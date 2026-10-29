@@ -10,7 +10,14 @@ class SupabaseAuthGateway implements AuthGateway {
   static const _confirmationRedirect = 'backstreetpilates://login-callback/';
 
   @override
-  Future<bool> hasActiveSession() async => _client.currentSession != null;
+  Stream<bool> get sessionReadyChanges =>
+      _client.onAuthStateChange.asyncMap((state) async {
+        if (state.session == null) return false;
+        return _hasVerifiedSession();
+      });
+
+  @override
+  Future<bool> hasActiveSession() => _hasVerifiedSession();
 
   @override
   Future<void> signIn({
@@ -19,6 +26,10 @@ class SupabaseAuthGateway implements AuthGateway {
   }) async {
     try {
       await _client.signInWithPassword(email: email, password: password);
+      if (!await _hasVerifiedSession()) {
+        throw const AuthFailure(
+            'Unable to reach the account service. Try again.');
+      }
     } on AuthException catch (error) {
       throw AuthFailure(_messageFor(error));
     } catch (_) {
@@ -57,6 +68,17 @@ class SupabaseAuthGateway implements AuthGateway {
 
   @override
   Future<void> signOut() => _client.signOut();
+
+  Future<bool> _hasVerifiedSession() async {
+    if (_client.currentSession == null) return false;
+    try {
+      return (await _client.getUser()).user != null;
+    } on AuthException {
+      return false;
+    } catch (_) {
+      return false;
+    }
+  }
 
   String _messageFor(AuthException error) {
     if (error.statusCode == '400') {

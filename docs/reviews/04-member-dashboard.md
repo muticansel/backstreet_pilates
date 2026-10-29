@@ -92,5 +92,12 @@ than a bitmap, video, or animation asset. It does not increase the app bundle
 with media, has a static reduce-motion version, and the cash-payment note is
 not shown without a package to purchase.
 
+2026-10-30 authentication integration note: dashboard data initialization now
+waits for the app root's verified Supabase session gate. On a fresh password
+login, the page is not constructed until the authenticated session is ready,
+so its existing booking and package reads cannot render an early RLS-empty
+snapshot. Please review this once with real member data before approving the
+page.
+
 User feedback: pending.
 Approval: pending.

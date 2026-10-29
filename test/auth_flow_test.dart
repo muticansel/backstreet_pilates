@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:backstreet_pilates/app.dart';
@@ -10,20 +12,30 @@ class FakeAuthGateway implements AuthGateway {
   FakeAuthGateway({
     this.signUpResult = SignupResult.confirmationRequired,
     this.hasSession = false,
+    this.initialSession,
+    this.signInReady,
   });
 
   final SignupResult signUpResult;
   final bool hasSession;
+  final Future<bool>? initialSession;
+  final Future<void>? signInReady;
+  final _sessionChanges = StreamController<bool>.broadcast();
   AuthFailure? signInFailure;
   AuthFailure? signUpFailure;
   int signOutCount = 0;
 
   @override
-  Future<bool> hasActiveSession() async => hasSession;
+  Stream<bool> get sessionReadyChanges => _sessionChanges.stream;
+
+  @override
+  Future<bool> hasActiveSession() => initialSession ?? Future.value(hasSession);
 
   @override
   Future<void> signIn({required String email, required String password}) async {
     if (signInFailure != null) throw signInFailure!;
+    await signInReady;
+    _sessionChanges.add(true);
   }
 
   @override
@@ -38,7 +50,12 @@ class FakeAuthGateway implements AuthGateway {
   }
 
   @override
-  Future<void> signOut() async => signOutCount++;
+  Future<void> signOut() async {
+    signOutCount++;
+    _sessionChanges.add(false);
+  }
+
+  void emitSessionReady(bool value) => _sessionChanges.add(value);
 }
 
 class FakeBookingGateway extends BookingGateway {
@@ -60,6 +77,16 @@ class FakeRoleResolver implements AccountRoleResolver {
 
   @override
   Future<AccountRole> currentRole() async => role;
+}
+
+class CountingRoleResolver implements AccountRoleResolver {
+  int calls = 0;
+
+  @override
+  Future<AccountRole> currentRole() async {
+    calls++;
+    return AccountRole.member;
+  }
 }
 
 class FakePurchaseGateway implements PurchaseGateway {
@@ -205,6 +232,65 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('YOUR CURRENT PACKAGE'), findsOneWidget);
+  });
+
+  testWidgets('protected queries wait for delayed session restoration',
+      (tester) async {
+    final restoredSession = Completer<bool>();
+    final roles = CountingRoleResolver();
+    await tester.pumpWidget(PilatesApp(
+      auth: FakeAuthGateway(initialSession: restoredSession.future),
+      roles: roles,
+    ));
+    await tester.pump();
+
+    expect(find.text('Welcome back.'), findsNothing);
+    expect(roles.calls, 0);
+
+    restoredSession.complete(true);
+    await tester.pumpAndSettle();
+
+    expect(find.text('YOUR CURRENT PACKAGE'), findsOneWidget);
+    expect(roles.calls, 1);
+  });
+
+  testWidgets('login waits for the ready session signal before loading data',
+      (tester) async {
+    final readySession = Completer<void>();
+    final roles = CountingRoleResolver();
+    await tester.pumpWidget(PilatesApp(
+      auth: FakeAuthGateway(signInReady: readySession.future),
+      roles: roles,
+    ));
+    await tester.pumpAndSettle();
+    await tester.enterText(
+        find.byType(TextFormField).at(0), 'hello@example.com');
+    await tester.enterText(find.byType(TextFormField).at(1), 'practice123');
+    await tester.tap(find.text('Log in'));
+    await tester.pump();
+
+    expect(find.text('Welcome back.'), findsOneWidget);
+    expect(roles.calls, 0);
+
+    readySession.complete();
+    await tester.pumpAndSettle();
+
+    expect(find.text('YOUR CURRENT PACKAGE'), findsOneWidget);
+    expect(roles.calls, 1);
+  });
+
+  testWidgets('a cleared session returns the root gate to login',
+      (tester) async {
+    final auth = FakeAuthGateway(hasSession: true);
+    await tester.pumpWidget(PilatesApp(auth: auth));
+    await tester.pumpAndSettle();
+    expect(find.text('YOUR CURRENT PACKAGE'), findsOneWidget);
+
+    auth.emitSessionReady(false);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Welcome back.'), findsOneWidget);
+    expect(find.text('YOUR CURRENT PACKAGE'), findsNothing);
   });
 
   testWidgets('signup checks confirmation and returns to login',

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
@@ -77,7 +79,7 @@ class _PilatesAppState extends State<PilatesApp> {
   }
 }
 
-class _AppLaunchGate extends StatelessWidget {
+class _AppLaunchGate extends StatefulWidget {
   const _AppLaunchGate({
     required this.hasActiveSession,
     required this.auth,
@@ -97,31 +99,64 @@ class _AppLaunchGate extends StatelessWidget {
   final AdminBookingGateway adminBookings;
 
   @override
+  State<_AppLaunchGate> createState() => _AppLaunchGateState();
+}
+
+class _AppLaunchGateState extends State<_AppLaunchGate> {
+  late final StreamSubscription<bool> _sessionSubscription;
+  late final Future<bool> _initialSession;
+  bool _receivedSessionState = false;
+  bool _sessionReady = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Subscribe before checking the initial value so a restored or newly
+    // authenticated session cannot be missed between the two operations.
+    _sessionSubscription = widget.auth.sessionReadyChanges.listen((ready) {
+      if (!mounted) return;
+      setState(() {
+        _receivedSessionState = true;
+        _sessionReady = ready;
+      });
+    });
+    _initialSession = widget.hasActiveSession;
+  }
+
+  @override
+  void dispose() {
+    _sessionSubscription.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) => FutureBuilder<bool>(
-        future: hasActiveSession,
+        future: _initialSession,
         builder: (context, snapshot) {
           if (snapshot.connectionState != ConnectionState.done) {
             return const Scaffold(
               body: Center(child: PilatesLoadingIndicator()),
             );
           }
-          if (snapshot.data == true) {
+          final sessionReady =
+              _receivedSessionState ? _sessionReady : snapshot.data == true;
+          if (sessionReady) {
             return AccountHomePage(
-              auth: auth,
-              roles: roles,
-              purchases: purchases,
-              adminPurchases: adminPurchases,
-              bookings: bookings,
-              adminBookings: adminBookings,
+              auth: widget.auth,
+              roles: widget.roles,
+              purchases: widget.purchases,
+              adminPurchases: widget.adminPurchases,
+              bookings: widget.bookings,
+              adminBookings: widget.adminBookings,
             );
           }
           return LoginPage(
-            auth: auth,
-            roles: roles,
-            purchases: purchases,
-            adminPurchases: adminPurchases,
-            bookings: bookings,
-            adminBookings: adminBookings,
+            auth: widget.auth,
+            roles: widget.roles,
+            purchases: widget.purchases,
+            adminPurchases: widget.adminPurchases,
+            bookings: widget.bookings,
+            adminBookings: widget.adminBookings,
           );
         },
       );

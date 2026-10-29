@@ -1,6 +1,10 @@
 enum SignupResult { signedIn, confirmationRequired }
 
 abstract interface class AuthGateway {
+  /// Emits only after an authenticated session has been verified as ready for
+  /// protected Supabase requests. `false` means the session was cleared.
+  Stream<bool> get sessionReadyChanges;
+
   /// Whether a previous, valid signed-in session is available on this device.
   ///
   /// Implementations must never expose or persist the user's password here.
@@ -29,6 +33,9 @@ class UnconfiguredAuthGateway implements AuthGateway {
 
   static const _message =
       'Account service is not configured. Start the app with its Supabase settings.';
+
+  @override
+  Stream<bool> get sessionReadyChanges => const Stream<bool>.empty();
 
   @override
   Future<bool> hasActiveSession() async => false;

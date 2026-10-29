@@ -2,6 +2,20 @@
 
 ## Current state
 
+- Added a verified-session gate for every first post-login data request. The
+  root now waits for a non-null Supabase session that also passes `getUser()`
+  validation before it creates the role/onboarding, member-dashboard, or
+  admin-dashboard trees. Login and sign-out no longer navigate independently;
+  they emit session changes and the root selects the correct screen. This
+  prevents first-login RLS queries from presenting an empty anonymous result
+  while the session is still becoming available. Added delayed-restore,
+  delayed-sign-in and session-clear widget coverage. `dart format` and
+  `flutter analyze` pass; `flutter test` reaches 25 passing tests then fails
+  at the unrelated, existing `ACTIVE MEMBERS` expectation in
+  `test/auth_flow_test.dart:419`. User runtime review of the first-login flow
+  remains required; see `docs/reviews/03-supabase-auth.md` and
+  `docs/reviews/04-member-dashboard.md`.
+
 - Built release version `0.1.1+5` on 2026-10-14: a signed iOS IPA for
   TestFlight and a signed Android APK for Firebase App Distribution. Supabase
   configuration was supplied only through build-time defines and was not
