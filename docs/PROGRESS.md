@@ -2,6 +2,38 @@
 
 ## Current state
 
+- Revised the live-environment plan to use only the existing development
+  project and one separate AB production project; staging is intentionally not
+  used. Removed the staging deployment workflow and staging-only secret/cron
+  references. Pull requests retain validation, while production deployment is
+  restricted to `main` and the production Environment approval gate. See
+  `docs/LIVE_OPERATIONS.md` and
+  `docs/plans/2026-10-15-supabase-live-launch.md`. `dart format lib test` and
+  `flutter analyze` pass; the full test suite still has the three unrelated,
+  existing package-render expectations described below. Clarified that Firebase
+  and notification webhook secrets belong to production Supabase Edge Function
+  secrets, not GitHub Environment secrets. The user selected Supabase’s own
+  production database backups instead of external AWS/S3 backup automation;
+  AWS-specific workflow, script, lifecycle configuration and secret
+  requirements were removed. Storage is not in use today and requires a
+  separate backup decision before it is introduced.
+
+- Saved the approved Supabase development/production, 30-day operational-retention,
+  and AB S3 backup strategy as
+  `docs/plans/2026-10-15-supabase-live-launch.md` so it can be safely stashed
+  and resumed alongside the implementation files.
+
+- Added the repository-side production operating foundation: a production
+  GitHub Actions deployment workflow, a daily encrypted S3
+  database/Storage backup workflow, a retention-health check, and AB
+  environment/runbook documentation. Added the forward-only operational
+  retention migration: after 30 days it aggregates completed group/private
+  lesson counts by user/month before deleting eligible raw records, while
+  preserving financial, membership, profile, audit, and failed-notification
+  data. The new Supabase projects, GitHub Environment secrets, AB S3 bucket,
+  `pg_cron` enablement, and first restore drill require account-owner setup;
+  nothing has been provisioned against the existing development project.
+
 - Removed the unavailable **Credit card / Kredi kartı** choice from the member
   package request dialog. Package selection now clearly asks the member to
   complete payment with the studio and sends a single request for administrator
@@ -9,10 +41,9 @@
   creates the membership. No card data is collected, persisted, or processed,
   and no schema change is needed. Added widget coverage that verifies the
   missing card choice and the single approval submission. `dart format lib
-  test` and `flutter analyze` pass. The full `flutter test` currently has four
+  test` and `flutter analyze` pass. The full `flutter test` currently has three
   unrelated pre-existing failures: two stale approved-package render
-  expectations, the stale member-dashboard package expectation, and the stale
-  `ACTIVE MEMBERS` admin expectation. Review this member package flow with
+  expectations and the stale member-dashboard package expectation. Review this member package flow with
   `docs/reviews/04-member-dashboard.md` before approving the page.
 
 - Prepared release version `0.1.1+6` on 2026-10-30. Generated a signed

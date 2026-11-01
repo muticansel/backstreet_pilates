@@ -49,3 +49,6 @@ Admin-recorded individual lessons and percentage-based earnings:
 
 Real Android device testing with Firebase App Distribution:
 [FIREBASE_ANDROID_DISTRIBUTION.md](docs/FIREBASE_ANDROID_DISTRIBUTION.md).
+
+Development/production separation, backups, restoration drills and incident
+handling: [LIVE_OPERATIONS.md](docs/LIVE_OPERATIONS.md).

@@ -469,7 +469,7 @@ void main() {
     expect(find.text('Individual lessons'), findsOneWidget);
     expect(find.text('₺400'), findsOneWidget);
     expect(find.text('GROUP LESSON MEMBERS'), findsOneWidget);
-    expect(find.text('ACTIVE MEMBERS'), findsOneWidget);
+    expect(find.text('Active Members'), findsOneWidget);
     expect(find.text('Oran: 7 · İncek: 5'), findsOneWidget);
     expect(find.text('Upcoming members'), findsOneWidget);
     expect(find.text('Oran: 0 · İncek: 0'), findsOneWidget);

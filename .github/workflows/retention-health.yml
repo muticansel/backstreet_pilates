@@ -1,0 +1,24 @@
+name: Check production retention job
+
+on:
+  schedule:
+    - cron: '45 2 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Install PostgreSQL client
+        run: sudo apt-get update && sudo apt-get install --yes postgresql-client
+      - name: Fail when the nightly retention job is stale
+        env:
+          DATABASE_URL: ${{ secrets.PRODUCTION_DATABASE_URL }}
+        run: |
+          healthy="$(psql "$DATABASE_URL" --tuples-only --no-align --command \
+            "select exists (select 1 from private.operational_retention_runs where ran_at > now() - interval '26 hours');")"
+          test "$healthy" = t
