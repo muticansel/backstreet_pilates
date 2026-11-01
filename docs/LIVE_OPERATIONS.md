@@ -15,17 +15,16 @@ GitHub repository settings altında yalnız `production` Environment’ını olu
 
 | Secret | Kullanım |
 |---|---|
-| `SUPABASE_ACCESS_TOKEN` | Yalnız ilgili projelere kapsamlı Supabase CLI token’ı |
-| `SUPABASE_PROJECT_REF`, `SUPABASE_DB_PASSWORD` | Migration dağıtımı |
+| `SUPABASE_ACCESS_TOKEN`, `SUPABASE_PROJECT_REF` | Edge Function dağıtımı |
 | `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY` | Ortam bazlı Flutter build yapılandırması |
-| `PRODUCTION_DATABASE_URL` | SQL health check bağlantısı |
+| `PRODUCTION_DATABASE_URL` | IPv4 uyumlu Session pooler üzerinden migration ve SQL health check bağlantısı |
 
 `FIREBASE_SERVICE_ACCOUNT_JSON` ve `NOTIFICATION_WEBHOOK_SECRET` GitHub
 Environment secret’ı değildir. Bunları production Supabase projesinde **Edge
 Functions → Secrets** altında ekle. `send-push-notification` bu değerleri
 yalnız çalışma anında okur; hiçbir değer Git’e veya Flutter’a girmez.
 
-`validate.yml` her PR’da Flutter ve migration ad kontrollerini çalıştırır. `deploy-production.yml`, production migration’larını ve Edge Function’ları production Environment onayından sonra uygular. Development projesine otomatik dağıtım yapılmaz; geliştirme ve sentetik veri işlemleri yerel olarak veya hesap sahibinin açık onayıyla yürütülür.
+`validate.yml` her PR’da Flutter ve migration ad kontrollerini çalıştırır. `deploy-production.yml`, production migration’larını GitHub Actions’ın IPv4 ağıyla uyumlu Session pooler bağlantısı üzerinden ve Edge Function’ları production Environment onayından sonra uygular. Development projesine otomatik dağıtım yapılmaz; geliştirme ve sentetik veri işlemleri yerel olarak veya hesap sahibinin açık onayıyla yürütülür.
 
 İlk dağıtımdan önce SQL Editor ile development’a uygulanmış migration’ları envanterle: `supabase migration list` ile yerel dosyaları karşılaştır, gereken kayıtlarda `supabase migration repair` kullan ve sonra production şema değişikliklerini yalnız CLI/CI ile yap. Production migration geri alınmaz; düzeltme her zaman yeni, ileri yönlü migration olarak eklenir.
 

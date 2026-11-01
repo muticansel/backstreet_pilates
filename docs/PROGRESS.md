@@ -16,21 +16,23 @@
   production database backups instead of external AWS/S3 backup automation;
   AWS-specific workflow, script, lifecycle configuration and secret
   requirements were removed. Storage is not in use today and requires a
-  separate backup decision before it is introduced.
+  separate backup decision before it is introduced. Updated production
+  migration deployment to use `PRODUCTION_DATABASE_URL` through Supabase’s
+  IPv4-compatible Session pooler, so GitHub Actions does not require the paid
+  IPv4 add-on. `SUPABASE_DB_PASSWORD` is no longer used by the workflow.
 
 - Saved the approved Supabase development/production, 30-day operational-retention,
-  and AB S3 backup strategy as
+  and Supabase-managed backup strategy as
   `docs/plans/2026-10-15-supabase-live-launch.md` so it can be safely stashed
   and resumed alongside the implementation files.
 
 - Added the repository-side production operating foundation: a production
-  GitHub Actions deployment workflow, a daily encrypted S3
-  database/Storage backup workflow, a retention-health check, and AB
+  GitHub Actions deployment workflow, a retention-health check, and AB
   environment/runbook documentation. Added the forward-only operational
   retention migration: after 30 days it aggregates completed group/private
   lesson counts by user/month before deleting eligible raw records, while
   preserving financial, membership, profile, audit, and failed-notification
-  data. The new Supabase projects, GitHub Environment secrets, AB S3 bucket,
+  data. The new production Supabase project, GitHub Environment secrets,
   `pg_cron` enablement, and first restore drill require account-owner setup;
   nothing has been provisioned against the existing development project.
 
