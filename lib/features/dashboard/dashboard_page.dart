@@ -1489,7 +1489,8 @@ class _PackagesPlaceholderState extends State<_PackagesPlaceholder> {
                     snapshot.data!.isNotEmpty) ...[
                   const SizedBox(height: 24),
                   Text(
-                    AppLocalizations.of(context).text('cashPaymentOnly'),
+                    AppLocalizations.of(context)
+                        .text('paymentApprovalRequired'),
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 12, color: AppTheme.sage),
                   ),
@@ -1501,7 +1502,6 @@ class _PackagesPlaceholderState extends State<_PackagesPlaceholder> {
   }
 
   Future<void> _showRequest(BuildContext context, PackageOffer offer) async {
-    var cash = true;
     await showDialog<void>(
       context: context,
       builder: (dialogContext) => StatefulBuilder(
@@ -1521,22 +1521,10 @@ class _PackagesPlaceholderState extends State<_PackagesPlaceholder> {
                           '${offer.startsOn.year}',
                     ),
               ),
-              RadioGroup<bool>(
-                groupValue: cash,
-                onChanged: (value) => setDialog(() => cash = value!),
-                child: Column(
-                  children: [
-                    RadioListTile<bool>(
-                      value: true,
-                      title: Text(AppLocalizations.of(context).text('cash')),
-                    ),
-                    RadioListTile<bool>(
-                      value: false,
-                      title:
-                          Text(AppLocalizations.of(context).text('creditCard')),
-                    ),
-                  ],
-                ),
+              const SizedBox(height: 16),
+              Text(
+                AppLocalizations.of(context).text('paymentApprovalDetail'),
+                textAlign: TextAlign.center,
               ),
             ],
           ),
@@ -1546,18 +1534,13 @@ class _PackagesPlaceholderState extends State<_PackagesPlaceholder> {
                 child: Text(AppLocalizations.of(context).text('cancel'))),
             FilledButton(
               onPressed: () async {
-                if (!cash) {
-                  AppNotifications.error(AppLocalizations.of(this.context)
-                      .text('cardPaymentsSoon'));
-                  return;
-                }
                 try {
                   await widget.purchases.requestCashPurchase(
                       offerId: offer.id, requestedStartDate: offer.startsOn);
                   if (context.mounted) Navigator.pop(context);
                   if (mounted)
                     AppNotifications.success(AppLocalizations.of(this.context)
-                        .text('cashRequestSent'));
+                        .text('paymentApprovalRequestSent'));
                 } on PurchaseFailure catch (error) {
                   if (context.mounted) Navigator.of(context).pop();
                   if (mounted) {
@@ -1565,7 +1548,7 @@ class _PackagesPlaceholderState extends State<_PackagesPlaceholder> {
                   }
                 }
               },
-              child: Text(AppLocalizations.of(context).text('sendRequest')),
+              child: Text(AppLocalizations.of(context).text('sendForApproval')),
             ),
           ],
         ),

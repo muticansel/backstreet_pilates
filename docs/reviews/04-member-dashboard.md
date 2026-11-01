@@ -18,6 +18,8 @@ Source: `lib/features/dashboard/dashboard_page.dart`.
 5. A package-exploration area with minimal branch cards for Oran and İncek.
    Each card has a muted location/atmosphere treatment and filters the offers
    without introducing another data request.
+   Selecting a package sends it to the studio for payment approval; credit-card
+   payment is not offered in the app.
 6. A progress card derived from the member's completed (`attended`) bookings:
    six months of attendance, a current/best weekly consistency series, and
    compact class milestones. It shows a clear empty state before a first
@@ -98,6 +100,13 @@ login, the page is not constructed until the authenticated session is ready,
 so its existing booking and package reads cannot render an early RLS-empty
 snapshot. Please review this once with real member data before approving the
 page.
+
+2026-11-01 package-request iteration: removed the unavailable credit-card
+choice from the package dialog. A member now sees one clear path: complete the
+payment with the studio, send the package request for approval, and receive an
+active package only after an administrator confirms it. This uses the existing
+server-side cash-request/administrator-confirmation flow; it does not process
+or store card details.
 
 User feedback: pending.
 Approval: pending.

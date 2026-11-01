@@ -116,6 +116,31 @@ class FakePurchaseGateway implements PurchaseGateway {
   }) async {}
 }
 
+class RecordingPurchaseGateway extends FakePurchaseGateway {
+  int requestCount = 0;
+
+  @override
+  Future<List<PackageOffer>> loadActiveOffers() async => [
+        PackageOffer(
+          id: 'offer-1',
+          title: 'Studio package',
+          branchName: 'Oran',
+          totalCredits: 8,
+          durationWeeks: 4,
+          priceMinor: 500000,
+          startsOn: DateTime(2026, 11, 2),
+        ),
+      ];
+
+  @override
+  Future<void> requestCashPurchase({
+    required String offerId,
+    required DateTime requestedStartDate,
+  }) async {
+    requestCount++;
+  }
+}
+
 class FakeAdminPurchaseGateway implements AdminPurchaseGateway {
   const FakeAdminPurchaseGateway();
 
@@ -377,6 +402,34 @@ void main() {
     await tester.tap(find.text('Home'));
     await tester.pumpAndSettle();
     expect(find.text('YOUR CURRENT PACKAGE'), findsOneWidget);
+  });
+
+  testWidgets('package requests use studio approval without a card choice',
+      (tester) async {
+    final purchases = RecordingPurchaseGateway();
+    await tester.pumpWidget(PilatesApp(
+      auth: FakeAuthGateway(),
+      purchases: purchases,
+    ));
+    await tester.pumpAndSettle();
+    await tester.enterText(
+        find.byType(TextFormField).at(0), 'member@example.com');
+    await tester.enterText(find.byType(TextFormField).at(1), 'practice123');
+    await tester.tap(find.text('Log in'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Explore'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Studio package'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Credit card'), findsNothing);
+    expect(find.text('Send for approval'), findsOneWidget);
+
+    await tester.tap(find.text('Send for approval'));
+    await tester.pumpAndSettle();
+    expect(purchases.requestCount, 1);
+    await tester.pump(const Duration(seconds: 4));
   });
 
   testWidgets('admin starts on Today and reaches all simplified sections',

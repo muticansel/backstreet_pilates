@@ -220,6 +220,12 @@ class AppLocalizations {
       'tryAgain': 'Try again',
       'cashRequestSent': 'Cash payment request sent to the studio.',
       'cardPaymentsSoon': 'Card payments will be available soon.',
+      'paymentApprovalRequired': 'Payment is completed after studio approval.',
+      'paymentApprovalDetail':
+          'Complete your payment with the studio. Your package will become active after approval.',
+      'paymentApprovalRequestSent':
+          'Your package request was sent to the studio for approval.',
+      'sendForApproval': 'Send for approval',
       'profile': 'Profile',
       'editProfile': 'Edit profile',
       'profileSaved': 'Profile saved.',
@@ -704,6 +710,12 @@ class AppLocalizations {
       'tryAgain': 'Tekrar dene',
       'cashRequestSent': 'Nakit ödeme talebi stüdyoya gönderildi.',
       'cardPaymentsSoon': 'Kartla ödeme yakında kullanılabilecek.',
+      'paymentApprovalRequired': 'Ödeme, stüdyo onayından sonra tamamlanır.',
+      'paymentApprovalDetail':
+          'Ödemeni stüdyoyla tamamla. Paketin onaydan sonra aktifleşir.',
+      'paymentApprovalRequestSent':
+          'Paket talebin onay için stüdyoya gönderildi.',
+      'sendForApproval': 'Onaya gönder',
       'profile': 'Profil',
       'editProfile': 'Profili düzenle',
       'profileSaved': 'Profil kaydedildi.',

@@ -2,6 +2,19 @@
 
 ## Current state
 
+- Removed the unavailable **Credit card / Kredi kartı** choice from the member
+  package request dialog. Package selection now clearly asks the member to
+  complete payment with the studio and sends a single request for administrator
+  approval; the existing server-authoritative cash-request confirmation then
+  creates the membership. No card data is collected, persisted, or processed,
+  and no schema change is needed. Added widget coverage that verifies the
+  missing card choice and the single approval submission. `dart format lib
+  test` and `flutter analyze` pass. The full `flutter test` currently has four
+  unrelated pre-existing failures: two stale approved-package render
+  expectations, the stale member-dashboard package expectation, and the stale
+  `ACTIVE MEMBERS` admin expectation. Review this member package flow with
+  `docs/reviews/04-member-dashboard.md` before approving the page.
+
 - Prepared release version `0.1.1+6` on 2026-10-30. Generated a signed
   Android APK for Firebase App Distribution and a signed iOS IPA for
   TestFlight with the Supabase URL and publishable key supplied only as
