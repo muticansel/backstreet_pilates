@@ -23,6 +23,12 @@ geçer. Kabul edilen veri kaybı hedefi en fazla 24 saattir.
   yerel migration geçmişiyle eşitlenir.
 - Production şema değişiklikleri yalnızca ileri yönlü migration ile yapılır;
   uygulanmış migration düzenlenmez veya geri alınmaz.
+- Development seed verisine bağlı olan
+  `20260927000400_activate_incek_8_2_4_offer.sql`, production’da sentetik
+  `demo-8-2-4` paketi ve 5.000 TRY fiyatı oluşturulmaması için SQL’i
+  çalıştırılmadan migration geçmişinde uygulanmış kabul edilir. Production
+  kataloğu gerçek şube, paket ve fiyatlar kararlaştırıldığında yeni bir ileri
+  yönlü migration ile eklenir.
 
 ## Veri saklama ve temizlik
 

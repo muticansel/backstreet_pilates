@@ -2,6 +2,18 @@
 
 ## Current state
 
+- Production boş başladığı için development seed verisine bağlı
+  `20260927000400_activate_incek_8_2_4_offer.sql` migration’ı kasıtlı olarak
+  atlandı. Production workflow artık bu tek sürümü SQL’i çalıştırmadan
+  migration geçmişinde uygulanmış olarak işaretliyor; bu nedenle sentetik
+  `demo-8-2-4` paketi, İncek şubesi veya 5.000 TRY fiyatı production’a
+  taşınmayacak ve sonraki şema migration’ları devam edecek. Bu migration
+  değiştirilmedi. Production’a gerçek katalog girişi, kullanıcı gerçek şube,
+  paket ve fiyatları onayladığında ayrı ileri yönlü migration olarak
+  yapılmalıdır. Sonraki adım: `main` push’ının production Environment onayını
+  verip workflow’u yeniden çalıştırmak; push Edge Function secret’ları henüz
+  ekli değilse Function dağıtılsa bile bildirim teslimi çalışmaz.
+
 - Revised the live-environment plan to use only the existing development
   project and one separate AB production project; staging is intentionally not
   used. Removed the staging deployment workflow and staging-only secret/cron

@@ -27,6 +27,11 @@ jobs:
           DATABASE_URL: ${{ secrets.PRODUCTION_DATABASE_URL }}
         run: |
           supabase db push --db-url "$DATABASE_URL" --dry-run
+      - name: Skip development-only demo catalog migration
+        env:
+          DATABASE_URL: ${{ secrets.PRODUCTION_DATABASE_URL }}
+        run: |
+          supabase migration repair 20260927000400 --status applied --db-url "$DATABASE_URL"
       - name: Apply reviewed migrations
         env:
           DATABASE_URL: ${{ secrets.PRODUCTION_DATABASE_URL }}

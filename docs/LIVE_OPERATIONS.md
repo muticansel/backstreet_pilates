@@ -26,6 +26,13 @@ yalnız çalışma anında okur; hiçbir değer Git’e veya Flutter’a girmez.
 
 `validate.yml` her PR’da Flutter ve migration ad kontrollerini çalıştırır. `deploy-production.yml`, production migration’larını GitHub Actions’ın IPv4 ağıyla uyumlu Session pooler bağlantısı üzerinden ve Edge Function’ları production Environment onayından sonra uygular. Development projesine otomatik dağıtım yapılmaz; geliştirme ve sentetik veri işlemleri yerel olarak veya hesap sahibinin açık onayıyla yürütülür.
 
+`20260927000400_activate_incek_8_2_4_offer.sql` yalnız development seed
+verisindeki `demo-8-2-4` paketi ile İncek teklifini etkinleştirir. Production
+boş başladığı ve sentetik paket/fiyat taşınmayacağı için workflow bu sürümü SQL
+çalıştırmadan production migration geçmişinde uygulanmış olarak işaretler.
+Bu bilinçli istisna yalnız bu sürüm içindir. Gerçek production şube, paket ve
+teklifleri daha sonra ayrı, ileri yönlü bir migration ile eklenmelidir.
+
 İlk dağıtımdan önce SQL Editor ile development’a uygulanmış migration’ları envanterle: `supabase migration list` ile yerel dosyaları karşılaştır, gereken kayıtlarda `supabase migration repair` kullan ve sonra production şema değişikliklerini yalnız CLI/CI ile yap. Production migration geri alınmaz; düzeltme her zaman yeni, ileri yönlü migration olarak eklenir.
 
 ## Otomatik saklama politikası
