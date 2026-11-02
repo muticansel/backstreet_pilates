@@ -41,6 +41,10 @@
   migration-onayı beklediği için durdu; bu adımın mevcut dry-run incelemesinin
   ardından çalışması üzere `--yes` eklendi.
 
+- Production Edge Function dağıtımı da terminal dışı onay gerektiriyordu;
+  `admin-user-management` ve `send-push-notification` deploy komutlarına
+  `--yes` eklendi.
+
 - Revised the live-environment plan to use only the existing development
   project and one separate AB production project; staging is intentionally not
   used. Removed the staging deployment workflow and staging-only secret/cron
