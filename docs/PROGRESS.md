@@ -37,6 +37,10 @@
   dışındaki zorunlu onayı için `--yes` eklendi. Bu yalnız kasıtlı olarak
   atlanan sürümlerin migration-geçmişi kaydını günceller; SQL çalıştırmaz.
 
+- Production deploy’unda gerçek `supabase db push` adımı da terminal dışı
+  migration-onayı beklediği için durdu; bu adımın mevcut dry-run incelemesinin
+  ardından çalışması üzere `--yes` eklendi.
+
 - Revised the live-environment plan to use only the existing development
   project and one separate AB production project; staging is intentionally not
   used. Removed the staging deployment workflow and staging-only secret/cron
