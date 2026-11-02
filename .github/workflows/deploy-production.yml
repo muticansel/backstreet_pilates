@@ -32,6 +32,11 @@ jobs:
           DATABASE_URL: ${{ secrets.PRODUCTION_DATABASE_URL }}
         run: |
           supabase migration repair 20260927000400 --status applied --db-url "$DATABASE_URL"
+      - name: Skip retired manual-booking upgrade migrations
+        env:
+          DATABASE_URL: ${{ secrets.PRODUCTION_DATABASE_URL }}
+        run: |
+          supabase migration repair 20261001000200 20261001000300 --status applied --db-url "$DATABASE_URL"
       - name: Apply reviewed migrations
         env:
           DATABASE_URL: ${{ secrets.PRODUCTION_DATABASE_URL }}

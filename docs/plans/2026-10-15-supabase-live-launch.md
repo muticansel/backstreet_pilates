@@ -29,6 +29,12 @@ geçer. Kabul edilen veri kaybı hedefi en fazla 24 saattir.
   çalıştırılmadan migration geçmişinde uygulanmış kabul edilir. Production
   kataloğu gerçek şube, paket ve fiyatlar kararlaştırıldığında yeni bir ileri
   yönlü migration ile eklenir.
+- `20261001000200_remove_manual_booking_draft.sql` ile alternatif
+  `20261001000300_archive_manual_booking_draft.sql` yalnız eski development
+  manual-booking taslağını dönüştürür. Boş production, güncel
+  `20261001000100_class_booking_foundation.sql` ile başladığından bu iki
+  sürüm SQL çalıştırılmadan uygulanmış kabul edilir; güncel sabit-ders
+  tabloları silinmez veya yeniden adlandırılmaz.
 
 ## Veri saklama ve temizlik
 

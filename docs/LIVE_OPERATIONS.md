@@ -33,6 +33,14 @@ boş başladığı ve sentetik paket/fiyat taşınmayacağı için workflow bu s
 Bu bilinçli istisna yalnız bu sürüm içindir. Gerçek production şube, paket ve
 teklifleri daha sonra ayrı, ileri yönlü bir migration ile eklenmelidir.
 
+`20261001000200_remove_manual_booking_draft.sql` ve alternatif
+`20261001000300_archive_manual_booking_draft.sql` da yalnız eski development
+manual-booking taslağından yükseltme içindir. Boş production’da önceki
+`20261001000100_class_booking_foundation.sql` güncel sabit-ders tablolarını
+zaten oluşturur. Bu iki eski-yükseltme sürümü de SQL çalıştırılmadan migration
+geçmişinde uygulanmış kabul edilir; production’da mevcut tablo veya veri
+silinmez/yeniden adlandırılmaz.
+
 İlk dağıtımdan önce SQL Editor ile development’a uygulanmış migration’ları envanterle: `supabase migration list` ile yerel dosyaları karşılaştır, gereken kayıtlarda `supabase migration repair` kullan ve sonra production şema değişikliklerini yalnız CLI/CI ile yap. Production migration geri alınmaz; düzeltme her zaman yeni, ileri yönlü migration olarak eklenir.
 
 ## Otomatik saklama politikası

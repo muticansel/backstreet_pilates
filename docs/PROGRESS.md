@@ -14,6 +14,16 @@
   verip workflow’u yeniden çalıştırmak; push Edge Function secret’ları henüz
   ekli değilse Function dağıtılsa bile bildirim teslimi çalışmaz.
 
+- Production migration denemesi, `20261001000200_remove_manual_booking_draft.sql`
+  dosyasının yeni `class_series` tablosunu silmeye çalıştığını ve
+  `class_series_slots` dış anahtarında durduğunu doğruladı. Bu dosya ve onun
+  alternatif, arşivleme amaçlı `20261001000300_archive_manual_booking_draft.sql`
+  yalnız eski development manual-booking taslağı içindir; boş production’da
+  `20261001000100_class_booking_foundation.sql` zaten güncel tabloları
+  oluşturur. Workflow artık iki eski-yükseltme sürümünü SQL çalıştırmadan
+  migration geçmişinde uygulanmış kabul eder. Hata transaction içinde olduğu
+  için başarısız `1002` denemesinden kalıcı bir kısmi değişiklik beklenmez.
+
 - Revised the live-environment plan to use only the existing development
   project and one separate AB production project; staging is intentionally not
   used. Removed the staging deployment workflow and staging-only secret/cron
