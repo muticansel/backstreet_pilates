@@ -33,6 +33,10 @@
   migration geçmişinde uygulanmış kabul eder. Hata transaction içinde olduğu
   için başarısız `1002` denemesinden kalıcı bir kısmi değişiklik beklenmez.
 
+- GitHub Actions’taki `supabase migration repair` adımlarına CLI’ın terminal
+  dışındaki zorunlu onayı için `--yes` eklendi. Bu yalnız kasıtlı olarak
+  atlanan sürümlerin migration-geçmişi kaydını günceller; SQL çalıştırmaz.
+
 - Revised the live-environment plan to use only the existing development
   project and one separate AB production project; staging is intentionally not
   used. Removed the staging deployment workflow and staging-only secret/cron
