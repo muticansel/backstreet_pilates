@@ -2,6 +2,15 @@
 
 ## Current state
 
+- Updated the three CI-blocking widget-test fixtures whose 2026 active-package
+  end dates had become historical. The package page correctly rendered those
+  fixtures as old packages, while the login dashboard correctly hid the
+  expired current package; their tests now use future dates so they test the
+  intended active-package states. No production schema, workflow, or visible
+  app behavior changed. `dart format lib test`, `flutter analyze`, and the
+  full `flutter test` suite now pass locally (27 tests). Next step: push the
+  changes and confirm the refreshed GitHub Actions validation run is green.
+
 - Production boş başladığı için development seed verisine bağlı
   `20260927000400_activate_incek_8_2_4_offer.sql` migration’ı kasıtlı olarak
   atlandı. Production workflow artık bu tek sürümü SQL’i çalıştırmadan

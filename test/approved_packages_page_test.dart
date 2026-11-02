@@ -48,8 +48,8 @@ void main() {
       status: 'active',
       totalCredits: 8,
       remainingCredits: 3,
-      startDate: DateTime(2026, 10, 1),
-      endDateExclusive: DateTime(2026, 11, 1),
+      startDate: DateTime(2099, 10, 1),
+      endDateExclusive: DateTime(2099, 11, 1),
     );
 
     await tester.pumpWidget(_testApp([package]));
@@ -107,8 +107,8 @@ void main() {
       status: 'active',
       totalCredits: 0,
       remainingCredits: 0,
-      startDate: DateTime(2026, 10, 1),
-      endDateExclusive: DateTime(2026, 11, 1),
+      startDate: DateTime(2099, 10, 1),
+      endDateExclusive: DateTime(2099, 11, 1),
     );
 
     await tester.pumpWidget(_testApp([package]));

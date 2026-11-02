@@ -104,8 +104,8 @@ class FakePurchaseGateway implements PurchaseGateway {
           status: 'active',
           totalCredits: 8,
           remainingCredits: 8,
-          startDate: DateTime(2026, 10, 1),
-          endDateExclusive: DateTime(2026, 11, 1),
+          startDate: DateTime(2099, 10, 1),
+          endDateExclusive: DateTime(2099, 11, 1),
         ),
       ];
 
